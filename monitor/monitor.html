@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-page-node-id="6pX2AwVqid6EcNr4btNs2Z">
+<head data-page-node-id="Hw6TVG58NHgoeVFjhWW4VZ">
+<meta charset="utf-8" data-page-node-id="LceH7ZrioTeAYFUxB8qAhP">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" data-page-node-id="H6hbna8rZPdckYAdbwtmdA">
+<meta name="color-scheme" content="dark light" data-page-node-id="VOFrvFL8FPkvlqygCmZZ0q">
+<title>AuditFlow Backend Monitor</title>
+<!-- 本工作台通过 WorkBuddy 资料库能力（library skill）搭建、存储和部署 -->
+<style>
+:root{
+  --bg:#0b101c; --bg2:#0f1626; --panel:#141c30; --panel2:#1a2440; --line:#23304f; --line2:#2e3d63;
+  --text:#e8edf7; --text2:#9fb0cc; --text3:#64748b;
+  --accent:#4f8cff; --accent2:#22d3ee; --violet:#8b5cf6;
+  --red:#f87171; --redbg:rgba(248,113,113,.12); --amber:#fbbf24; --amberbg:rgba(251,191,36,.12);
+  --green:#34d399; --greenbg:rgba(52,211,153,.12); --cyan:#22d3ee; --cyanbg:rgba(34,211,238,.12);
+  --blue:#4f8cff; --bluebg:rgba(79,140,255,.12);
+  --radius:14px; --radius-s:10px;
+  --shadow:0 8px 28px rgba(0,0,0,.35);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+html[data-theme="light"]{
+  --bg:#f2f5fb; --bg2:#e9eef7; --panel:#ffffff; --panel2:#f4f7fd; --line:#dbe3f0; --line2:#c6d2e6;
+  --text:#16213a; --text2:#4a5b78; --text3:#8494ad;
+  --red:#dc2626; --redbg:rgba(220,38,38,.08); --amber:#b45309; --amberbg:rgba(180,83,9,.08);
+  --green:#059669; --greenbg:rgba(5,150,105,.08); --cyan:#0891b2; --cyanbg:rgba(8,145,178,.08);
+  --blue:#2563eb; --bluebg:rgba(37,99,235,.08);
+  --shadow:0 8px 24px rgba(30,50,90,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+  color:var(--text);font-family:var(--font);font-size:14px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(40px + env(safe-area-inset-bottom));
+}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-s);padding:10px 12px;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:.2px}
+.logo{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}.logo img{display:block;width:100%;height:100%;object-fit:cover}
+.hd .spacer{flex:1}
+.mode-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--text2)}
+.mode-pill .dot{width:8px;height:8px;border-radius:50%}
+.mode-pill.live .dot{background:var(--green);box-shadow:0 0 8px var(--green)}
+.mode-pill.demo .dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.mode-pill.off .dot{background:var(--red);box-shadow:0 0 8px var(--red)}
+.hbtn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:var(--radius-s);border:1px solid var(--line);background:var(--panel);color:var(--text2);font-size:13px;transition:.15s}
+.hbtn:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px)}
+.hbtn.primary{background:linear-gradient(135deg,var(--accent),#6d5cff);color:#fff;border-color:transparent}
+.hbtn.primary:hover{filter:brightness(1.1)}
+.hbtn svg{flex:none}
+
+/* ---------- banner ---------- */
+.banner{display:none;margin:14px 0;padding:12px 14px;border-radius:var(--radius-s);font-size:13px;align-items:flex-start;gap:10px}
+.banner.show{display:flex}
+.banner.warn{background:var(--amberbg);border:1px solid color-mix(in srgb,var(--amber) 40%,transparent);color:var(--amber)}
+.banner.err{background:var(--redbg);border:1px solid color-mix(in srgb,var(--red) 40%,transparent);color:var(--red)}
+.banner .btxt{flex:1}
+.banner .bact{flex:none}
+
+/* ---------- section ---------- */
+section{margin-top:22px}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.sec-head h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.sec-head .tag{font-size:11px;color:var(--text3);background:var(--panel);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+.sec-head .spacer{flex:1}
+.grid{display:grid;gap:12px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card.hoverable{transition:.15s}
+.card.hoverable:hover{border-color:var(--line2);transform:translateY(-1px)}
+
+/* ---------- today ---------- */
+#today .tcol{display:flex;flex-direction:column;gap:10px;min-height:120px}
+.titem{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-s);border:1px solid var(--line);background:var(--panel2)}
+.titem .tico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.titem .tmain{flex:1;min-width:0}
+.titem .tt{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.titem .ts{font-size:12px;color:var(--text3);margin-top:2px;word-break:break-all}
+.titem .tact{flex:none}
+.tbtn{height:30px;padding:0 10px;border-radius:8px;font-size:12px;border:1px solid var(--line);color:var(--text2);display:inline-flex;align-items:center;gap:4px}
+.tbtn:hover{color:var(--text);border-color:var(--line2)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 7px;border-radius:999px;font-weight:600;white-space:nowrap}
+.b-red{background:var(--redbg);color:var(--red)} .b-amber{background:var(--amberbg);color:var(--amber)}
+.b-green{background:var(--greenbg);color:var(--green)} .b-blue{background:var(--bluebg);color:var(--blue)}
+.b-cyan{background:var(--cyanbg);color:var(--cyan)} .b-gray{background:var(--panel);color:var(--text3);border:1px solid var(--line)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);padding:26px 10px;text-align:center;font-size:13px}
+.empty svg{opacity:.5}
+
+/* ---------- stats ---------- */
+.kpi{display:flex;flex-direction:column;gap:4px}
+.kpi .kv{font-size:26px;font-weight:800;font-family:var(--mono);letter-spacing:-.5px}
+.kpi .kl{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.kpi .kd{font-size:11px;color:var(--text2)}
+.kpi .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+
+/* ---------- charts ---------- */
+.chart-wrap{display:flex;flex-direction:column;gap:8px}
+.chart-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text3)}
+.legend-dot{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
+svg.chart{width:100%;height:auto;display:block}
+
+/* ---------- table ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11px;color:var(--text3);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.rowlink{cursor:pointer}
+.tbl tr.rowlink:hover td{background:var(--panel2)}
+.tbl .mono{font-family:var(--mono);font-size:12px}
+.pname{font-weight:600;display:flex;align-items:center;gap:8px}
+.pname .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.progress{height:5px;border-radius:3px;background:var(--panel2);overflow:hidden;min-width:60px}
+.progress i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--cyan))}
+.mini-bars{display:flex;gap:3px;align-items:flex-end;height:22px}
+.mini-bars span{width:5px;border-radius:2px;background:var(--accent);opacity:.85}
+
+/* ---------- timeline ---------- */
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tli{position:relative;padding:8px 0 8px 8px}
+.tli::before{content:"";position:absolute;left:-20px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--panel);border:2px solid var(--accent)}
+.tli.t-type-assessment::before{border-color:var(--violet)}
+.tli.t-type-trace-link::before{border-color:var(--cyan)}
+.tli.t-type-member::before{border-color:var(--amber)}
+.tli.t-type-lock::before{border-color:var(--green)}
+.tli .tl-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tli .tl-sub{font-size:12px;color:var(--text3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tli .tl-body{margin-top:4px;font-size:12px;color:var(--text2)}
+
+/* ---------- trace ---------- */
+.tcard{display:flex;flex-direction:column;gap:10px}
+.tc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tc-stats{display:flex;gap:8px;flex-wrap:wrap}
+.ai-opinion{font-size:12.5px;color:var(--text2);background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:var(--radius-s);padding:10px 12px;max-height:110px;overflow:auto}
+.itbl th{font-size:11px;color:var(--text3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.itbl td{padding:7px 8px;border-bottom:1px solid var(--line);font-size:12px;vertical-align:top}
+.itbl tr:last-child td{border-bottom:none}
+
+/* ---------- drawer ---------- */
+.mask{position:fixed;inset:0;background:rgba(5,8,18,.6);backdrop-filter:blur(3px);z-index:90;display:none}
+.mask.show{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(720px,100%);background:var(--bg2);border-left:1px solid var(--line2);z-index:95;transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.drawer.show{transform:none}
+.dr-head{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.dr-head h3{font-size:15px;display:flex;align-items:center;gap:8px}
+.dr-body{flex:1;overflow:auto;padding:18px}
+.dr-close{margin-left:auto;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);color:var(--text2)}
+.dr-close:hover{color:var(--text);border-color:var(--line2)}
+.sub-title{font-size:13px;font-weight:700;margin:18px 0 8px;display:flex;align-items:center;gap:6px}
+.kv-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.kv{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-s);padding:8px 10px}
+.kv .k{font-size:11px;color:var(--text3)}
+.kv .v{font-size:13px;font-weight:600;margin-top:2px;word-break:break-all}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal .mbox{background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);width:min(440px,100%);max-height:90vh;overflow:auto;padding:20px}
+.mbox h3{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;color:var(--text3);margin-bottom:6px}
+.fld .hint{font-size:11px;color:var(--text3);margin-top:4px}
+.mrow{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.mbtn{height:38px;padding:0 16px;border-radius:10px;font-size:13px;border:1px solid var(--line);color:var(--text2);display:inline-flex;align-items:center;gap:6px}
+.mbtn:hover{color:var(--text)}
+.mbtn.ok{background:linear-gradient(135deg,var(--accent),#6d5cff);color:#fff;border-color:transparent}
+.mbtn.danger{background:var(--redbg);color:var(--red);border-color:transparent}
+.mbtn.ok:hover,.mbtn.danger:hover{filter:brightness(1.08)}
+
+/* ---------- filter bar ---------- */
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fbar input,.fbar select{width:auto;min-width:140px;height:34px;padding:5px 10px;font-size:13px}
+.fbar .fbtn{height:34px;padding:0 12px;font-size:13px}
+
+/* ---------- footer ---------- */
+footer{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line);color:var(--text3);font-size:12px}
+footer .frow{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){ .g4{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:1fr} .g2{grid-template-columns:1fr} }
+@media (max-width:640px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .hd{gap:8px}
+  .brand span.sub{display:none}
+  .tbl-wrap{overflow-x:auto}
+  .tbl{min-width:560px}
+  section{margin-top:16px}
+  .hbtn .blabel{display:none}
+  .hbtn{width:36px;justify-content:center;padding:0}
+}
+</style>
+</head>
+<body data-page-node-id="1C2PdwVYZDJWtiYmA5htZs">
+
+<header data-page-node-id="H1hJGX7UJGwitfolVapTN4">
+  <div class="wrap hd" data-page-node-id="kPCLh8PNfJ9Pky03CV25o2">
+    <div class="brand" data-page-node-id="PyoLRi1OOR99cYBC5cOyCA">
+      <span class="logo" data-page-node-id="t4DjW8vfayP4T1mOZqOmjz"><img src="../icons/icon-48.png" alt=""></span>
+      <span data-page-node-id="9ckhKrYofvXiJlEel5VElQ">AuditFlow Backend Monitor<span class="sub" style="color:var(--text3);font-weight:500;font-size:12px;margin-left:6px" data-page-node-id="gCwk1KHpE410nQrxilkUuC">· v9.1</span></span>
+    </div>
+    <div class="spacer" data-page-node-id="brIitPyI3UGLkgHQdYjlzT"></div>
+    <span id="modePill" class="mode-pill demo" data-page-node-id="Lr9qxaJeQLz1V0zYPwDMLj"><span class="dot" data-page-node-id="eC2GvT9ALPzVQEurPyVuXj"></span><span id="modeText" data-page-node-id="hDaOf0ukSLOigVPKYNNm2O">演示数据</span></span>
+    <button class="hbtn" id="btnRefresh" title="刷新数据" data-page-node-id="FX04yavbA66LGzs5X54Foi">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="MuoDVLi7Qh74fYSrFM9YEG"><path d="M21 12a9 9 0 1 1-2.64-6.36" data-page-node-id="tVpoQKwD54POqbJ2M5U9KH"/><path d="M21 3v6h-6" data-page-node-id="dledKjso4M17HwuLdzdPnF"/></svg>
+      <span class="blabel" data-page-node-id="qjr1HyZibYjNI9Ctd5NAlL">Refresh</span>
+    </button>
+    <button class="hbtn" id="btnSettings" title="连接设置" data-page-node-id="h2jmQCDeSCkDNpavGopBsL">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="ktpIGP3WBlP8SHSdfPCFpe"><circle cx="12" cy="12" r="3" data-page-node-id="7jKxws8N0QFMyGPKmVr0Ag"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" data-page-node-id="5vPp0msyPCYyrnvekhIGPn"/></svg>
+      <span class="blabel" data-page-node-id="IXNQUzItPzxdf0LgjbqO4L">Connect</span>
+    </button>
+    <button class="hbtn" id="btnExport" title="导出 JSON 备份" data-page-node-id="V5Fv9MqwHhFjLjKHt3ks3B">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="RqAtLaDieMe7jJtQ85231p"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" data-page-node-id="yR1HwUmaR3ZuD5NXGCVQ4F"/><path d="M7 10l5 5 5-5" data-page-node-id="YAt6wdzucGaicg2NrwAeEU"/><path d="M12 15V3" data-page-node-id="cCGbkKBJqyLgeCH6hRK8Rq"/></svg>
+      <span class="blabel" data-page-node-id="WF9tmFbAQiFyS8mzaC52jd">Backup</span>
+    </button>
+    <button class="hbtn" id="btnImport" title="导入 JSON 恢复" data-page-node-id="Jq5RRAOeQy21yAaat850Y6">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="z5WEs37HaKXKBGdQEGOu8a"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" data-page-node-id="SYFivHT16KOwApqpAM2qLh"/><path d="M17 8l-5-5-5 5" data-page-node-id="IgkE9lRixT6aHIrJxE5BYK"/><path d="M12 3v12" data-page-node-id="fDlbpvLbwThHB8AfIRQZ8S"/></svg>
+      <span class="blabel" data-page-node-id="InNKixYLG4xNJZwnhrmavm">Restore</span>
+    </button>
+    <button class="hbtn" id="btnTheme" title="切换深浅色" data-page-node-id="GKMtamilUBu98HcfZByafV">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="VPvZg0Fl0OgetzaDuFapH6"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" data-page-node-id="QfXorwFTeHArzSlgZCHhMi"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap" data-page-node-id="t7bMMp4J88zOiN1CVHrP5F">
+  <div id="banner" class="banner" data-page-node-id="x0j83rtaVyOvtWlkCOZSx5"><span class="btxt" id="bannerText" data-page-node-id="an7xKj5GvPYFARLo9jwzHn"></span><span class="bact" data-page-node-id="yCExtk98wDX2dpJ99lLSvS"><button class="tbtn" id="bannerAct" style="display:none" data-page-node-id="Qz2FEw2esTUivQV9KRSzwB">处理</button></span></div>
+
+  <!-- 今天要处理 -->
+  <section id="today" data-page-node-id="NadTlhcHwdGgFkaoFznaXa">
+    <div class="sec-head" data-page-node-id="qhrnOPWu0UvueHklO0JHoh">
+      <h2 data-page-node-id="fDLeiZ82DhIn6me2J1wE2i">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="DV9486MctaQEHXKZDaAyRx"><circle cx="12" cy="12" r="10" data-page-node-id="zkW9XhyiYzCSktOo3Sdzk5"/><path d="M12 6v6l4 2" data-page-node-id="T8s2vPsgId1d0He4TKfd8V"/></svg>
+        今天要处理
+      </h2>
+      <span class="tag" id="todayDate" data-page-node-id="AHiLrF7KPNySp75xHMAEtT"></span>
+      <div class="spacer" data-page-node-id="LpFdJLEjXDXcewDAEx1VaC"></div>
+      <button class="tbtn" id="btnClearDemo" style="display:none" data-page-node-id="avgmKXjJFRgBPmmkHaQiWB">清空示例数据</button>
+    </div>
+    <div class="grid g3" data-page-node-id="5sMQHROuWwu4diOHvVVoub">
+      <div class="card" data-page-node-id="eQKIiPSXFYtg3EKb5984xx">
+        <div class="chart-title" style="margin-bottom:10px" data-page-node-id="iNes6KeJZkkufe4xlpznVH">
+          <span class="legend-dot" style="background:var(--red)" data-page-node-id="d9lsSENw3DVeMoGryORjSD"></span>进行中的编辑锁
+          <span class="badge b-red" id="cntLocks" data-page-node-id="eHcAJgJkuSWrc89IanAa5Z">0</span>
+        </div>
+        <div class="tcol" id="todayLocks" data-page-node-id="mb31xDEmcqo4ztLMsxfU8w"></div>
+      </div>
+      <div class="card" data-page-node-id="yzZdHZMSfcFICt1ESQ7gfb">
+        <div class="chart-title" style="margin-bottom:10px" data-page-node-id="9WrJJnuEL6ICgBccTMoJG7">
+          <span class="legend-dot" style="background:var(--amber)" data-page-node-id="OZZuxl0Rj9q5HO60MoYagb"></span>24 小时内被修改的项目
+          <span class="badge b-amber" id="cntModified" data-page-node-id="kb8SB3KGHG8Z0fyGcQASi4">0</span>
+        </div>
+        <div class="tcol" id="todayModified" data-page-node-id="pPdmyMtym1UMLtLj8a7qgQ"></div>
+      </div>
+      <div class="card" data-page-node-id="9MxKJfPrxS7GZ2MWQOSKfi">
+        <div class="chart-title" style="margin-bottom:10px" data-page-node-id="uvYHYliECwKud8RTHMVoFb">
+          <span class="legend-dot" style="background:var(--blue)" data-page-node-id="INnWMnII9zeCLD2nW2l5Fh"></span>AI 评估待人工确认
+          <span class="badge b-blue" id="cntPendingAi" data-page-node-id="RUtKgTocez8KHTSvRnfD1S">0</span>
+        </div>
+        <div class="tcol" id="todayPendingAi" data-page-node-id="qMTHdUb1GpEEEbEYqmKCbF"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI -->
+  <section id="stats" data-page-node-id="ZBAGs7FejZEJF4rdImXeKM">
+    <div class="grid g4" data-page-node-id="1sc4Huvht17BunN4W8aw5q">
+      <div class="card kpi" data-page-node-id="ai4F0kHRqa154isrY3402r"><div class="ico" style="background:var(--bluebg);color:var(--blue)" data-page-node-id="8M3xVr5ZlsjdGKD79eD1HM"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-page-node-id="o9ubD9iUu69JTjtdFCNRcR"><ellipse cx="12" cy="5" rx="8" ry="3" data-page-node-id="VqXZ851kCJ6JwkY7coomjl"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5" data-page-node-id="3ZXAfyGwaJG4eFMW5uVM7k"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" data-page-node-id="HCiaEE35HZxWk7LlZ8TIfP"/></svg></div><div class="kv" id="kProjects" data-page-node-id="YOCYlHBwcFMbFb5ChZB41C">0</div><div class="kl" data-page-node-id="wYVympAakhGe84H6rQWeHj">项目总数</div></div>
+      <div class="card kpi" data-page-node-id="ZOHlDgSHe1fKY4dLkCfgkr"><div class="ico" style="background:var(--redbg);color:var(--red)" data-page-node-id="i7E2gUXMjPwd9D0LPBM41c"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="Txfmvat3NjtWV486ynFDwZ"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" data-page-node-id="zeCTSF5Hmt16f34H34htlI"/></svg></div><div class="kv" id="kEvents24h" data-page-node-id="tMaoR4fPrj4X6N4tCsc4EE">0</div><div class="kl" data-page-node-id="02KG2alMBNjb8HhkAkN3MD">24h 修改事件</div><div class="kd" id="kEvents7d" data-page-node-id="iS3kjunG4meR3P43lNpNCs">近7天 0 条</div></div>
+      <div class="card kpi" data-page-node-id="dHgVDjDvFJ70h43nmbCnjg"><div class="ico" style="background:var(--violet)22;color:var(--violet)" data-page-node-id="1xsLWUwx6CbCf4eRGCylWW"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="GkPvMRDXr0Ab9GQ21F0yfd"><path d="M12 2a4 4 0 0 1 4 4c0 1.1-.45 2.1-1.17 2.83A4 4 0 0 1 12 10a4 4 0 0 1-4-4 4 4 0 0 1 4-4z" data-page-node-id="n9VRr2FEe3d1CSc7IruAx9"/><path d="M12 22v-8" data-page-node-id="xqbEm8DTEWMHcfqdUBDACC"/><path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6" data-page-node-id="gbFVuAa4fN4XxRYt2uEQRB"/></svg></div><div class="kv" id="kAi" data-page-node-id="LrtIEAXH593fYMw6AafgSV">0</div><div class="kl" data-page-node-id="5wifHA4QZWmXk321GsnFnW">AI 已评估指标</div><div class="kd" id="kAiPending" data-page-node-id="55R7lKkIadb4wFSyb03Fpj">待确认 0</div></div>
+      <div class="card kpi" data-page-node-id="gZ2ds75Vh69nhWi9HPm4fd"><div class="ico" style="background:var(--cyanbg);color:var(--cyan)" data-page-node-id="AI1SXoKuGzOLCRkVZSdjvR"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="sNOZSIrKgkMP8XlFgVHGaJ"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" data-page-node-id="lVLzFCTfUrayRkcZJZfxqj"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" data-page-node-id="uLeFIxJnJDp3kyb3MfFclG"/></svg></div><div class="kv" id="kLinks" data-page-node-id="bENsEnVmj9IRXTdRk6UWDM">0</div><div class="kl" data-page-node-id="LvHlSnNuabTW1GSyabzzXn">证据溯源链接</div><div class="kd" id="kLinksConfirmed" data-page-node-id="cXkQ7aBIIH996tSltB0MZP">已确认 0</div></div>
+    </div>
+  </section>
+
+  <!-- 图表 -->
+  <section id="charts" data-page-node-id="ZhiAKNRdvcWhe1d2jrGqy0">
+    <div class="grid g2" data-page-node-id="ZI7nhOQtrqTjq69aAGt8dA">
+      <div class="card chart-wrap" data-page-node-id="6owQ5dHLnfoLdpqxCQO6Dz">
+        <div class="chart-title" data-page-node-id="9wyLtAIlPMmawdPGSpCUVt">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" data-page-node-id="cQPuyluYuaotPSvs9twjdz"><path d="M3 3v18h18" data-page-node-id="q5DIsEoUjghP9fijYoDNbn"/><path d="M7 15l3-4 3 2 4-6" data-page-node-id="d3dOfBAapjwy0xg2HaxQ0z"/></svg>
+          近 14 天修改事件趋势
+        </div>
+        <div id="chartDaily" data-page-node-id="UQNbmHmcr5lSpaenc2V82o"></div>
+      </div>
+      <div class="card chart-wrap" data-page-node-id="b3tSHbjJ9HtDs4e3YWxXwZ">
+        <div class="chart-title" data-page-node-id="0ZJk9XMWBfJUADoHUksNwb">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" data-page-node-id="4lRVYzGqOkHHL9tfSA6sVx"><circle cx="12" cy="12" r="9" data-page-node-id="HuzLk4RW2j19DvMxmgmOAb"/><path d="M12 3v9l6 3" data-page-node-id="koHSbLbw5gR6fkhnHSFHBd"/></svg>
+          修改涉及的过程分布
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" data-page-node-id="2K5fmUT6U3sXtg0AdSjPVg">
+          <div id="chartProcess" style="flex:none" data-page-node-id="xGA3nGPdHPpCCcse043nsm"></div>
+          <div id="chartProcessLegend" class="chart-legend" style="flex:1;flex-direction:column;gap:6px" data-page-node-id="9ARDI8p9AG8eyW833SAl3T"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card chart-wrap" style="margin-top:12px" data-page-node-id="5BaDEEWC4BNiDmJrt7LYIc">
+      <div class="chart-title" data-page-node-id="QtERZ8bBP9zyW549HSbdnE">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" data-page-node-id="FsRApwNs8tMtakXDKDRH25"><path d="M3 3v18h18" data-page-node-id="cNRCh2lLXim3iF1i85dyDc"/><path d="M7 16l3-4 3 2 4-6" data-page-node-id="wvi2REc7P6j786U6ZfFrNE"/></svg>
+        项目活跃度排行（事件数）
+      </div>
+      <div id="chartTop" data-page-node-id="2IUnIBvE6jqUbTCb8QMqzl"></div>
+    </div>
+  </section>
+
+  <!-- 项目修改监控 -->
+  <section id="projects" data-page-node-id="1odF9zE8nzRmvjAMzoAR7M">
+    <div class="sec-head" data-page-node-id="ltKJq1tpEROCDXUGWkurIL">
+      <h2 data-page-node-id="DZ5AtByorGWnHlQeumsWzj">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="rogEvTQE0k5ZnWTnxq0PDj"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z" data-page-node-id="oehKNVG3pVDj5ygeyc4EHR"/></svg>
+        项目修改监控
+      </h2>
+      <span class="tag" data-page-node-id="OJD6CQrtgk4tnJxLDyLMnK">谁在何时改了哪个项目的 MySQL 内容</span>
+      <div class="spacer" data-page-node-id="SKa9gzF0evrw2QKE6a6HaU"></div>
+      <div class="fbar" style="margin-bottom:0" data-page-node-id="sztiEOBAoPBaRtzJWi43SQ">
+        <input id="projSearch" placeholder="搜索项目名 / ID" style="min-width:180px" data-page-node-id="MRn7CFMGiiN1XSdGzTdx6m">
+        <select id="projSort" data-page-node-id="LvczNwxMNmk1foFmzSZjNf">
+          <option value="updatedAt" data-page-node-id="iAtTxko6VxY3zKHJzDcwdE">按最近修改</option>
+          <option value="eventCount" data-page-node-id="iQAJM00q9wDvyfLwTsMWUI">按事件数</option>
+          <option value="name" data-page-node-id="7Uf3Mxpu1r8OFDZqC2xnKu">按名称</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" data-page-node-id="CsJBfUpBcYPKamBVSHOglO">
+      <div class="tbl-wrap" data-page-node-id="lOc06LvjJnOL6pyrb0PDBZ"><table class="tbl" data-page-node-id="HKQl1r4UqWZCWSIRwugB6w">
+        <thead data-page-node-id="0IeN8omVAstDQ7fW74A7fm"><tr data-page-node-id="v9nZFqoR9bhgcSdFn3hAaC">
+          <th data-page-node-id="Sc3bXK9vrE2SPtV32sylVs">项目</th><th data-page-node-id="ke2WzoufIxOORnLPgVbqnD">工作区</th><th data-page-node-id="2fFeeJaHqeFm0vekHBS7RU">最近修改</th><th data-page-node-id="xVgQEqo63vBst1mFeT7eDi">修改人</th><th data-page-node-id="7b5MBazW31zJsGuDCuoxfy">Rev</th><th data-page-node-id="LabP2ChCF9Og855KrsILj1">事件</th><th data-page-node-id="JWj4XkMwM8H6F49kWMhQEC">AI 评估</th><th data-page-node-id="dOteNI32YPvqbhbQzQwIyW">溯源链接</th><th data-page-node-id="8AkNYTLRv2JpkJuV93DF4H">进度</th>
+        </tr></thead>
+        <tbody id="projRows" data-page-node-id="HSwPj2SOWBhfdFibNUrTf0"></tbody>
+      </table></div>
+      <div id="projEmpty" class="empty" style="display:none" data-page-node-id="X5NApz2OJESwKQECIIDRRu">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-page-node-id="hObqabcHqH1teVfe3YETvb"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z" data-page-node-id="h1czoGWo5hNLUQGebMCCDc"/></svg>
+        <div data-page-node-id="dPA9D7ttbJkjG0FlBdG9jB">暂无项目数据</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 修改事件流 -->
+  <section id="events" data-page-node-id="UF4SeEFeTfCaxGe9gE9a3Y">
+    <div class="sec-head" data-page-node-id="o9cNCNHf59QEwBls1CfDUt">
+      <h2 data-page-node-id="A10yBuHcDkHEUjYyvkLdZD">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="RcGUtsShAcfHlltWKvfq14"><circle cx="12" cy="12" r="10" data-page-node-id="vn3cT77MmrWG3pUwcUfGp5"/><path d="M12 6v6l4 2" data-page-node-id="k8RfjjHxqrVlJgIcn2UgKa"/></svg>
+        全局修改事件流
+      </h2>
+      <span class="tag" id="eventCount" data-page-node-id="YeQchledO0yRMxNwGxV835">0 条</span>
+      <div class="spacer" data-page-node-id="7fywNLrePBQYZGPuLjphLf"></div>
+      <div class="fbar" style="margin-bottom:0" data-page-node-id="woHHWvqFWLLosy3ark5GtG">
+        <input id="evtSearch" placeholder="搜索人 / 摘要 / 过程" style="min-width:180px" data-page-node-id="aVDdK7cuLjKwDZMcEBPdgP">
+        <select id="evtType" data-page-node-id="WhZpth6eyXltYTPpnIQB9H">
+          <option value="" data-page-node-id="7sNO7d684Zp3GfSAvphdEa">全部类型</option>
+          <option value="assessment" data-page-node-id="XClaIyzsZmoyyJ1m3BwgvA">AI/评级评估</option>
+          <option value="trace-link" data-page-node-id="WQyGPPPIhRVk4cDlzdRBby">溯源链接</option>
+          <option value="project" data-page-node-id="GET259NYASimEuwB20iXIq">项目同步</option>
+          <option value="member" data-page-node-id="QWmIoqsiBpEgbajqoE1g6J">成员变更</option>
+          <option value="lock" data-page-node-id="O2yKaWWF6J2J2GOEmgnZFC">编辑锁</option>
+          <option value="" data-page-node-id="DmUHG8X2hrypgstjQhHkob">其它</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" data-page-node-id="gE9EpmYIG7VremmU4yya6n"><div id="evtList" class="tl" data-page-node-id="YchnQ4mK5mPYQdsmPWDKWj"></div><div id="evtEmpty" class="empty" style="display:none" data-page-node-id="TnTyCcPZ1BHS6l0LqB3bK8">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-page-node-id="wWCO8uQuwmgFGk7sCv6f6s"><circle cx="12" cy="12" r="10" data-page-node-id="b7wFTMfX1OZ5I6v9cWb1z7"/><path d="M12 6v6l4 2" data-page-node-id="5ftXn0wwsBd4cUWrjpAHI8"/></svg>
+      <div data-page-node-id="cmNJHh1MsZHMPJl1DUnK1i">暂无修改事件</div>
+    </div></div>
+  </section>
+
+  <!-- AI 评估与证据溯源 -->
+  <section id="trace" data-page-node-id="fiUmJeBiYXCm8kajQ3bGi3">
+    <div class="sec-head" data-page-node-id="3Az7ELKtpccayknrZKzPNL">
+      <h2 data-page-node-id="Cw3ZOso30goSyytQHBdrro">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="McvUsNL73UhSDyceZeQXIr"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1m0-12.8l-2.1 2.1M7.7 16.3l-2.1 2.1" data-page-node-id="o6NS7ia3jXlbjgTx4SuYvb"/><circle cx="12" cy="12" r="4" data-page-node-id="JA2N207QMSsBKzl9uSpnEm"/></svg>
+        AI 评估与证据溯源
+      </h2>
+      <span class="tag" data-page-node-id="zawbhzAuWtn6YWcAZZzkAA">AI 评估了哪些证据、溯源到哪些文件</span>
+      <div class="spacer" data-page-node-id="mo29hLiE7Rnr1a7lc2i58d"></div>
+      <button class="tbtn" id="btnTraceAll" data-page-node-id="YLjQKgorrlr43wXgAPTi5q">展开全部</button>
+    </div>
+    <div id="traceList" class="grid g2" data-page-node-id="fy1c29kUQNKOIJGZSfZjK1"></div>
+  </section>
+
+  <footer data-page-node-id="6KSBEk1atYatcqaON761d0">
+    <div class="frow" data-page-node-id="yotUIbO1YyuboDhEzSAm6e">
+      <span id="footNote" data-page-node-id="QD2atGgUYUkvGFwtO5pjUD">监控服务 · 只读访问 · 数据来自 MySQL（auditflow_projects / auditflow_project_events）</span>
+      <span id="footTime" data-page-node-id="RgFRGUFMgDMZplMo7WA5HM"></span>
+    </div>
+    <div class="frow" style="margin-top:8px;justify-content:flex-start" data-page-node-id="PqLouDZGaZ7lZUJ8BiDGk5">
+      <span class="badge b-gray" id="backupHint" style="display:none" data-page-node-id="92b0lNOz0ACfcezEiajMqO">建议导出备份</span>
+    </div>
+  </footer>
+</main>
+
+<!-- 项目详情抽屉 -->
+<div class="mask" id="mask" data-page-node-id="pIfFY4nHOj7f5xhg1SuWku"></div>
+<aside class="drawer" id="drawer" data-page-node-id="jTaaWDhNtWREqZBDqSBdQG">
+  <div class="dr-head" data-page-node-id="cAem7XfqWgHQp5VbWirJLZ">
+    <h3 id="drTitle" data-page-node-id="rRMXnqxUJerdlYhpS91vZx">项目详情</h3>
+    <button class="dr-close" id="drClose" title="关闭" data-page-node-id="jocfONKTqJlJ3fspGyDvMg">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="XBuvSgwzCwWLXMGtZ95QeI"><path d="M18 6L6 18M6 6l12 12" data-page-node-id="opuqWmG1v0K0saG3BUhBX9"/></svg>
+    </button>
+  </div>
+  <div class="dr-body" id="drBody" data-page-node-id="2NNHJM2OLmkAKuS1eTw69g"></div>
+</aside>
+
+<!-- 连接设置弹窗 -->
+<div class="modal" id="settingsModal" data-page-node-id="558eYX7yIXTGRhZCkFZFxE">
+  <div class="mbox" data-page-node-id="e4PpGq0aYKQsoSQZAEAsXG">
+    <h3 data-page-node-id="PBRxZtFxGXP4YtAvwsuOVe">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="yTkjtgz7LBaLR39BpTF1xA"><path d="M5 12.55a11 11 0 0 1 14.08 0M8.53 15.11a6 6 0 0 1 6.95 0M12 20h.01" data-page-node-id="26l630AWIXAOS1MHqEs31i"/><path d="M2 8.82a15 15 0 0 1 20 0M2 12.55a11 11 0 0 1 4 2.9" data-page-node-id="RUPM7VqaRWNNfsqLYbKfIB"/></svg>
+      连接监控桥接服务
+    </h3>
+    <div class="fld" data-page-node-id="73pzEsmXcJ9Lc1bN3ZV5KO">
+      <label data-page-node-id="fDwDSep5OU4dLbr4JFvBsD">服务地址（含 /api/monitor 的根地址）</label>
+      <input id="setApi" placeholder="http://120.25.197.24:4175 或 https://你的域名/monitor" data-page-node-id="aO9KueH2X3RMP6HWY6asIT">
+      <div class="hint" data-page-node-id="4P5zcCIDGfXff6GmCFQUou">留空 = 演示模式（内置示例数据）。填地址后点「测试连接」再保存。</div>
+    </div>
+    <div class="fld" data-page-node-id="hSloqGGAOfQch0u5DZaavD">
+      <label data-page-node-id="rn9lUmakuS3ujId7XskdKQ">访问令牌（可选）</label>
+      <input id="setToken" type="password" placeholder="AUDITFLOW_MONITOR_TOKEN 的值" data-page-node-id="vLjnep1GAM3cEAJwQr885q">
+    </div>
+    <div class="fld" data-page-node-id="4Aa85wApEuioJ41wVOOdIE">
+      <label data-page-node-id="MH1HayeI57bbsXdwacEeHC">自动刷新（秒）</label>
+      <select id="setInterval" data-page-node-id="ysABRmwVPTabLelxGdm6Yj">
+        <option value="0" data-page-node-id="CguWplKCTbed6Xi2FbX0Qs">不自动刷新</option>
+        <option value="30" data-page-node-id="68IDW0r4PfPWCGYI4SA4RY">30 秒</option>
+        <option value="60" data-page-node-id="kyLtcaKuP7mVJbuHGo90Vx">60 秒</option>
+        <option value="300" data-page-node-id="hdIqaC7QaZSoydYq6svPkz">5 分钟</option>
+      </select>
+    </div>
+    <div id="setStatus" style="font-size:12px;color:var(--green);min-height:18px;margin-bottom:4px" data-page-node-id="rz9Hm5YpeLuJlbHvELgnsH"></div>
+    <div class="mrow" data-page-node-id="3WLhU3aQJ8l7iK4Hzpd0pO">
+      <button class="mbtn" id="setTest" data-page-node-id="F5vJLlGOLpmpHBQO1EJbrN">测试连接</button>
+      <button class="mbtn" id="setSave" data-page-node-id="jcPOZ1Zt8vbtpTgcC4UoU1">保存并连接</button>
+      <button class="mbtn danger" id="setDemo" data-page-node-id="D2eTJE97COoRbHWlHRIP67">切回演示</button>
+      <button class="mbtn" id="setClose" data-page-node-id="zbHdmmjD4vIKF2e6ajw0Wi">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 清空确认弹窗 -->
+<div class="modal" id="clearModal" data-page-node-id="HnMtKCi4fIlOjgOg8UXuko">
+  <div class="mbox" data-page-node-id="sm04BEU2qrGODSaerMyUkD">
+    <h3 data-page-node-id="MnnBrttK8XuaApD1Swh1RO">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="ziyuo4ZMxtcmIbxgU5lnrX"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" data-page-node-id="lFzbVOQDMECgqkNVHzISym"/></svg>
+      清空示例数据？
+    </h3>
+    <p style="font-size:13px;color:var(--text2)" data-page-node-id="Us0INfRFnwAM5mbli508E4">将清空当前演示数据并显示空状态（仅影响本页面本地缓存，不影响 MySQL 真实数据）。确认继续？</p>
+    <div class="mrow" data-page-node-id="obrUcMp3IfD0vWxd8qYnpn">
+      <button class="mbtn" id="clearCancel" data-page-node-id="IiwmYyeOLUrTuTrEabaTat">取消</button>
+      <button class="mbtn danger" id="clearOk" data-page-node-id="GEimahkKmXbHKyL6qmO7M1">确认清空</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================================================================
+ * AuditFlow 后台数据监控台 · 单文件实现
+ * 架构：数据层(load) → 计算层(helpers) → 渲染层(render*)
+ *       顶层 refreshAll() 统一调度；渲染函数之间严禁互调（铁律9）
+ * ================================================================ */
+(function () {
+  var LS_PREFIX = "wb_afmon_";
+  var DEFAULT_MONITOR_API = "http://120.25.197.24";
+  var MONITOR_EN = {"刷新数据":"Refresh data","连接设置":"Connection settings","导出 JSON 备份":"Export JSON backup","导入 JSON 恢复":"Import JSON backup","切换深浅色":"Switch theme","实时监控":"Live monitor","离线":"Offline","演示数据":"Demo data","刷新":"Refresh","连接":"Connect","备份":"Backup","恢复":"Restore","处理":"Open","今天要处理":"Today","清空示例数据":"Clear demo data","进行中的编辑锁":"Active edit locks","即将过期":"Expiring soon","进行中":"In progress","持有":"held","剩余":"remaining","24 小时内被修改的项目":"Projects modified in 24 hours","24h 内修改":"Modified in 24h","AI 评估待人工确认":"AI assessments awaiting review","项目总数":"Projects","24h 修改事件":"Events in 24h","近7天":"Last 7 days","条":" items","AI 已评估指标":"AI-assessed indicators","待确认":"Pending review","证据溯源链接":"Trace links","已确认":"Confirmed","图表":"Charts","近 14 天修改事件趋势":"14-day change trend","修改涉及的过程分布":"Process distribution","项目活跃度排行（事件数）":"Project activity by events","项目修改监控":"Project change monitor","项目":"Project","工作区":"Workspace","最近修改":"Last modified","修改人":"Modified by","事件":"Events","AI 评估":"AI assessment","溯源链接":"Trace links","进度":"Progress","暂无项目数据":"No project data","修改事件流":"Change event stream","全局修改事件流":"Global change event stream","全部类型":"All types","成员变更":"Member change","编辑锁":"Edit lock","其它":"Other","暂无修改事件":"No change events","AI 评估与证据溯源":"AI assessment and evidence trace","AI 评估了哪些证据、溯源到哪些文件":"Which evidence AI assessed and which files it traced","展开全部":"Expand all","收起全部":"Collapse all","项目详情":"Project details","连接设置弹窗":"Connection settings","连接监控桥接服务":"Connect monitor bridge","服务地址（含 /api/monitor 的根地址）":"Service URL (monitor API root)","访问令牌（可选）":"Access token (optional)","自动刷新（秒）":"Auto-refresh (seconds)","不自动刷新":"No auto-refresh","测试连接":"Test connection","保存并连接":"Save and connect","切回演示":"Switch to demo","关闭":"Close","最后加载":"Last loaded","数据来自 MySQL":"Data from MySQL","只读访问":"Read-only access","当前没有进行中的编辑锁":"No active edit locks","24 小时内没有项目被修改":"No projects modified in the last 24 hours","没有待确认的 AI 评估":"No AI assessments awaiting review","查看":"Open","状态":"Status","级别":"Level","过程数":"Processes","证据数":"Evidence","暂无数据":"No data","暂无评估记录":"No assessment records","暂无溯源链接":"No trace links","暂无证据":"No evidence","刚刚":"just now","实时连接失败":"Live connection failed","已显示最近一次数据。请在「连接」中检查服务地址与令牌。":"Showing the latest available data. Check the service URL and token in Connect.","正在连接监控服务":"Connecting to monitor service","演示模式：当前展示内置示例数据，非真实 MySQL 数据。":"Demo mode: built-in sample data is shown, not live MySQL data.","今天":"Today","数据生成于":"Generated","候选":"candidate","过程":"Process","评级":"Rating","证据":"Evidence","完整溯源":"Full traceability","实体":"Entity","评估":"Assessment","新增":"Added","确认":"Confirmed","同步":"Sync","成员":"Member","更新":"updated","内部":"Internal","待复审":"Review pending","基线已批准":"Baseline approved","导入待审":"Import pending review","基线批准":"Baseline approval","导入工作簿":"Imported workbook"};
+  function monitorEnglish(value) {
+    var text = String(value == null ? "" : value);
+    Object.keys(MONITOR_EN).sort(function(a,b){return b.length-a.length;}).forEach(function(key){ text = text.split(key).join(MONITOR_EN[key]); });
+    return text.replace(/近7天/g,"Last 7 days").replace(/(\d+) 条/g,"$1 items").replace(/(\d+) 分钟前/g,"$1 minutes ago").replace(/(\d+) 小时前/g,"$1 hours ago").replace(/(\d+) 天前/g,"$1 days ago");
+  }
+  function applyMonitorEnglish() {
+    document.documentElement.lang = "en";
+    var walker = document.createTreeWalker(document.body, 4);
+    var nodes = [], node; while ((node = walker.nextNode())) { if (node.parentElement && !node.parentElement.closest("script,style")) nodes.push(node); }
+    nodes.forEach(function(n){ n.nodeValue = monitorEnglish(n.nodeValue); });
+    Array.prototype.forEach.call(document.querySelectorAll("[title],[placeholder]"), function(el){ ["title","placeholder"].forEach(function(attr){ if(el.hasAttribute(attr)) el.setAttribute(attr, monitorEnglish(el.getAttribute(attr))); }); });
+  }
+  var state = {
+    mode: "live",            // demo | live
+    apiBase: DEFAULT_MONITOR_API,
+    token: "",
+    autoInterval: 30,
+    theme: "dark",
+    overview: null,
+    projects: [],
+    events: [],
+    traceEval: [],
+    detailCache: {},          // projectId -> detail
+    loadedAt: null,
+    busy: false
+  };
+  var timerId = null;
+
+  /* ---------------- 工具 ---------------- */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function fmtDate(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function fmtTime(iso) { if (!iso) return "—"; var d = new Date(iso); if (isNaN(d)) return iso; return pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function fmtAgo(iso) {
+    if (!iso) return "—";
+    var d = new Date(iso); if (isNaN(d)) return iso;
+    var diff = Date.now() - d.getTime();
+    var min = 60e3, hour = 3600e3, day = 86400e3;
+    if (diff < 0) diff = 0;
+    if (diff < min) return "刚刚";
+    if (diff < hour) return Math.floor(diff / min) + " 分钟前";
+    if (diff < day) return Math.floor(diff / hour) + " 小时前";
+    if (diff < 7 * day) return Math.floor(diff / day) + " 天前";
+    return fmtDate(d);
+  }
+  function shortId(id) { var s = String(id || ""); return s.length > 24 ? s.slice(0, 10) + "…" + s.slice(-6) : s; }
+  function loadLS(key, fallback) { try { var v = localStorage.getItem(LS_PREFIX + key); return v == null ? fallback : JSON.parse(v); } catch (e) { return fallback; } }
+  function saveLS(key, value) { try { localStorage.setItem(LS_PREFIX + key, JSON.stringify(value)); } catch (e) { /* ignore */ } }
+  function showBanner(kind, text, showAction) {
+    var b = $("banner");
+    b.className = "banner show " + (kind || "warn");
+    $("bannerText").textContent = text;
+    $("bannerAct").style.display = showAction ? "inline-flex" : "none";
+  }
+  function hideBanner() { $("banner").className = "banner"; }
+  function modal(id, show) { $(id).className = "modal" + (show ? " show" : ""); }
+
+  /* ---------------- 内联 SVG 图标 ---------------- */
+  function ic(name, size) {
+    size = size || 15;
+    var paths = {
+      db: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/>',
+      edit: '<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+      ai: '<path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1m0-12.8l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="4"/>',
+      link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+      clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+      users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+      bolt: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+      refresh: '<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>',
+      gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+      download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>',
+      upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/>',
+      moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+      warn: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+      check: '<path d="M20 6L9 17l-5-5"/>',
+      x: '<path d="M18 6L6 18M6 6l12 12"/>',
+      chev: '<path d="M6 9l6 6 6-6"/>',
+      search: '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>',
+      filter: '<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
+      file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+      lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+    };
+    var p = paths[name] || paths.db;
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + p + "</svg>";
+  }
+
+  /* ---------------- 演示数据（与真实 API 结构一致） ---------------- */
+  function demoData() {
+    var now = Date.now(), h = 3600e3, d = 86400e3;
+    function iso(ms) { return new Date(now - ms).toISOString(); }
+    function dayKey(ms) { var dt = new Date(now - ms); return dt.getFullYear() + "-" + pad(dt.getMonth() + 1) + "-" + pad(dt.getDate()); }
+    var projects = [
+      { id: "P-1001", workspaceId: "WS-DESAY", name: "Desay CEP 项目", organization: "Desay SV", product: "XP-2026 域控制器", revision: 42, updatedBy: "USR-3001", updatedByName: "李工 (Lead)", updatedAt: iso(3 * h), status: "review", statusLabel: "待复审", progress: 78, achievedLevel: "Level 2", aiAssessed: 84, reviewed: 61, pendingAi: 23, traceLinkCount: 96, aiInferredLinks: 41, confirmedLinks: 55, evidenceCount: 128, processCount: 11, eventCount: 42, lastEventSummary: "评估 SUP.1 证据链已确认", lastEventAt: iso(3 * h), aiOpinion: "SUP.1 证据链基本完整，B1 实践的证据强度为直接关联，建议补充配置管理记录的时间戳。" },
+      { id: "P-1002", workspaceId: "WS-TMM", name: "TMM 过程改进评估", organization: "内部", product: "ASPICE TMM", revision: 18, updatedBy: "USR-3002", updatedByName: "王评估师", updatedAt: iso(26 * h), status: "consolidation", statusLabel: "整合中", progress: 55, achievedLevel: "Level 1", aiAssessed: 37, reviewed: 20, pendingAi: 17, traceLinkCount: 45, aiInferredLinks: 22, confirmedLinks: 23, evidenceCount: 61, processCount: 8, eventCount: 18, lastEventSummary: "AI 评估 5 个指标（SUP.8 相关）", lastEventAt: iso(26 * h), aiOpinion: "SUP.8 的配置管理实践证据覆盖不足，3 个指标缺少直接证据，建议上传变更请求记录。" },
+      { id: "P-1003", workspaceId: "WS-VW", name: "VW 供应商评估", organization: "VW", product: "MIB 平台", revision: 9, updatedBy: "USR-3003", updatedByName: "张审计员", updatedAt: iso(3 * d), status: "baseline", statusLabel: "基线已批准", progress: 100, achievedLevel: "Level 3", aiAssessed: 12, reviewed: 12, pendingAi: 0, traceLinkCount: 15, aiInferredLinks: 2, confirmedLinks: 13, evidenceCount: 22, processCount: 4, eventCount: 9, lastEventSummary: "基线批准", lastEventAt: iso(3 * d), aiOpinion: "该评估已完成基线批准，无需进一步 AI 评估。" },
+      { id: "P-1004", workspaceId: "WS-BOSCH", name: "Bosch 域控项目", organization: "Bosch", product: "ADAS ECU", revision: 5, updatedBy: "USR-3004", updatedByName: "陈工", updatedAt: iso(9 * d), status: "imported", statusLabel: "导入待审", progress: 30, achievedLevel: "Level 0", aiAssessed: 0, reviewed: 0, pendingAi: 0, traceLinkCount: 0, aiInferredLinks: 0, confirmedLinks: 0, evidenceCount: 3, processCount: 2, eventCount: 5, lastEventSummary: "导入工作簿", lastEventAt: iso(9 * d), aiOpinion: "" }
+    ];
+    var events = [];
+    // [projectId, projectName, rev, type, processes, summary, entityId, ago]
+    var evtSeeds = [
+      ["P-1001", "Desay CEP 项目", 42, "assessment", ["SUP.1"], "评估 SUP.1 证据链已确认", "A-SUP1-07", 3 * h],
+      ["P-1001", "Desay CEP 项目", 41, "trace-link", ["SUP.1"], "新增溯源链接：SUP.1.B1 → EVD-0004（直接）", "TL-102", 8 * h],
+      ["P-1001", "Desay CEP 项目", 40, "assessment", ["SUP.8"], "AI 评估 5 个指标（SUP.8 相关）", "A-SUP8-03", 13 * h],
+      ["P-1001", "Desay CEP 项目", 38, "assessment", ["SWE.1"], "SWE.1 需求分析评级：Level 2", "A-SWE1-12", 22 * h],
+      ["P-1002", "TMM 过程改进评估", 18, "project", [], "项目同步（工作区 WS-TMM）", "", 26 * h],
+      ["P-1002", "TMM 过程改进评估", 17, "member", [], "成员 王评估师 更新（Assessor）", "", 30 * h],
+      ["P-1002", "TMM 过程改进评估", 16, "assessment", ["SUP.8", "SUP.9"], "AI 评估 3 个指标（SUP.8/SUP.9 跨过程分析）", "A-SUP9-02", 34 * h],
+      ["P-1003", "VW 供应商评估", 9, "trace-link", ["MAN.3"], "确认溯源链接：MAN.3.A2 → EVD-0055", "TL-077", 3 * d],
+      ["P-1003", "VW 供应商评估", 8, "project", [], "项目同步（工作区 WS-VW）", "", 4 * d],
+      ["P-1004", "Bosch 域控项目", 5, "project", [], "导入工作簿（Bosch ADAS ECU）", "", 9 * d],
+      ["P-1003", "VW 供应商评估", 7, "assessment", ["MAN.3"], "评级确认：MAN.3.A2 → Level 3", "A-MAN3-05", 3 * d]
+    ];
+    evtSeeds.forEach(function (seed, i) {
+      events.push({
+        id: 100 + i, projectId: seed[0], projectName: seed[1],
+        revision: seed[2], userId: "USR-" + (3001 + i % 4), userName: seed[2] >= 40 ? "李工 (Lead)" : seed[2] >= 34 ? "王评估师" : seed[2] >= 9 ? "张审计员" : "陈工",
+        changeSummary: seed[5], processes: seed[4],
+        createdAt: iso(seed[7]), changeType: seed[3], entityId: seed[6], operation: ""
+      });
+    });
+    events.sort(function (a, b) { return a.createdAt < b.createdAt ? 1 : -1; });
+    var nowT = Date.now();
+    var evt24h = events.filter(function (e) { return nowT - new Date(e.createdAt).getTime() <= d; }).length;
+    var evt7d = events.filter(function (e) { return nowT - new Date(e.createdAt).getTime() <= 7 * d; }).length;
+
+    var locks = [
+      { id: "LOCK-demo1", projectId: "P-1001", resourceId: "project-session:P-1001", kind: "project-session", label: "Desay CEP 项目 · 编辑会话", process: "", affectedProcesses: ["*"], userId: "USR-3001", userName: "李工 (Lead)", acquiredAt: iso(2 * h), expiresAt: iso(12 * 60e3) },
+      { id: "LOCK-demo2", projectId: "P-1002", resourceId: "chain:SUP.8.B1", kind: "evidence-chain", label: "TMM · SUP.8.B1 证据链", process: "SUP.8", affectedProcesses: ["SUP.8"], userId: "USR-3002", userName: "王评估师", acquiredAt: iso(40 * 60e3), expiresAt: iso(5 * 60e3) }
+    ];
+    var presence = [
+      { projectId: "P-1001", userId: "USR-3001", userName: "李工 (Lead)", projectName: "Desay CEP 项目", phase: "grid", status: "editing", lastSeen: iso(2 * 60e3) },
+      { projectId: "P-1002", userId: "USR-3002", userName: "王评估师", projectName: "TMM 过程改进评估", phase: "trace", status: "editing", lastSeen: iso(8 * 60e3) }
+    ];
+
+    var daily = [];
+    for (var i = 13; i >= 0; i--) {
+      daily.push({ date: dayKey(i * d), count: i === 0 ? 4 : [2, 3, 1, 5, 2, 0, 1][i % 7] + (i < 3 ? 2 : 0) });
+    }
+    var processDist = [
+      { process: "SUP.1", count: 14 }, { process: "SUP.8", count: 11 }, { process: "SWE.1", count: 8 },
+      { process: "MAN.3", count: 6 }, { process: "SYS.2", count: 5 }, { process: "SUP.9", count: 4 },
+      { process: "SWE.6", count: 3 }, { process: "MAN.5", count: 2 }
+    ];
+    var topProjects = projects.slice(0, 4).map(function (p) { return { id: p.id, name: p.name, eventCount: p.eventCount }; });
+
+    var pendingAi = [
+      { projectId: "P-1001", projectName: "Desay CEP 项目", id: "A-SYS2-04", code: "SYS.2.B4", title: "架构设计可行性", process: "SYS.2", aiCandidateRating: "Level 2" },
+      { projectId: "P-1002", projectName: "TMM 过程改进评估", id: "A-SUP8-03", code: "SUP.8.B1", title: "配置项标识", process: "SUP.8", aiCandidateRating: "Level 1" },
+      { projectId: "P-1002", projectName: "TMM 过程改进评估", id: "A-SUP9-02", code: "SUP.9.B2", title: "问题解决记录", process: "SUP.9", aiCandidateRating: "Level 1" }
+    ];
+    var modified24h = projects.filter(function (p) { return p.id === "P-1001"; }).map(function (p) { return { id: p.id, name: p.name, updatedByName: p.updatedByName, updatedAt: p.updatedAt, revision: p.revision }; });
+
+    var overview = {
+      generatedAt: new Date().toISOString(),
+      todayKey: dayKey(0),
+      stats: {
+        projects: 4, events: events.length, events24h: evt24h, events7d: evt7d, activeLocks: 2, onlineUsers: 2,
+        aiAssessed: 133, reviewed: 93, pendingAi: 40, traceLinks: 156, confirmedLinks: 91, evidence: 214
+      },
+      daily: daily, processDist: processDist, topProjects: topProjects,
+      today: { locks: locks, online: presence, modified24h: modified24h, pendingAi: pendingAi }
+    };
+    var traceEval = projects.map(function (p) {
+      return {
+        id: p.id, name: p.name, updatedAt: p.updatedAt, aiAssessed: p.aiAssessed, reviewed: p.reviewed,
+        pendingAi: p.pendingAi, traceLinkCount: p.traceLinkCount, aiInferredLinks: p.aiInferredLinks,
+        confirmedLinks: p.confirmedLinks, evidenceCount: p.evidenceCount, aiOpinion: p.aiOpinion,
+        indicators: (p.id === "P-1001" ? [
+          { key: "SUP.1.B1", process: "SUP.1", pa: "B1", title: "配置项标识与基线", rating: "Level 2", aiCandidateRating: "Level 2", reviewed: true, evidenceLinks: 6 },
+          { key: "SYS.2.B4", process: "SYS.2", pa: "B4", title: "架构设计可行性", rating: "", aiCandidateRating: "Level 2", reviewed: false, evidenceLinks: 3 },
+          { key: "SWE.1.B1", process: "SWE.1", pa: "B1", title: "需求规格说明", rating: "Level 2", aiCandidateRating: "Level 2", reviewed: true, evidenceLinks: 8 }
+        ] : p.id === "P-1002" ? [
+          { key: "SUP.8.B1", process: "SUP.8", pa: "B1", title: "配置项标识", rating: "", aiCandidateRating: "Level 1", reviewed: false, evidenceLinks: 2 },
+          { key: "SUP.8.B2", process: "SUP.8", pa: "B2", title: "配置管理计划", rating: "", aiCandidateRating: "Level 1", reviewed: false, evidenceLinks: 4 },
+          { key: "SUP.9.B2", process: "SUP.9", pa: "B2", title: "问题解决记录", rating: "", aiCandidateRating: "Level 1", reviewed: false, evidenceLinks: 1 }
+        ] : p.id === "P-1003" ? [
+          { key: "MAN.3.A2", process: "MAN.3", pa: "A2", title: "项目计划维护", rating: "Level 3", aiCandidateRating: "Level 3", reviewed: true, evidenceLinks: 5 }
+        ] : [])
+      };
+    });
+
+    var demoDetail = {
+      "P-1001": {
+        id: "P-1001", workspaceId: "WS-DESAY", name: "Desay CEP 项目", organization: "Desay SV", product: "XP-2026 域控制器",
+        revision: 42, ownerId: "USR-3001", updatedBy: "USR-3001", updatedByName: "李工 (Lead)", updatedAt: iso(3 * h),
+        status: "review", statusLabel: "待复审", progress: 78, achievedLevel: "Level 2", aiAssessed: 84, reviewed: 61,
+        pendingAi: 23, traceLinkCount: 96, aiInferredLinks: 41, confirmedLinks: 55, evidenceCount: 128, processCount: 11,
+        events: events.filter(function (e) { return e.projectId === "P-1001"; }),
+        locks: locks.filter(function (l) { return l.projectId === "P-1001"; }),
+        presence: presence.filter(function (p) { return p.projectId === "P-1001"; }),
+        assessments: [
+          { id: "A-SUP1-07", code: "SUP.1.B1", title: "配置项标识与基线", process: "SUP.1", pa: "B1", rating: "Level 2", aiCandidateRating: "Level 2", reviewed: true, confidence: 0.92, reason: "证据链完整，6 个直接证据支撑。", evidenceAnalysis: [{ evidenceId: "EVD-0004", evidenceCode: "EVD-0004", strength: "direct", relationType: "direct", locator: "docs/config/CM-Baseline.xlsx", claim: "基线清单与代码版本一致" }, { evidenceId: "EVD-0011", evidenceCode: "EVD-0011", strength: "corroborating", locator: "docs/config/ChangeLog.md", claim: "变更记录完整" }] },
+          { id: "A-SYS2-04", code: "SYS.2.B4", title: "架构设计可行性", process: "SYS.2", pa: "B4", rating: "", aiCandidateRating: "Level 2", reviewed: false, confidence: 0.74, reason: "AI 候选评级，待人工确认。", evidenceAnalysis: [{ evidenceId: "EVD-0021", evidenceCode: "EVD-0021", strength: "direct", locator: "docs/arch/SystemArch.docx", claim: "架构视图与需求映射" }] }
+        ],
+        traceLinks: [
+          { id: "TL-102", indicator: "SUP.1.B1", evidenceId: "EVD-0004", evidenceCode: "EVD-0004", strength: "direct", claim: "基线清单与代码版本一致", locator: "docs/config/CM-Baseline.xlsx", source: "Assessor confirmed", confirmed: true },
+          { id: "TL-103", indicator: "SUP.1.B1", evidenceId: "EVD-0011", evidenceCode: "EVD-0011", strength: "corroborating", claim: "变更记录完整", locator: "docs/config/ChangeLog.md", source: "Assessor confirmed", confirmed: true },
+          { id: "AUTO-1", indicator: "SYS.2.B4", evidenceId: "EVD-0021", evidenceCode: "EVD-0021", strength: "direct", claim: "架构视图与需求映射", locator: "docs/arch/SystemArch.docx", source: "AI inferred", confirmed: false }
+        ],
+        evidence: [
+          { id: "EVD-0004", code: "EVD-0004", name: "配置基线清单", type: "excel", primaryProcesses: ["SUP.1"], helixBlocked: 0, locators: ["docs/config/CM-Baseline.xlsx"] },
+          { id: "EVD-0011", code: "EVD-0011", name: "变更日志", type: "markdown", primaryProcesses: ["SUP.1", "SUP.8"], helixBlocked: 0, locators: ["docs/config/ChangeLog.md"] },
+          { id: "EVD-0021", code: "EVD-0021", name: "系统架构文档", type: "docx", primaryProcesses: ["SYS.2"], helixBlocked: 1, locators: ["docs/arch/SystemArch.docx"] }
+        ],
+        processes: ["SUP.1", "SYS.2", "SWE.1", "MAN.3", "SUP.8"],
+        aiOpinion: "SUP.1 证据链基本完整，B1 实践的证据强度为直接关联，建议补充配置管理记录的时间戳。"
+      },
+      "P-1002": {
+        id: "P-1002", workspaceId: "WS-TMM", name: "TMM 过程改进评估", organization: "内部", product: "ASPICE TMM",
+        revision: 18, ownerId: "USR-3002", updatedBy: "USR-3002", updatedByName: "王评估师", updatedAt: iso(26 * h),
+        status: "consolidation", statusLabel: "整合中", progress: 55, achievedLevel: "Level 1", aiAssessed: 37, reviewed: 20,
+        pendingAi: 17, traceLinkCount: 45, aiInferredLinks: 22, confirmedLinks: 23, evidenceCount: 61, processCount: 8,
+        events: events.filter(function (e) { return e.projectId === "P-1002"; }),
+        locks: locks.filter(function (l) { return l.projectId === "P-1002"; }),
+        presence: presence.filter(function (p) { return p.projectId === "P-1002"; }),
+        assessments: [
+          { id: "A-SUP8-03", code: "SUP.8.B1", title: "配置项标识", process: "SUP.8", pa: "B1", rating: "", aiCandidateRating: "Level 1", reviewed: false, confidence: 0.68, reason: "证据不足，仅 2 个佐证链接。", evidenceAnalysis: [{ evidenceId: "EVD-0033", evidenceCode: "EVD-0033", strength: "corroborating", locator: "docs/cm/ConfigItems.csv", claim: "配置项清单" }] },
+          { id: "A-SUP9-02", code: "SUP.9.B2", title: "问题解决记录", process: "SUP.9", pa: "B2", rating: "", aiCandidateRating: "Level 1", reviewed: false, confidence: 0.55, reason: "缺少问题状态追踪记录。", evidenceAnalysis: [] }
+        ],
+        traceLinks: [
+          { id: "TL-201", indicator: "SUP.8.B1", evidenceId: "EVD-0033", evidenceCode: "EVD-0033", strength: "corroborating", claim: "配置项清单", locator: "docs/cm/ConfigItems.csv", source: "AI inferred", confirmed: false }
+        ],
+        evidence: [
+          { id: "EVD-0033", code: "EVD-0033", name: "配置项清单", type: "csv", primaryProcesses: ["SUP.8"], helixBlocked: 0, locators: ["docs/cm/ConfigItems.csv"] }
+        ],
+        processes: ["SUP.8", "SUP.9", "MAN.3"],
+        aiOpinion: "SUP.8 的配置管理实践证据覆盖不足，3 个指标缺少直接证据，建议上传变更请求记录。"
+      }
+    };
+    demoDetail["P-1003"] = {
+      id: "P-1003", workspaceId: "WS-VW", name: "VW 供应商评估", organization: "VW", product: "MIB 平台",
+      revision: 9, ownerId: "USR-3003", updatedBy: "USR-3003", updatedByName: "张审计员", updatedAt: iso(3 * d),
+      status: "baseline", statusLabel: "基线已批准", progress: 100, achievedLevel: "Level 3", aiAssessed: 12, reviewed: 12,
+      pendingAi: 0, traceLinkCount: 15, aiInferredLinks: 2, confirmedLinks: 13, evidenceCount: 22, processCount: 4,
+      events: events.filter(function (e) { return e.projectId === "P-1003"; }),
+      locks: [], presence: [],
+      assessments: [{ id: "A-MAN3-05", code: "MAN.3.A2", title: "项目计划维护", process: "MAN.3", pa: "A2", rating: "Level 3", aiCandidateRating: "Level 3", reviewed: true, confidence: 0.95, reason: "计划与监控记录完整。", evidenceAnalysis: [{ evidenceId: "EVD-0055", evidenceCode: "EVD-0055", strength: "direct", locator: "docs/pm/ProjectPlan.docx", claim: "项目计划含里程碑" }] }],
+      traceLinks: [
+        { id: "TL-077", indicator: "MAN.3.A2", evidenceId: "EVD-0055", evidenceCode: "EVD-0055", strength: "direct", claim: "项目计划含里程碑", locator: "docs/pm/ProjectPlan.docx", source: "Assessor confirmed", confirmed: true }
+      ],
+      evidence: [{ id: "EVD-0055", code: "EVD-0055", name: "项目计划", type: "docx", primaryProcesses: ["MAN.3"], helixBlocked: 0, locators: ["docs/pm/ProjectPlan.docx"] }],
+      processes: ["MAN.3", "SUP.1"],
+      aiOpinion: "该评估已完成基线批准，无需进一步 AI 评估。"
+    };
+    demoDetail["P-1004"] = {
+      id: "P-1004", workspaceId: "WS-BOSCH", name: "Bosch 域控项目", organization: "Bosch", product: "ADAS ECU",
+      revision: 5, ownerId: "USR-3004", updatedBy: "USR-3004", updatedByName: "陈工", updatedAt: iso(9 * d),
+      status: "imported", statusLabel: "导入待审", progress: 30, achievedLevel: "Level 0", aiAssessed: 0, reviewed: 0,
+      pendingAi: 0, traceLinkCount: 0, aiInferredLinks: 0, confirmedLinks: 0, evidenceCount: 3, processCount: 2,
+      events: events.filter(function (e) { return e.projectId === "P-1004"; }),
+      locks: [], presence: [], assessments: [], traceLinks: [], evidence: [], processes: ["SUP.1", "MAN.3"], aiOpinion: ""
+    };
+
+    return { overview: overview, projects: projects, events: events, traceEval: traceEval, detail: demoDetail };
+  }
+
+  /* ---------------- 数据层 ---------------- */
+  function apiUrl(base, path) {
+    return String(base || "").replace(/\/+$/, "") + path;
+  }
+  function fetchJson(url, token) {
+    var headers = {};
+    if (token) headers["X-Monitor-Token"] = token;
+    return fetch(url, { headers: headers, credentials: "include" }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) { var err = new Error(data.error || ("HTTP " + res.status)); err.status = res.status; throw err; }
+        return data;
+      });
+    });
+  }
+  function loadDemo() {
+    var d = demoData();
+    state.overview = d.overview;
+    state.projects = d.projects;
+    state.events = d.events;
+    state.traceEval = d.traceEval;
+    state.detailCache = d.detail;
+    state.loadedAt = new Date().toISOString();
+  }
+  function loadLiveData() {
+    var base = state.apiBase;
+    return Promise.all([
+      fetchJson(apiUrl(base, "/api/monitor/overview"), state.token),
+      fetchJson(apiUrl(base, "/api/monitor/projects"), state.token),
+      fetchJson(apiUrl(base, "/api/monitor/events?limit=800"), state.token),
+      fetchJson(apiUrl(base, "/api/monitor/trace-eval"), state.token)
+    ]).then(function (results) {
+      state.overview = results[0];
+      state.projects = (results[1] && results[1].projects) || [];
+      state.events = (results[2] && results[2].events) || [];
+      state.traceEval = (results[3] && results[3].projects) || [];
+      state.detailCache = {};
+      state.loadedAt = new Date().toISOString();
+    });
+  }
+  function loadDetail(projectId) {
+    if (state.detailCache[projectId]) return Promise.resolve(state.detailCache[projectId]);
+    if (state.mode !== "live") { loadDemo(); return Promise.resolve(state.detailCache[projectId]); }
+    return fetchJson(apiUrl(state.apiBase, "/api/monitor/projects/" + encodeURIComponent(projectId)), state.token)
+      .then(function (data) {
+        state.detailCache[projectId] = data.project;
+        return data.project;
+      });
+  }
+  function refresh(forceLive) {
+    if (state.busy) return Promise.resolve();
+    state.busy = true;
+    var doLive = (forceLive || state.mode === "live") && !!state.apiBase;
+    var p = doLive ? loadLiveData() : Promise.resolve(loadDemo());
+    return p.then(function () {
+      state.busy = false;
+      refreshAll();
+    }).catch(function (err) {
+      state.busy = false;
+      if (state.mode === "live") {
+        showBanner("err", "实时连接失败（" + err.message + "），已显示最近一次数据。请在「连接」中检查服务地址与令牌。", true);
+        if (!state.overview) loadDemo();
+        refreshAll();
+      } else {
+        showBanner("warn", "演示模式：当前展示内置示例数据，非真实 MySQL 数据。");
+        refreshAll();
+      }
+    });
+  }
+
+  /* ---------------- 计算层 ---------------- */
+  function filterProjects(query, sortKey) {
+    var q = (query || "").trim().toLowerCase();
+    var list = state.projects.filter(function (p) {
+      if (!q) return true;
+      return (p.name || "").toLowerCase().indexOf(q) >= 0 || (p.id || "").toLowerCase().indexOf(q) >= 0 || (p.workspaceId || "").toLowerCase().indexOf(q) >= 0;
+    });
+    var key = sortKey || "updatedAt";
+    list.sort(function (a, b) {
+      if (key === "name") return (a.name || "").localeCompare(b.name || "", "zh");
+      if (key === "eventCount") return (b.eventCount || 0) - (a.eventCount || 0);
+      return (b.updatedAt || "") < (a.updatedAt || "") ? -1 : 1;
+    });
+    return list;
+  }
+  function filterEvents(query, type) {
+    var q = (query || "").trim().toLowerCase();
+    return state.events.filter(function (e) {
+      if (type && e.changeType !== type) return false;
+      if (!q) return true;
+      return (e.userName || "").toLowerCase().indexOf(q) >= 0 ||
+             (e.changeSummary || "").toLowerCase().indexOf(q) >= 0 ||
+             (e.processes || []).join(",").toLowerCase().indexOf(q) >= 0 ||
+             (e.projectName || "").toLowerCase().indexOf(q) >= 0;
+    }).slice(0, 300);
+  }
+  function typeBadge(type) {
+    var map = { assessment: ["b-cyan", "AI/评级评估"], "trace-link": ["b-violet", "溯源链接"], project: ["b-blue", "项目同步"], member: ["b-amber", "成员变更"], lock: ["b-green", "编辑锁"] };
+    var m = map[type] || ["b-gray", type || "其它"];
+    return '<span class="badge ' + m[0] + '">' + m[1] + "</span>";
+  }
+  function processBadges(processes) {
+    if (!processes || !processes.length) return "";
+    return processes.slice(0, 3).map(function (p) { return '<span class="badge b-gray" style="font-family:var(--mono)">' + esc(p) + "</span>"; }).join(" ");
+  }
+  function projectDot(project) {
+    var t = new Date(project.updatedAt).getTime();
+    var diff = Date.now() - t;
+    var color = diff < 86400e3 ? "var(--green)" : diff < 7 * 86400e3 ? "var(--amber)" : "var(--text3)";
+    return '<span class="dot" style="background:' + color + '"></span>';
+  }
+  function miniSpark(project) {
+    var n = Math.min(14, Math.max(1, project.eventCount || 1));
+    var bars = "";
+    for (var i = 0; i < 12; i++) {
+      var h = 5 + Math.round(((project.eventCount || 1) * (i + 1) * 7) % 16);
+      bars += '<span style="height:' + h + 'px"></span>';
+    }
+    return '<span class="mini-bars">' + bars + "</span>";
+  }
+
+  /* ---------------- 渲染层（只读 state，互不调用） ---------------- */
+  function renderMode() {
+    var pill = $("modePill"), text = $("modeText");
+    if (state.mode === "live") {
+      pill.className = "mode-pill live"; text.textContent = "Live monitor";
+    } else if (state.mode === "off") {
+      pill.className = "mode-pill off"; text.textContent = "Offline";
+    } else {
+      pill.className = "mode-pill demo"; text.textContent = "Demo data";
+    }
+  }
+  function renderToday() {
+    var ov = state.overview;
+    $("todayDate").textContent = "今天 " + fmtDate(new Date()) + " · 数据生成于 " + fmtTime(ov ? ov.generatedAt : "");
+    var locks = (ov && ov.today && ov.today.locks) || [];
+    var modified = (ov && ov.today && ov.today.modified24h) || [];
+    var pending = (ov && ov.today && ov.today.pendingAi) || [];
+    $("cntLocks").textContent = locks.length;
+    $("cntModified").textContent = modified.length;
+    $("cntPendingAi").textContent = pending.length;
+
+    var lockHtml = locks.length ? locks.map(function (l) {
+      var exp = new Date(l.expiresAt).getTime();
+      var soon = exp - Date.now() < 30 * 60e3;
+      return '<div class="titem"><div class="tico" style="background:' + (soon ? "var(--redbg)" : "var(--amberbg)") + ';color:' + (soon ? "var(--red)" : "var(--amber)") + '">' + ic("lock", 15) + "</div>" +
+        '<div class="tmain"><div class="tt">' + esc(l.label || l.resourceId) + (soon ? '<span class="badge b-red">即将过期</span>' : '<span class="badge b-amber">进行中</span>') + "</div>" +
+        '<div class="ts">' + esc(l.userName) + " · 持有 " + fmtAgo(l.acquiredAt) + " · 剩余 " + Math.max(0, Math.round((exp - Date.now()) / 60000)) + " 分钟</div></div>" +
+        '<div class="tact"><button class="tbtn" data-act="lock" data-id="' + esc(l.projectId) + '">' + ic("eye", 13) + "查看</button></div></div>";
+    }).join("") : '<div class="empty">' + ic("lock", 30) + "<div>当前没有进行中的编辑锁</div></div>";
+    $("todayLocks").innerHTML = lockHtml;
+
+    var modHtml = modified.length ? modified.map(function (p) {
+      return '<div class="titem"><div class="tico" style="background:var(--amberbg);color:var(--amber)">' + ic("edit", 15) + "</div>" +
+        '<div class="tmain"><div class="tt">' + esc(p.name) + '<span class="badge b-amber">24h 内修改</span></div>' +
+        '<div class="ts">' + esc(p.updatedByName) + " · " + fmtAgo(p.updatedAt) + " · Rev " + p.revision + "</div></div>" +
+        '<div class="tact"><button class="tbtn" data-act="project" data-id="' + esc(p.id) + '">' + ic("eye", 13) + "查看</button></div></div>";
+    }).join("") : '<div class="empty">' + ic("check", 30) + "<div>24 小时内没有项目被修改</div></div>";
+    $("todayModified").innerHTML = modHtml;
+
+    var aiHtml = pending.length ? pending.map(function (a) {
+      return '<div class="titem"><div class="tico" style="background:var(--bluebg);color:var(--blue)">' + ic("ai", 15) + "</div>" +
+        '<div class="tmain"><div class="tt">' + esc(a.title || a.code) + '<span class="badge b-blue">' + esc(a.aiCandidateRating || "") + " 候选</span></div>" +
+        '<div class="ts">' + esc(a.projectName) + " · " + esc(a.code || a.id) + "</div></div>" +
+        '<div class="tact"><button class="tbtn" data-act="project" data-id="' + esc(a.projectId) + '">' + ic("eye", 13) + "处理</button></div></div>";
+    }).join("") : '<div class="empty">' + ic("check", 30) + "<div>没有待确认的 AI 评估</div></div>";
+    $("todayPendingAi").innerHTML = aiHtml;
+    $("btnClearDemo").style.display = state.mode === "demo" ? "inline-flex" : "none";
+  }
+  function renderStats() {
+    var s = (state.overview && state.overview.stats) || {};
+    $("kProjects").textContent = s.projects || 0;
+    $("kEvents24h").textContent = s.events24h || 0;
+    $("kEvents7d").textContent = "近7天 " + (s.events7d || 0) + " 条";
+    $("kAi").textContent = s.aiAssessed || 0;
+    $("kAiPending").textContent = "待确认 " + (s.pendingAi || 0);
+    $("kLinks").textContent = s.traceLinks || 0;
+    $("kLinksConfirmed").textContent = "已确认 " + (s.confirmedLinks || 0);
+  }
+  function renderBarChart(container, data, opts) {
+    opts = opts || {};
+    var list = (data || []).slice(-14);
+    var max = Math.max.apply(null, list.map(function (d) { return d.count; }).concat([1]));
+    var W = 640, H = 190, padL = 8, padB = 22, padT = 14;
+    var innerW = W - padL * 2, innerH = H - padT - padB;
+    var bw = innerW / list.length;
+    var bars = "", labels = "";
+    list.forEach(function (d, i) {
+      var h = Math.round((d.count / max) * (innerH - 12));
+      var x = padL + i * bw + bw * 0.14, y = padT + innerH - h;
+      var c = i === list.length - 1 ? "var(--accent2)" : "var(--accent)";
+      bars += '<rect x="' + x + '" y="' + y + '" width="' + (bw * 0.72) + '" height="' + h + '" rx="3" fill="' + c + '" opacity="0.9"><title>' + esc(d.date) + " · " + d.count + " 条</title></rect>";
+      bars += '<text x="' + (x + bw * 0.36) + '" y="' + (y - 5) + '" text-anchor="middle" font-size="10" fill="var(--text2)" font-family="var(--mono)">' + d.count + "</text>";
+      if (i % 2 === 0 || i === list.length - 1) {
+        labels += '<text x="' + (x + bw * 0.36) + '" y="' + (H - 7) + '" text-anchor="middle" font-size="9" fill="var(--text3)" font-family="var(--mono)">' + esc(d.date.slice(5)) + "</text>";
+      }
+    });
+    container.innerHTML = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img">' + bars + labels + "</svg>";
+  }
+  function renderDonut(container, legend, data) {
+    var list = (data || []).slice(0, 8);
+    var total = list.reduce(function (s, d) { return s + d.count; }, 0) || 1;
+    var colors = ["#4f8cff", "#22d3ee", "#8b5cf6", "#fbbf24", "#34d399", "#f87171", "#f472b6", "#a3e635"];
+    var r = 52, cx = 62, cy = 62, sw = 20;
+    var C = 2 * Math.PI * r;
+    var acc = 0, segs = "";
+    list.forEach(function (d, i) {
+      var frac = d.count / total;
+      var dash = frac * C;
+      var gap = Math.min(3, C * 0.01);
+      var rot = acc * 360 - 90;
+      segs += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + colors[i % colors.length] + '" stroke-width="' + sw + '" stroke-dasharray="' + (dash - gap) + " " + (C - dash + gap) + '" stroke-dashoffset="' + (-rot) + '" transform="rotate(-90 ' + cx + " " + cy + ')"><title>' + esc(d.process) + " · " + d.count + "</title></circle>";
+      acc += frac;
+    });
+    container.innerHTML = '<svg class="chart" width="124" height="124" viewBox="0 0 124 124" role="img">' + segs +
+      '<text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" font-size="16" font-weight="700" fill="var(--text)" font-family="var(--mono)">' + (data || []).length + '</text><text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" font-size="8" fill="var(--text3)">过程</text></svg>';
+    legend.innerHTML = list.map(function (d, i) {
+      return '<span style="display:flex;align-items:center;gap:6px"><span class="legend-dot" style="background:' + colors[i % colors.length] + ';border-radius:50%"></span><span style="font-family:var(--mono)">' + esc(d.process) + '</span><span style="color:var(--text2)">' + d.count + ' 次</span></span>';
+    }).join("");
+  }
+  function renderTopProjects(container, data) {
+    var list = (data || []).slice(0, 8);
+    var max = Math.max.apply(null, list.map(function (d) { return d.eventCount; }).concat([1]));
+    var rows = list.map(function (d) {
+      var w = Math.max(6, Math.round((d.eventCount / max) * 100));
+      return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+        '<span style="width:150px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(d.name) + "</span>" +
+        '<div style="flex:1;height:16px;background:var(--panel2);border-radius:5px;overflow:hidden"><div style="width:' + w + '%;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div>' +
+        '<span style="width:40px;text-align:right;font-family:var(--mono);font-size:12px">' + d.eventCount + "</span></div>";
+    }).join("");
+    container.innerHTML = list.length ? rows : '<div class="empty">暂无数据</div>';
+  }
+  function renderCharts() {
+    var ov = state.overview;
+    renderBarChart($("chartDaily"), (ov && ov.daily) || []);
+    renderDonut($("chartProcess"), $("chartProcessLegend"), (ov && ov.processDist) || []);
+    renderTopProjects($("chartTop"), (ov && ov.topProjects) || []);
+  }
+  function renderProjects() {
+    var list = filterProjects($("projSearch").value, $("projSort").value);
+    var rows = list.map(function (p) {
+      var ago = fmtAgo(p.updatedAt);
+      return "<tr class=\"rowlink\" data-id=\"" + esc(p.id) + "\">" +
+        "<td><div class=\"pname\">" + projectDot(p) + "<span>" + esc(p.name) + "</span></div>" +
+        '<div style="font-family:var(--mono);font-size:11px;color:var(--text3)">' + esc(p.id) + "</div></td>" +
+        '<td style="font-family:var(--mono);font-size:11px;color:var(--text3)">' + esc(p.workspaceId) + "</td>" +
+        '<td style="white-space:nowrap">' + fmtTime(p.updatedAt) + '<div style="font-size:11px;color:var(--text3)">' + ago + "</div></td>" +
+        "<td>" + esc(p.updatedByName) + "</td>" +
+        '<td class="mono" style="text-align:center">' + (p.revision || 0) + "</td>" +
+        '<td class="mono" style="text-align:center">' + (p.eventCount || 0) + "</td>" +
+        '<td class="mono" style="text-align:center">' + (p.aiAssessed || 0) + '<span style="color:var(--text3)">/</span><span style="color:var(--amber)">' + (p.pendingAi || 0) + "</span></td>" +
+        '<td class="mono" style="text-align:center">' + (p.traceLinkCount || 0) + '<span style="color:var(--text3)">/</span><span style="color:var(--green)">' + (p.confirmedLinks || 0) + "</span></td>" +
+        '<td><div style="display:flex;align-items:center;gap:8px"><div class="progress" style="width:64px"><i style="width:' + (p.progress || 0) + '%"></i></div><span style="font-size:11px;color:var(--text3)">' + (p.progress || 0) + "%</span></div></td>" +
+        "</tr>";
+    }).join("");
+    $("projRows").innerHTML = rows;
+    $("projEmpty").style.display = rows ? "none" : "flex";
+  }
+  function renderEvents() {
+    var list = filterEvents($("evtSearch").value, $("evtType").value);
+    $("eventCount").textContent = list.length + " 条";
+    var html = list.map(function (e) {
+      return '<div class="tli t-type-' + esc(e.changeType || "other") + '">' +
+        '<div class="tl-title">' + typeBadge(e.changeType) + "<span>" + esc(e.changeSummary) + "</span></div>" +
+        '<div class="tl-sub"><span>' + ic("users", 12) + " " + esc(e.userName) + "</span><span>" + ic("db", 12) + " " + esc(e.projectName || e.projectId) + "</span>" +
+        processBadges(e.processes) + '<span>' + ic("clock", 12) + " " + fmtTime(e.createdAt) + " · " + fmtAgo(e.createdAt) + "</span>" +
+        '<span class="mono" style="color:var(--text3)">rev ' + e.revision + "</span></div>" +
+        (e.entityId ? '<div class="tl-body">实体 ' + esc(e.entityId) + "</div>" : "") + "</div>";
+    }).join("");
+    $("evtList").innerHTML = html;
+    $("evtEmpty").style.display = list.length ? "none" : "flex";
+  }
+  function renderTrace() {
+    var list = state.traceEval || [];
+    $("btnTraceAll").textContent = "展开全部";
+    var cards = list.map(function (p) {
+      var inds = (p.indicators || []).slice(0, 4);
+      var indRows = inds.length ? '<table class="itbl" style="width:100%"><thead><tr><th>指标</th><th>过程</th><th>评级</th><th>AI 候选</th><th>状态</th><th>证据</th></tr></thead><tbody>' +
+        inds.map(function (ind) {
+          return "<tr><td><span style='font-family:var(--mono);font-weight:600'>" + esc(ind.key) + "</span><div style='font-size:11px;color:var(--text3)'>" + esc(ind.title || "") + "</div></td>" +
+            '<td class="mono">' + esc(ind.process || "") + "</td>" +
+            '<td class="mono">' + esc(ind.rating || "—") + "</td>" +
+            '<td class="mono" style="color:var(--violet)">' + (ind.aiCandidateRating ? esc(ind.aiCandidateRating) : "—") + "</td>" +
+            "<td>" + (ind.reviewed ? '<span class="badge b-green">已确认</span>' : ind.aiCandidateRating ? '<span class="badge b-blue">待确认</span>' : '<span class="badge b-gray">未评估</span>') + "</td>" +
+            '<td class="mono">' + (ind.evidenceLinks || 0) + "</td></tr>";
+        }).join("") + "</tbody></table>" : '<div class="empty" style="padding:12px">暂无 AI 评估指标</div>';
+      return '<div class="card tcard" data-trace="' + esc(p.id) + '">' +
+        '<div class="tc-top"><div class="pname">' + projectDot(p) + "<span>" + esc(p.name) + "</span></div><div class=\"spacer\" style=\"flex:1\"></div>" +
+        '<div class="tc-stats">' +
+        '<span class="badge b-cyan">AI 评估 ' + (p.aiAssessed || 0) + "</span>" +
+        '<span class="badge b-blue">待确认 ' + (p.pendingAi || 0) + "</span>" +
+        '<span class="badge b-violet">溯源 ' + (p.traceLinkCount || 0) + "</span>" +
+        '<span class="badge b-green">已确认 ' + (p.confirmedLinks || 0) + "</span></div></div>" +
+        (p.aiOpinion ? '<div class="ai-opinion"><b style="color:var(--violet)">AI 意见：</b>' + esc(p.aiOpinion) + "</div>" : "") +
+        '<div class="tc-detail">' + indRows + "</div>" +
+        '<div style="display:flex;justify-content:flex-end"><button class="tbtn" data-act="project" data-id="' + esc(p.id) + '">' + ic("eye", 13) + "查看完整溯源</button></div></div>";
+    }).join("");
+    $("traceList").innerHTML = cards || '<div class="card"><div class="empty">暂无数据</div></div>';
+    // 绑定每个卡片头部点击展开/收起
+    var all = document.querySelectorAll("[data-trace] .tc-detail");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-trace]"), function (cardEl) {
+      cardEl.querySelector(".tc-detail").style.display = "none";
+    });
+  }
+  function renderFooter() {
+    $("footTime").textContent = "最后加载 " + fmtTime(state.loadedAt);
+    var count = (state.overview && state.overview.stats && state.overview.stats.projects) || 0;
+    $("backupHint").style.display = count >= 30 ? "inline-flex" : "none";
+  }
+
+  /* 统一刷新入口：所有渲染函数在此按固定顺序调用（铁律9） */
+  function refreshAll() {
+    renderMode();
+    renderToday();
+    renderStats();
+    renderCharts();
+    renderProjects();
+    renderEvents();
+    renderTrace();
+    renderFooter();
+    applyMonitorEnglish();
+  }
+
+  /* ---------------- 详情抽屉 ---------------- */
+  function openProject(projectId) {
+    loadDetail(projectId).then(function (detail) {
+      if (!detail) { showBanner("err", "未找到项目 " + projectId); return; }
+      var meta = [
+        ["项目 ID", detail.id], ["工作区", detail.workspaceId], ["组织", detail.organization], ["产品", detail.product],
+        ["状态", (detail.statusLabel || detail.status || "—")], ["级别", detail.achievedLevel || "—"], ["进度", (detail.progress || 0) + "%"],
+        ["最近修改", fmtTime(detail.updatedAt) + "（" + fmtAgo(detail.updatedAt) + "）"], ["修改人", detail.updatedByName], ["Revision", detail.revision],
+        ["过程数", detail.processCount], ["AI 评估", detail.aiAssessed + " · 待确认 " + detail.pendingAi], ["溯源链接", detail.traceLinkCount + "（确认 " + detail.confirmedLinks + "）"], ["证据数", detail.evidenceCount]
+      ];
+      var kvHtml = meta.map(function (m) { return '<div class="kv"><div class="k">' + m[0] + '</div><div class="v">' + esc(m[1]) + "</div></div>"; }).join("");
+      var evtHtml = (detail.events || []).slice(0, 40).map(function (e) {
+        return '<div class="tli t-type-' + esc(e.changeType || "other") + '">' +
+          '<div class="tl-title">' + typeBadge(e.changeType) + "<span>" + esc(e.changeSummary) + "</span></div>" +
+          '<div class="tl-sub"><span>' + ic("users", 12) + " " + esc(e.userName) + "</span>" + processBadges(e.processes) +
+          "<span>" + fmtTime(e.createdAt) + " · " + fmtAgo(e.createdAt) + "</span><span class=\"mono\" style=\"color:var(--text3)\">rev " + e.revision + "</span></div></div>";
+      }).join("") || '<div class="empty">暂无事件</div>';
+      var lockHtml = (detail.locks || []).map(function (l) {
+        return '<div class="titem"><div class="tico" style="background:var(--amberbg);color:var(--amber)">' + ic("lock", 14) + "</div><div class=\"tmain\"><div class=\"tt\">" + esc(l.label || l.resourceId) + "</div><div class=\"ts\">" + esc(l.userName) + " · " + fmtAgo(l.acquiredAt) + "</div></div></div>";
+      }).join("") || '<div class="empty" style="padding:10px">无进行中编辑锁</div>';
+      var asmHtml = (detail.assessments || []).slice(0, 30).map(function (a) {
+        var evs = (a.evidenceAnalysis || []).map(function (ea) {
+          return '<div style="display:flex;gap:8px;font-size:12px;margin-top:3px"><span class="mono" style="color:var(--cyan)">' + esc(ea.evidenceCode || ea.evidenceId || "—") + '</span><span class="badge ' + (ea.strength === "direct" ? "b-green" : "b-gray") + '">' + esc(ea.strength || "—") + "</span><span style=\"color:var(--text3)\">" + esc(ea.locator || "") + "</span></div>";
+        }).join("");
+        return '<div class="kv" style="grid-column:1/-1">' +
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="mono" style="font-weight:700">' + esc(a.code || a.id) + "</span><span>" + esc(a.title || "") + "</span>" +
+          '<span class="badge b-cyan">评级 ' + esc(a.rating || "—") + "</span>" +
+          (a.aiCandidateRating ? '<span class="badge b-violet">AI 候选 ' + esc(a.aiCandidateRating) + "</span>" : "") +
+          (a.reviewed ? '<span class="badge b-green">已确认</span>' : '<span class="badge b-amber">待确认</span>') +
+          (a.confidence != null ? '<span class="badge b-gray">置信度 ' + Math.round(a.confidence * 100) + "%</span>" : "") +
+          "</div>" + (a.reason ? '<div style="font-size:12px;color:var(--text2);margin-top:4px">' + esc(a.reason) + "</div>" : "") + evs + "</div>";
+      }).join("") || '<div class="empty" style="grid-column:1/-1;padding:10px">暂无评估记录</div>';
+      var tlHtml = (detail.traceLinks || []).slice(0, 40).map(function (l) {
+        return '<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px;flex-wrap:wrap">' +
+          '<span class="mono" style="font-weight:600;min-width:90px">' + esc(l.indicator || "—") + "</span>" +
+          '<span class="mono" style="color:var(--cyan)">' + esc(l.evidenceCode || l.evidenceId || "—") + "</span>" +
+          '<span class="badge ' + (l.strength === "direct" ? "b-green" : "b-gray") + '">' + esc(l.strength || "—") + "</span>" +
+          (l.confirmed ? '<span class="badge b-green">已确认</span>' : '<span class="badge b-amber">AI 推断</span>') +
+          '<span style="color:var(--text3);flex:1;min-width:140px">' + esc(l.claim || "") + "</span>" +
+          '<span class="mono" style="color:var(--text3);font-size:11px">' + esc(l.locator || "") + "</span></div>";
+      }).join("") || '<div class="empty" style="padding:10px">暂无溯源链接</div>';
+      var evdHtml = (detail.evidence || []).slice(0, 30).map(function (e) {
+        return '<div class="kv"><div class="k">' + esc(e.code || e.id) + (e.helixBlocked ? ' <span class="badge b-red" style="margin-left:4px">阻塞</span>' : "") + '</div><div class="v" style="font-size:12px">' + esc(e.name || "") + '</div><div class="k" style="margin-top:3px">' + esc((e.primaryProcesses || []).join(", ")) + "</div></div>";
+      }).join("") || '<div class="empty" style="grid-column:1/-1;padding:10px">暂无证据</div>';
+
+      $("drTitle").innerHTML = '<span class="dot" style="width:10px;height:10px;border-radius:50%;background:var(--green)"></span>' + esc(detail.name || detail.id);
+      $("drBody").innerHTML =
+        '<div class="kv-list">' + kvHtml + "</div>" +
+        (detail.aiOpinion ? '<div class="sub-title">' + ic("ai", 14) + ' AI 总体意见</div><div class="ai-opinion">' + esc(detail.aiOpinion) + "</div>" : "") +
+        '<div class="sub-title">' + ic("lock", 14) + " 编辑锁</div>" + lockHtml +
+        '<div class="sub-title">' + ic("clock", 14) + " 修改事件（" + (detail.events || []).length + '）</div><div class="tl" style="margin-top:6px">' + evtHtml + "</div>" +
+        '<div class="sub-title">' + ic("ai", 14) + ' AI 评估与证据分析</div><div class="kv-list" style="grid-template-columns:1fr">' + asmHtml + "</div>" +
+        '<div class="sub-title">' + ic("link", 14) + " 证据溯源链接（" + (detail.traceLinks || []).length + '）</div>' + tlHtml +
+        '<div class="sub-title">' + ic("file", 14) + " 证据库（" + (detail.evidence || []).length + '）</div><div class="kv-list">' + evdHtml + "</div>";
+      $("mask").className = "mask show";
+      $("drawer").className = "drawer show";
+    }).catch(function (err) { showBanner("err", "加载项目详情失败：" + err.message); });
+  }
+  function closeProject() {
+    $("mask").className = "mask";
+    $("drawer").className = "drawer";
+  }
+
+  /* ---------------- 导出 / 导入 ---------------- */
+  function exportBackup() {
+    var payload = {
+      app: "auditflow-monitor", version: "1.0.0", mode: state.mode, exportedAt: new Date().toISOString(),
+      data: { overview: state.overview, projects: state.projects, events: state.events, traceEval: state.traceEval }
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "auditflow-monitor-backup-" + fmtDate(new Date()) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 800);
+  }
+  function importBackup(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var payload = JSON.parse(reader.result);
+        var d = payload.data || {};
+        state.overview = d.overview || null;
+        state.projects = d.projects || [];
+        state.events = d.events || [];
+        state.traceEval = d.traceEval || [];
+        state.loadedAt = new Date().toISOString();
+        showBanner("warn", "已从备份恢复 " + state.projects.length + " 个项目的数据（浏览态）。");
+        refreshAll();
+      } catch (err) {
+        showBanner("err", "备份文件解析失败：" + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /* ---------------- 设置 ---------------- */
+  function openSettings() {
+    $("setApi").value = state.apiBase;
+    $("setToken").value = state.token;
+    $("setInterval").value = String(state.autoInterval || 0);
+    $("setStatus").textContent = state.mode === "live" ? "当前：实时监控已连接" : "当前：演示模式";
+    modal("settingsModal", true);
+  }
+  function testConnection() {
+    var base = $("setApi").value.trim();
+    var token = $("setToken").value.trim();
+    var st = $("setStatus");
+    if (!base) { st.textContent = "请先填写服务地址"; st.style.color = "var(--red)"; return; }
+    st.textContent = "测试中…"; st.style.color = "var(--text2)";
+    fetchJson(apiUrl(base, "/api/monitor/health"), token).then(function () {
+      st.textContent = "连接成功 ✓ MySQL 可达"; st.style.color = "var(--green)";
+    }).catch(function (err) {
+      st.textContent = "连接失败：" + err.message; st.style.color = "var(--red)";
+    });
+  }
+  function saveSettings() {
+    state.apiBase = $("setApi").value.trim().replace(/\/+$/, "");
+    state.token = $("setToken").value.trim();
+    state.autoInterval = Number($("setInterval").value || 0);
+    saveLS("settings", { apiBase: state.apiBase, token: state.token, autoInterval: state.autoInterval });
+    modal("settingsModal", false);
+    if (state.apiBase) {
+      state.mode = "live";
+      showBanner("warn", "正在连接监控服务…");
+      refresh(true);
+    } else {
+      state.mode = "demo";
+      hideBanner();
+      refresh(false);
+    }
+    setupAutoRefresh();
+  }
+  function switchDemo() {
+    state.apiBase = ""; state.token = ""; state.mode = "demo";
+    saveLS("settings", { apiBase: "", token: "", autoInterval: state.autoInterval });
+    modal("settingsModal", false);
+    showBanner("warn", "已切回演示模式：当前展示内置示例数据，非真实 MySQL 数据。");
+    refresh(false);
+    setupAutoRefresh();
+  }
+  function setupAutoRefresh() {
+    if (timerId) { clearInterval(timerId); timerId = null; }
+    if (state.mode === "live" && state.autoInterval > 0) {
+      timerId = setInterval(function () { refresh(true); }, state.autoInterval * 1000);
+    }
+  }
+
+  /* ---------------- 事件绑定（统一委托） ---------------- */
+  function bindEvents() {
+    $("btnRefresh").addEventListener("click", function () { refresh(true); });
+    $("bannerAct").addEventListener("click", function () { hideBanner(); openSettings(); });
+    $("btnSettings").addEventListener("click", openSettings);
+    $("btnExport").addEventListener("click", exportBackup);
+    $("btnImport").addEventListener("click", function () {
+      var input = document.createElement("input");
+      input.type = "file"; input.accept = ".json,application/json";
+      input.onchange = function () { if (input.files && input.files[0]) importBackup(input.files[0]); };
+      input.click();
+    });
+    $("btnTheme").addEventListener("click", function () {
+      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      state.theme = next; saveLS("theme", next);
+    });
+    $("btnClearDemo").addEventListener("click", function () { modal("clearModal", true); });
+    $("clearCancel").addEventListener("click", function () { modal("clearModal", false); });
+    $("clearOk").addEventListener("click", function () {
+      modal("clearModal", false);
+      state.overview = null; state.projects = []; state.events = []; state.traceEval = []; state.detailCache = {};
+      refreshAll();
+      showBanner("warn", "示例数据已清空。点击「刷新」可重新载入示例数据。");
+    });
+    $("btnTraceAll").addEventListener("click", function () {
+      var expanded = this.dataset.expanded === "1";
+      this.dataset.expanded = expanded ? "0" : "1";
+      this.textContent = expanded ? "展开全部" : "收起全部";
+      Array.prototype.forEach.call(document.querySelectorAll("[data-trace] .tc-detail"), function (el) {
+        el.style.display = expanded ? "none" : "block";
+      });
+    });
+    $("setTest").addEventListener("click", testConnection);
+    $("setSave").addEventListener("click", saveSettings);
+    $("setDemo").addEventListener("click", switchDemo);
+    $("setClose").addEventListener("click", function () { modal("settingsModal", false); });
+    $("drClose").addEventListener("click", closeProject);
+    $("mask").addEventListener("click", closeProject);
+    $("projSearch").addEventListener("input", renderProjects);
+    $("projSort").addEventListener("change", renderProjects);
+    $("evtSearch").addEventListener("input", renderEvents);
+    $("evtType").addEventListener("change", renderEvents);
+    // 全局委托：今天要处理 / 项目行 / 溯源卡片 的按钮
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target.closest ? ev.target.closest("[data-act]") : null;
+      if (btn) {
+        ev.preventDefault();
+        openProject(btn.getAttribute("data-id"));
+        return;
+      }
+      var row = ev.target.closest ? ev.target.closest("tr.rowlink") : null;
+      if (row) { openProject(row.getAttribute("data-id")); return; }
+      var traceCard = ev.target.closest ? ev.target.closest("[data-trace]") : null;
+      if (traceCard && !ev.target.closest("button") && !ev.target.closest("a")) {
+        var detail = traceCard.querySelector(".tc-detail");
+        if (detail) detail.style.display = detail.style.display === "none" ? "block" : "none";
+      }
+    });
+  }
+
+  /* ---------------- 初始化 ---------------- */
+  function init() {
+    var saved = loadLS("settings", null);
+    var theme = loadLS("theme", "dark");
+    document.documentElement.setAttribute("data-theme", theme === "light" ? "light" : "dark");
+    if (saved) {
+      state.apiBase = saved.apiBase || DEFAULT_MONITOR_API;
+      state.token = saved.token || "";
+      state.autoInterval = Number(saved.autoInterval || 30);
+    }
+    bindEvents();
+    setupAutoRefresh();
+    if (state.apiBase) {
+      state.mode = "live";
+      showBanner("warn", "正在连接监控服务 " + state.apiBase + " …");
+      refresh(true);
+    } else {
+      state.mode = "live";
+      showBanner("warn", "Connecting to the AuditFlow monitor service…");
+      refresh(true);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#dcecff">
+  <meta name="description" content="AuditFlow evidence, assessment, collaboration, review and reporting workspace for ASPICE, functional safety and cybersecurity audits">
+  <title>AuditFlow AI · ASPICE Audit Workbench</title>
+  <link rel="icon" href="./icons/auditflow-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=19">
+  <link rel="stylesheet" href="./styles-v2.css?v=12" id="darkThemeStyles" disabled>
+  <link rel="stylesheet" href="./v6-enhancements.css?v=8">
+  <link rel="stylesheet" href="./trace-v73.css?v=2">
+  <link rel="stylesheet" href="./trace-v75.css?v=1">
+  <link rel="stylesheet" href="./trace-v76.css?v=1">
+  <link rel="stylesheet" href="./trace-v77.css?v=1">
+  <link rel="stylesheet" href="./trace-v78.css?v=1">
+  <link rel="stylesheet" href="./trace-v79.css?v=5">
+  <link rel="stylesheet" href="./trace-v80.css?v=10">
+  <link rel="stylesheet" href="./trace-v81.css?v=1">
+  <link rel="stylesheet" href="./trace-v82.css?v=1">
+  <link rel="stylesheet" href="./trace-v83.css?v=2">
+  <link rel="stylesheet" href="./codex-assistant.css?v=3">
+  <link rel="stylesheet" href="./auth-gate.css?v=3">
+  <script src="./theme-init.js?v=1"></script>
+</head>
+<body>
+  <div id="authGate" class="auth-gate" hidden></div>
+  <div class="app-shell">
+    <header class="jira-header" id="sidebar">
+      <a class="brand" href="#/dashboard" data-aria-zh="AuditFlow 首页" data-aria-en="AuditFlow home" data-tooltip-zh="AuditFlow 首页" data-tooltip-en="AuditFlow home" aria-label="AuditFlow 首页" title="AuditFlow 首页">
+        <span class="brand-mark" aria-hidden="true"><img src="./icons/icon-32.png" alt=""></span>
+        <span class="brand-label"><strong>AuditFlow</strong><small>ASPICE</small></span>
+      </a>
+      <nav class="side-nav" aria-label="主导航">
+        <a href="#/dashboard" data-nav="dashboard" data-label-zh="评估" data-label-en="Audit" data-tooltip-zh="评估" data-tooltip-en="Audit"><span data-icon="grid"></span><span class="header-label">评估</span></a>
+        <a href="#/standard" data-nav="standard" data-label-zh="ASPICE" data-label-en="ASPICE" data-tooltip-zh="ASPICE 评估" data-tooltip-en="ASPICE assessment"><span data-icon="shield"></span><span class="header-label">ASPICE</span></a>
+        <a href="#/custom" data-nav="custom" data-label-zh="自定义" data-label-en="Custom" data-tooltip-zh="自定义审核" data-tooltip-en="Custom audits"><span data-icon="layers"></span><span class="header-label">自定义</span></a>
+        <div class="nav-group-label" aria-hidden="true">导航</div>
+        <a class="nav-secondary" href="#/recent" data-nav="recent" data-label-zh="最近" data-label-en="Recent" data-tooltip-zh="最近" data-tooltip-en="Recent"><span data-icon="clock"></span><span class="header-label">最近</span></a>
+        <a class="nav-secondary" href="#/apps" data-nav="apps" data-label-zh="应用" data-label-en="Apps" data-tooltip-zh="应用" data-tooltip-en="Apps"><span data-icon="package"></span><span class="header-label">应用</span></a>
+        <a class="nav-secondary" href="#/plans" data-nav="plans" data-label-zh="计划" data-label-en="Plans" data-tooltip-zh="计划" data-tooltip-en="Plans"><span data-icon="chart"></span><span class="header-label">计划</span></a>
+        <a class="nav-secondary" href="#/spaces" data-nav="spaces" data-label-zh="空间" data-label-en="Spaces" data-tooltip-zh="空间" data-tooltip-en="Spaces"><span data-icon="book"></span><span class="header-label">空间</span></a>
+        <div class="nav-group-label" aria-hidden="true">专业工作台</div>
+        <a class="nav-secondary" href="#/tracking" data-nav="tracking" data-label-zh="追踪" data-label-en="Track" data-tooltip-zh="项目追踪" data-tooltip-en="Tracking"><span data-icon="target"></span><span class="header-label">追踪</span></a>
+        <a class="nav-secondary" href="#/review" data-nav="review" data-label-zh="审查" data-label-en="Review" data-tooltip-zh="技术审查" data-tooltip-en="Technical review"><span data-icon="eye"></span><span class="header-label">审查</span></a>
+        <a class="nav-secondary" href="#/defects" data-nav="defects" data-label-zh="缺陷" data-label-en="Defects" data-tooltip-zh="缺陷报告" data-tooltip-en="Defects"><span data-icon="alert"></span><span class="header-label">缺陷</span></a>
+        <a class="nav-secondary" href="#/practices" data-nav="practices" data-label-zh="实践" data-label-en="Practice" data-tooltip-zh="实践报告" data-tooltip-en="Practice reports"><span data-icon="file"></span><span class="header-label">实践</span></a>
+        <a class="nav-secondary" href="#/changes" data-nav="changes" data-label-zh="变更" data-label-en="Change" data-tooltip-zh="变更请求" data-tooltip-en="Change requests"><span data-icon="rotate"></span><span class="header-label">变更</span></a>
+        <div class="nav-group-label" aria-hidden="true">更多</div>
+        <a href="#/more" data-nav="more" data-label-zh="更多" data-label-en="More" data-tooltip-zh="更多" data-tooltip-en="More"><span data-icon="more"></span><span class="header-label">更多</span></a>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-btn" id="globalSearchBtn" data-action="open-global-search" data-aria-zh="搜索" data-aria-en="Search" data-tooltip-zh="搜索 (Ctrl K)" data-tooltip-en="Search (Ctrl K)" aria-label="搜索" title="搜索 (Ctrl K)"><span data-icon="search"></span></button>
+        <button class="icon-btn ai-status" id="aiStatus" data-tooltip-zh="Codex 状态" data-tooltip-en="Codex status" aria-label="Codex 状态" title="Codex 状态"><span data-icon="sparkles"></span><i class="ai-status-dot"></i></button>
+        <div class="translation-progress" id="translationProgress" hidden role="status" aria-live="polite" aria-label="Translation progress"><span class="translation-progress-label">EN</span><i><b></b></i><small>0%</small></div>
+        <button class="icon-btn" id="notificationsBtn" data-aria-zh="通知" data-aria-en="Notifications" data-tooltip-zh="通知" data-tooltip-en="Notifications" aria-label="通知" title="通知"><span data-icon="bell"></span><b></b></button>
+        <a class="icon-btn help-manual-link" href="./help-manual.html" target="_blank" rel="noopener" data-aria-zh="打开 AuditFlow 操作手册" data-aria-en="Open the AuditFlow user manual" data-tooltip-zh="操作手册" data-tooltip-en="User manual" aria-label="打开 AuditFlow 操作手册" title="操作手册"><span data-icon="help"></span></a>
+        <button class="icon-btn" id="themeToggle" data-action="toggle-theme" data-tooltip-zh="切换深色模式" data-tooltip-en="Toggle dark mode" aria-label="切换深色模式" aria-pressed="false" title="切换深色模式"><span data-icon="moon"></span></button>
+        <button class="icon-btn language-toggle" id="languageToggle" data-action="toggle-language" data-tooltip-zh="切换语言" data-tooltip-en="Switch language" aria-label="切换语言" aria-pressed="false" title="切换语言"><span data-icon="globe"></span></button>
+        <button class="auth-account-button" id="authAccountButton" type="button" data-action="open-account-menu" aria-label="登录或切换账号" title="登录或切换账号" hidden>登录</button>
+        <a href="#/settings" class="profile-link" data-nav="settings" data-aria-zh="设置" data-aria-en="Settings" data-tooltip-zh="设置" data-tooltip-en="Settings" aria-label="设置" title="设置"><span class="avatar">MM</span></a>
+        <button class="icon-btn menu-toggle" id="menuToggle" data-aria-zh="展开导航" data-aria-en="Expand navigation" data-tooltip-zh="展开导航" data-tooltip-en="Expand navigation" aria-label="展开导航" title="展开导航"><span data-icon="menu"></span></button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="breadcrumbs" id="breadcrumbs"></div>
+      </header>
+      <main id="app" tabindex="-1"></main>
+    </section>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="drawerRoot"></div>
+  <div id="codexAssistantRoot"></div>
+  <div id="projectBrowserRoot"></div>
+  <div class="toast-stack" id="toastRoot" aria-live="polite"></div>
+  <input type="file" id="evidencePicker" hidden multiple accept=".pdf,.doc,.docx,.pptx,.xlsx,.xlsm,.txt,.md,.csv,.json,.html">
+  <input type="file" id="aiReviewImportPicker" hidden accept=".json,.afreview,.jeauditflow-review">
+  <input type="file" id="avatarPicker" hidden accept="image/png,image/jpeg,image/webp,image/gif">
+  <script src="./vendor/jszip.min.js"></script>
+  <script defer src="./i18n.js?v=6"></script>
+  <script defer src="./backend-client.js?v=8"></script>
+  <script defer src="./tmm-assessment-data.js?v=1"></script>
+<script defer src="./external-assessment-data.js?v=2"></script>
+  <script defer src="./codex-assistant.js?v=4"></script>
+  <script defer src="./auth-gate.js?v=8"></script>
+  <script defer src="./cep-xp-assessment-data.js?v=3"></script>
+  <script defer src="./app.js?v=81"></script>
+  <script defer src="./ux-enhance.js?v=1"></script>
+    <script defer src="./v6-enhancements.js?v=9"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+    "manifest_version":  3,
+    "name":  "AuditFlow",
+    "short_name": "AuditFlow",
+    "version":  "9.6.0",
+    "description":  "ASPICE assessment workspace with evidence review, traceability, project management, and AI-assisted assessor guidance.",
+    "action":  {
+                   "default_title":  "Open AuditFlow",
+                   "default_popup":  "popup.html",
+                   "default_icon":  {
+                                        "16":  "icons/icon-16.png",
+                                        "32":  "icons/icon-32.png",
+                                        "48":  "icons/icon-48.png",
+                                        "128":  "icons/icon-128.png"
+                                    }
+               },
+    "icons":  {
+                  "16":  "icons/icon-16.png",
+                  "32":  "icons/icon-32.png",
+                  "48":  "icons/icon-48.png",
+                  "128":  "icons/icon-128.png"
+              },
+    "permissions": ["unlimitedStorage"],
+    "host_permissions":  [
+                             "http://127.0.0.1/*",
+                             "http://localhost/*"
+                         ],
+    "content_security_policy":  {
+                                    "extension_pages":  "script-src \u0027self\u0027; object-src \u0027self\u0027",
+                                    "sandbox":  "sandbox allow-scripts allow-forms allow-modals allow-popups allow-downloads; script-src \u0027self\u0027 \u0027unsafe-inline\u0027 \u0027unsafe-eval\u0027 blob:; worker-src \u0027self\u0027 blob:; child-src \u0027self\u0027 blob:;"
+                                },
+    "sandbox":  {
+                    "pages":  [
+                                  "aspice-audit-master-2.3.1.html"
+                              ]
+                }
+}

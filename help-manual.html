@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="AuditFlow v9.6.0 的本地评估、PA 门禁、SUP 闭环、悬浮 Codex 助手与单机项目操作手册">
+  <title>AuditFlow v9.6.0 操作手册</title>
+  <style>
+    :root { --canvas:#f7f8fa; --surface:#fff; --ink:#172b4d; --muted:#5e6c84; --line:#dfe1e6; --blue:#0c66e4; --blue-soft:#e9f2ff; --green:#216e4e; --green-soft:#e3fcef; --amber:#974f0c; --amber-soft:#fff0b3; --red:#ae2e24; --red-soft:#ffebe6; --navy:#0d1117; --navy-2:#161b22; --nav-text:#c9d1d9; --radius:6px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; color-scheme:light; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--canvas); font-size:14px; line-height:1.6; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; }
+    .app-header { position:sticky; top:0; z-index:10; min-height:58px; display:flex; align-items:center; gap:18px; padding:10px max(20px,calc((100vw - 1440px) / 2)); border-bottom:1px solid #30363d; background:var(--navy); color:var(--nav-text); }
+    .brand { display:flex; align-items:center; gap:10px; min-width:max-content; color:#fff; }
+    .brand img { width:30px; height:30px; border-radius:6px; }
+    .brand strong { display:block; font-size:15px; line-height:1.2; }
+    .brand small { display:block; margin-top:2px; color:#8b949e; font-size:10px; }
+    .header-title { min-width:0; flex:1; color:#c9d1d9; font-size:13px; }
+    .back-link { display:inline-flex; align-items:center; min-height:32px; padding:0 11px; border:1px solid #3d444d; border-radius:6px; color:#f0f6fc; font-size:12px; white-space:nowrap; }
+    .back-link:hover { border-color:#58a6ff; background:#21262d; }
+    .manual-layout { width:min(1440px,100%); margin:0 auto; display:grid; grid-template-columns:250px minmax(0,1fr); align-items:start; min-height:calc(100vh - 58px); }
+    .manual-nav { position:sticky; top:58px; max-height:calc(100vh - 58px); overflow:auto; padding:22px 16px 28px; border-right:1px solid var(--line); background:#fff; }
+    .manual-nav p { margin:0 0 8px; color:#6b778c; font-size:10px; font-weight:700; text-transform:uppercase; }
+    .manual-nav a { display:block; padding:7px 9px; border-radius:4px; color:#42526e; font-size:12px; }
+    .manual-nav a:hover { color:var(--blue); background:var(--blue-soft); }
+    .manual-nav .nav-spacer { height:14px; }
+    main { min-width:0; padding:28px 34px 64px; }
+    .hero { padding:24px 0 26px; border-bottom:1px solid var(--line); }
+    .eyebrow { margin:0 0 8px; color:var(--blue); font-size:11px; font-weight:700; text-transform:uppercase; }
+    h1,h2,h3 { margin:0; color:var(--ink); line-height:1.3; letter-spacing:0; }
+    h1 { font-size:28px; }
+    h2 { font-size:20px; }
+    h3 { font-size:14px; }
+    .hero p:last-child { max-width:820px; margin:10px 0 0; color:var(--muted); }
+    .notice { display:flex; gap:10px; margin-top:18px; padding:12px 14px; border-left:3px solid var(--blue); background:var(--blue-soft); color:#172b4d; font-size:12px; }
+    .notice strong { display:block; margin-bottom:2px; }
+    section { scroll-margin-top:78px; padding:30px 0; border-bottom:1px solid var(--line); }
+    section > p { max-width:920px; margin:8px 0 0; color:var(--muted); }
+    .flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:18px; }
+    .flow a { min-height:78px; display:grid; align-content:start; gap:3px; padding:12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+    .flow a:hover { border-color:#85b8ff; background:#f7faff; }
+    .flow span { color:var(--blue); font-size:10px; font-weight:700; }
+    .flow strong { font-size:12px; }
+    .flow small { color:var(--muted); font-size:10px; line-height:1.45; }
+    .steps { display:grid; gap:10px; margin-top:18px; }
+    .step { display:grid; grid-template-columns:38px minmax(0,1fr); gap:12px; align-items:start; padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+    .step-no { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:var(--blue-soft); color:var(--blue); font-size:11px; font-weight:700; }
+    .step p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .checklist { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .checklist article { padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+    .checklist p { margin:5px 0 0; color:var(--muted); font-size:12px; }
+    .checklist strong::before { content:""; display:inline-block; width:7px; height:7px; margin:0 7px 1px 0; border-radius:50%; background:var(--green); }
+    .rating-table { width:100%; margin-top:16px; border-collapse:collapse; overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); font-size:12px; }
+    .rating-table th,.rating-table td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .rating-table th { color:#42526e; background:#f4f5f7; font-size:11px; }
+    .rating-table tr:last-child td { border-bottom:0; }
+    .rating { display:inline-grid; min-width:26px; place-items:center; padding:1px 5px; border-radius:3px; font-weight:700; }
+    .rating.n { background:#ebecf0; color:#42526e; }.rating.p { background:var(--amber-soft); color:var(--amber); }.rating.l { background:#ffbdad; color:#ae2e24; }.rating.f { background:var(--green-soft); color:var(--green); }
+    .callout { margin-top:14px; padding:13px 14px; border:1px solid #b3d4ff; border-radius:var(--radius); background:#f7faff; color:#172b4d; font-size:12px; }
+    .callout.warning { border-color:#f5cd47; background:#fff7d6; }
+    .phase-list { display:grid; gap:0; margin-top:18px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface); }
+    .phase { display:grid; grid-template-columns:42px minmax(140px,220px) minmax(0,1fr); gap:12px; align-items:start; padding:14px; border-bottom:1px solid var(--line); }
+    .phase:last-child { border-bottom:0; }
+    .phase-index { width:28px; height:28px; display:grid; place-items:center; border-radius:4px; color:var(--blue); background:var(--blue-soft); font-size:10px; font-weight:700; }
+    .phase p { margin:0; color:var(--muted); font-size:12px; }
+    .phase .operation { grid-column:2 / -1; margin-top:-5px; color:#42526e; font-size:11px; }
+    .phase .operation b { color:var(--ink); }
+    .role-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:16px; }
+    .role-grid article { min-height:145px; padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+    .role-grid p { margin:5px 0 0; color:var(--muted); font-size:12px; }
+    .role-grid .direct { border-top:3px solid var(--green); }.role-grid .corroborating { border-top:3px solid #0c66e4; }.role-grid .index { border-top:3px solid #6b778c; }
+    .support-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin-top:16px; }
+    .support-grid article { padding:12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+    .support-grid strong { display:block; color:var(--blue); font-size:11px; }.support-grid span { display:block; margin-top:2px; font-size:11px; }.support-grid p { margin:5px 0 0; color:var(--muted); font-size:10px; line-height:1.5; }
+    .feature-table { width:100%; margin-top:16px; border-collapse:collapse; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface); font-size:12px; }
+    .feature-table th,.feature-table td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    .feature-table th { width:24%; background:#f4f5f7; color:#42526e; font-size:11px; }.feature-table tr:last-child td { border-bottom:0; }.feature-table td:last-child { color:var(--muted); }
+    .faq { display:grid; gap:8px; margin-top:16px; }.faq details { border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }.faq summary { padding:11px 13px; cursor:pointer; font-size:12px; font-weight:600; }.faq p { margin:0; padding:0 13px 13px; color:var(--muted); font-size:12px; }
+    footer { padding:22px 0 0; color:#6b778c; font-size:11px; }.back-top { color:var(--blue); }
+    @media (max-width:1100px) { .support-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }.flow { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:800px) { .app-header { padding:10px 14px; }.header-title { display:none; }.manual-layout { display:block; }.manual-nav { position:static; max-height:none; display:flex; gap:2px; overflow:auto; padding:10px 14px; border-right:0; border-bottom:1px solid var(--line); white-space:nowrap; }.manual-nav p,.manual-nav .nav-spacer { display:none; }.manual-nav a { padding:6px 8px; }.manual-nav a:first-of-type { padding-left:0; } main { padding:22px 14px 50px; }.checklist,.role-grid { grid-template-columns:1fr; }.phase { grid-template-columns:34px minmax(0,1fr); }.phase p,.phase .operation { grid-column:2; }.support-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:520px) { h1 { font-size:23px; }.brand small { display:none; }.flow { grid-template-columns:1fr; }.support-grid { grid-template-columns:1fr; }.rating-table th,.rating-table td,.feature-table th,.feature-table td { padding:8px; }.feature-table th { width:32%; }.phase { padding:12px 10px; gap:8px; } }
+    @media print { .app-header,.manual-nav { display:none; } .manual-layout { display:block; } main { padding:0; } section { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="./index.html#/dashboard" aria-label="返回 AuditFlow 工作台">
+      <img src="./icons/icon-128.png" alt="AuditFlow">
+      <span><strong>AuditFlow</strong><small>ASPICE 评估工作台</small></span>
+    </a>
+    <span class="header-title">Automotive SPICE 4.0 评估操作手册</span>
+    <a class="back-link" href="./index.html#/settings">返回工作台</a>
+  </header>
+
+  <div class="manual-layout">
+    <nav class="manual-nav" aria-label="操作手册目录">
+      <p>开始</p>
+      <a href="#overview">手册目的与边界</a>
+      <a href="#workflow">评估闭环</a>
+      <a href="#rating">范围、能力与评级</a>
+      <span class="nav-spacer"></span>
+      <p>工作台</p>
+      <a href="#phases">十个评估阶段</a>
+      <a href="#audit-master">范围内嵌 Audit Master</a>
+      <a href="#ai-review">AI 初稿与人工改定</a>
+      <a href="#support-subproject">MAN.3 / SUP.8 专项子项目</a>
+      <a href="#evidence">证据与追溯</a>
+      <a href="#support">跨过程闭环</a>
+      <a href="#security-audits">功能安全与网络安全</a>
+      <a href="#functions">功能操作索引</a>
+      <a href="#collaboration">本机单用户与项目设置</a>
+      <span class="nav-spacer"></span>
+      <p>完成</p>
+      <a href="#close">关闭与报告输出</a>
+      <a href="#privacy">本地数据与 AI</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+
+    <main>
+      <div class="hero" id="overview">
+        <p class="eyebrow">AuditFlow AI · v9.6.0</p>
+        <h1>面向评估师的操作手册</h1>
+        <p>AuditFlow 用于组织项目级 Automotive SPICE、ISO 26262 功能安全和 ISO/SAE 21434 网络安全审核活动：建立范围、分配职责、登记可定位证据、生成候选判断，并在人工复核和质量门通过后形成受控报告。</p>
+        <div class="notice"><div><strong>结论边界</strong>AI、本地规则和跨过程分析只生成候选判断与补证方向。正式过程属性评级、能力等级和报告结论必须由评估师基于已确认的证据链作出。</div></div>
+      </div>
+
+      <section id="workflow">
+        <h2>评估闭环</h2>
+        <p>ASPICE 的评估对象通常是项目。先定义项目中哪些过程需要达到何种能力等级，再将工作产品、执行记录、访谈和闭环信息组织为可复核的证据链。</p>
+        <div class="flow">
+          <a href="#phases"><span>01</span><strong>定范围</strong><small>目的、目标等级、正式过程域</small></a>
+          <a href="#phases"><span>02</span><strong>建计划</strong><small>实例、样本、角色、访谈与日程</small></a>
+          <a href="#evidence"><span>03</span><strong>纳证据</strong><small>来源、定位、版本、状态与责任</small></a>
+          <a href="#phases"><span>04</span><strong>做评估</strong><small>BP / GP、访谈、发现与候选评级</small></a>
+          <a href="#evidence"><span>05</span><strong>验追溯</strong><small>双向关系与跨过程闭环</small></a>
+          <a href="#close"><span>06</span><strong>复核关闭</strong><small>定稿、质量门、报告与改进</small></a>
+        </div>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>建立正式评估范围</h3><p>在“ASPICE 评估”中创建项目，选择适用 PAM、目标 CL1 或 CL2，并只勾选客户或评估计划覆盖的过程。范围外过程保留为关联背景，不进入评级矩阵和正式报告。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>将评估活动计划化</h3><p>在“计划和日程”维护过程实例、样本、评估师、访谈和里程碑。对于 CL2，应能说明绩效目标、过程计划、资源、监控调整和接口管理与 MAN.3 的关系。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>只依据可回溯的事实形成结论</h3><p>每一个 BP / GP 候选都需要回到工作产品、执行记录或访谈定位。发现应描述客观事实、影响、所属过程和后续补证或关闭动作。</p></div></article>
+        </div>
+      </section>
+
+      <section id="rating">
+        <h2>范围、能力与评级</h2>
+        <p>过程维度回答“哪些过程被评估”，能力维度回答“这些过程达到什么能力”。能力等级由过程属性（PA）的评级组合决定，而不是由文件数量或单个平均分决定。</p>
+        <table class="rating-table">
+          <thead><tr><th>评级</th><th>达成度</th><th>评估含义</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rating n">N</span></td><td>0% - 15%</td><td>未达成：结果不存在，或内容不足以证明实践已执行。</td></tr>
+            <tr><td><span class="rating p">P</span></td><td>&gt;15% - 50%</td><td>部分达成：已实施部分结果，但不能支持稳定满足质量、进度或资源目标。</td></tr>
+            <tr><td><span class="rating l">L</span></td><td>&gt;50% - 85%</td><td>大部分达成：实践有显著实施证据，但仍存在影响目标实现的不足。</td></tr>
+            <tr><td><span class="rating f">F</span></td><td>&gt;85% - 100%</td><td>完全达成：没有与目标相关的显著风险，允许存在孤立的不完善点。</td></tr>
+          </tbody>
+        </table>
+        <div class="checklist">
+          <article><strong>CL1：过程被执行</strong><p>关注 PA 1.1。BP 的实施、工作产品及结果应构成充分证据链。</p></article>
+          <article><strong>CL2：过程被管理</strong><p>在 PA 1.1 的基础上，检查 PA 2.1 绩效管理与 PA 2.2 工作产品管理。</p></article>
+          <article><strong>MAN.3 是 CL2 的骨架</strong><p>目标、计划、资源、监控调整和接口管理须能支持各过程的绩效管理。</p></article>
+          <article><strong>SUP.1 与 SUP.8 支持 CL2</strong><p>质量保证、工作产品控制、标识、基线与一致性支撑 PA 2.2 的判断。</p></article>
+        </div>
+        <div class="callout warning"><strong>产品边界：</strong>AuditFlow 的本地引擎提供 CL1 / CL2 的候选结论。CL3 涉及组织标准过程、角色能力、资源和部署监控，需采用组织批准的外部评估方法；本地引擎不对 GP 3.x 作正式评级。</div>
+      </section>
+
+      <section id="phases">
+        <h2>十个评估阶段</h2>
+        <p>项目页左上方的顶部阶段导航遵循评估工作流。每个阶段都有可恢复的 URL；可在各阶段之间往返，但关闭前必须重新检查范围、证据充分性、人工复核和开放问题。</p>
+        <div class="phase-list">
+          <article class="phase"><span class="phase-index">01</span><h3>项目概况</h3><p>集中查看项目进度、证据解析、追溯覆盖、人工复核、开放弱项和 BP / PA / GP 矩阵。</p><div class="operation"><b>操作：</b>先确认正式范围和待评过程是否完整，再用看板识别证据、复核或弱项的阻塞项。</div></article>
+          <article class="phase"><span class="phase-index">02</span><h3>计划评估</h3><p>管理过程实例、计划卡片、评估活动、访谈安排和进度状态。</p><div class="operation"><b>操作：</b>为每个正式范围过程确定样本与评估活动；记录角色、日期、输入和预期输出，保留计划调整依据。</div></article>
+          <article class="phase"><span class="phase-index">03</span><h3>范围与资料 / Scope</h3><p>左侧选择正式过程域，在当前过程上下文中导入 DOCX、PPTX、XLSX/XLSM、PDF、CSV、JSON、HTML、Helix 或文本；右上角 Audit Master 可对已上传来源做四遍交叉过程分析。</p><div class="operation"><b>操作：</b>确认过程实例、资料主过程、Direct/Corroborating/Index-only、解析状态和定位信息。Audit Master 回流项始终是 Index-only AI 意见。</div></article>
+          <article class="phase"><span class="phase-index">04</span><h3>逐条评审 / Grid View</h3><p>左侧固定过程域，中间逐项审查 BP / GP，右侧持续显示当前指标的候选评级、证据链和 C/R/O/W/S/Q 记录。</p><div class="operation"><b>操作：</b>对每项指标记录直接事实、引用定位、访谈问题和发现；人工改定应写明与证据相符的理由。</div></article>
+          <article class="phase"><span class="phase-index">05</span><h3>证据溯源 / List View</h3><p>并排展示 Assessment Scope、Records & confirmed links 和 Evidence Inventory。</p><div class="operation"><b>操作：</b>确认 direct、corroborating 或 index-only 作用；确认关系不改变原始证据强度，也不能绕过评级护栏。</div></article>
+          <article class="phase"><span class="phase-index">06</span><h3>记录合并</h3><p>将多位评估师的记录收敛到 Consolidated 工作区并定稿。</p><div class="operation"><b>操作：</b>处理分歧、重复、冲突证据和未决问题；只把一致且可回溯的结论移入定稿记录。</div></article>
+          <article class="phase"><span class="phase-index">07</span><h3>AI 评审</h3><p>集中显示正式范围内全部 BP / GP 的 AI 初稿、证据充分性和人工改定状态；可导入 aspice-audit-master 导出的评审 JSON，在每个过程域下修改或确认。</p><div class="operation"><b>操作：</b>导入文件只更新未人工复核的候选，不覆盖已有人工结论；若候选与原始证据冲突，以评估师判断和直接证据为准。</div></article>
+          <article class="phase"><span class="phase-index">08</span><h3>版本与基线</h3><p>评估版本用于比较候选变化；受控基线冻结文件、条目、正式范围、责任、时间和变更原因。</p><div class="operation"><b>操作：</b>先确认原子条目，再创建 Draft；由 Independent Reviewer 完成独立复核，最后由 Lead Assessor 或 Configuration Manager 批准。</div></article>
+          <article class="phase"><span class="phase-index">09</span><h3>关闭评估</h3><p>运行证据、复核、记录、弱项和 Guideline 质量门并冻结正式结论。</p><div class="operation"><b>操作：</b>先完成 SUP.9 → SUP.10 → 工作产品更新 → 验证 → SUP.8 基线闭环，再关闭。</div></article>
+          <article class="phase"><span class="phase-index">10</span><h3>报告</h3><p>预览或生成 Word、PowerPoint、Excel 与评估计划输出。</p><div class="operation"><b>操作：</b>门禁未通过时报告标记 Draft；正式报告只展示正式范围和已人工复核结论。</div></article>
+        </div>
+      </section>
+
+      <section id="audit-master">
+        <h2>范围内嵌 ASPICE Audit Master</h2>
+        <p>进入项目的“范围与资料”，点击右上角小型 Audit Master 按钮。弹窗只列出当前项目已经上传的文件及 Helix 原子条目，评估师决定选哪些来源，并逐项确认 Direct、Corroborating 或 Index-only。</p>
+        <div class="checklist">
+          <article><strong>四遍分析</strong><p>Qualified flow、Agree &amp; summarize、Divide &amp; control 和 Trace consistency 同时执行；正式范围在本次分析中不可扩张。</p></article>
+          <article><strong>受控传输</strong><p>启用在线 AI 时只发送所选摘要、定位、正式范围和现有候选，不发送原始文件 Blob。关闭开关则完全使用本地专业规则。</p></article>
+          <article><strong>证据回流</strong><p>结果保存为 AI Review Opinion，并强制标记 Index-only；同时进入 AI 评审历史和独立参考版本。</p></article>
+          <article><strong>人工门禁</strong><p>回流意见不会自动修改人工评分、建立虚假直接证据、批准基线、关闭问题或声明认证结论。</p></article>
+        </div>
+      </section>
+
+      <section id="ai-review">
+        <h2>评定结果：BP + GP AI 初稿与人工改定</h2>
+        <p>AI 预评估完成后自动进入“AI 评审”。该页沿用当前评估版本中的 BP / GP 数据，不复制结果，因此评分、证据链、人工复核、PA 聚合和版本记录保持一致。v7.4 还可导入 `auditflow-ai-review/v1` 文件，所有导入内容始终作为待审核候选。</p>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>先看范围和阻塞</h3><p>顶部摘要显示范围内 BP / GP 数量、人工复核进度、证据充分项和项目候选等级。项目等级受 PA 否决门禁约束，不由简单平均分决定。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>按过程和 PA 核对</h3><p>结果按“过程 → PA 1.1 / PA 2.1 / PA 2.2 → BP / GP”分组。每行显示 AI 候选、置信度、Direct / Corroborating / Index-only 数量、主要缺口和当前人工评分。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>复核并留下改定依据</h3><p>评分下拉用于快速改定，并立即标记为“人工改定”。需要完整复核时打开“核对详情”，核实标准意图、证据定位、四遍跨过程分析和关闭证据，再填写人工复核意见与 O/W/R。</p></div></article>
+          <article class="step"><span class="step-no">04</span><div><h3>受控运行 Codex 参考评审</h3><p>只有 Consolidated 已定稿记录会进入 Codex 上下文。模型只能返回正式范围内已知 BP / GP 候选；无证据不得编造事实，范围外过程只形成“关联观察·不评级”。每次运行保存独立版本且不覆盖人工结论。</p></div></article>
+        </div>
+        <div class="callout warning"><strong>评分边界：</strong>AI 初稿和 Codex 候选均不是正式评估结果。关联证据不能替代目标过程直接证据；F 必须由评估师依据多来源、代表性、受控且稳定闭环的直接证据确认。</div>
+      </section>
+
+      <section id="support-subproject">
+        <h2>MAN.3 / SUP.8 支持域专项子项目</h2>
+        <p>该功能适用于原项目范围较大、但当前只需要核查 MAN.3 项目管理或 SUP.8 配置管理材料的场景。它把问题文件作为筛选入口，建立一个保留父项目上下文的轻量评估工作区；专项结果必须回到父项目完成正式证据核实和结论定稿。</p>
+        <div class="callout"><strong>专项边界：</strong>子项目只评估上传文件中实际出现的 Issue。它不补齐未出现的 BP/GP，不声明过程能力等级；Action Plan 或问题记录是问题佐证，不等于目标过程直接实施证据。</div>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>从项目列表生成</h3><p>在“审核总览”或“ASPICE 评估”项目列表找到父项目，点击图层图标“生成 MAN.3 / SUP.8 专项子项目”。选择过程和需要继承的证据后，创建并进入子项目证据页。父项目已有 MAN.3 / SUP.8 Action Plan 问题会自动带入。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>上传问题和支持材料</h3><p>上传 DOCX、DOC、PDF、XLSX、CSV、JSON、HTML 或粘贴文本。系统按来源文件折叠展示，并把需求 ID、观察、段落和表格行拆为文档条目；逐条评审中可调整 SYS/SWE/MAN/SUP 分类及直接、佐证、仅索引角色。对旧版 DOC 或解析警告文件，必须打开原件核对页码与表格。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>识别文件中的实际 Issue</h3><p>点击“识别问题并配对 BP/GP”。系统从 Issue 编号、过程域、严重度/状态、原始问题、ASPICE 审核说明、风险、行动和最小关闭证据中建立问题记录；选择 MAN.3/SUP.8 后，其他过程的问题被排除，不生成无来源评定项。</p></div></article>
+          <article class="step"><span class="step-no">04</span><div><h3>核对 AI 初稿</h3><p>打开“评定结果（BP + GP · AI 初稿，可复核改定）”。每一行对应一个来源 Issue，查看候选 BP/GP、AI 候选评分、问题来源定位、证据角色、风险、访谈问题和最小关闭证据。使用“核对详情”改定评分、理由、引用和 O/W/R，保存后才算人工复核。</p></div></article>
+          <article class="step"><span class="step-no">05</span><div><h3>一键回写父项目</h3><p>当所有专项评定项均已人工复核时，“一键回写原项目”才可用。回写会追加父项目草稿弱项和候选追溯；新增证据会复制并建立来源映射。父项目已有评分、人工复核状态和历史版本不会被候选结论覆盖。</p></div></article>
+          <article class="step"><span class="step-no">06</span><div><h3>父项目完成正式 ASPICE 流程</h3><p>回写后继续在父项目中核对目标过程直接证据、评估师记录、访谈、版本/基线、状态、批准和关闭有效性。专项子项目标记“已回写”只说明数据移交完成，不代表问题已关闭，也不代表 MAN.3/SUP.8 达成目标能力等级。</p></div></article>
+        </div>
+        <h3>问题驱动评定的证据护栏</h3>
+        <table class="feature-table">
+          <thead><tr><th>证据作用</th><th>可以证明什么</th><th>不能替代什么</th></tr></thead>
+          <tbody>
+            <tr><td>Direct</td><td>目标过程内、可定位、直接证明活动执行及结果的受控工作产品或记录。</td><td>不能只用文件名、模板或问题清单证明完整实施。</td></tr>
+            <tr><td>Corroborating</td><td>上下游、MAN.3、SUP.1、SUP.8、SUP.9、SUP.10 的接口、一致性、配置、问题或变更佐证。</td><td>不能替代当前目标过程的直接实施证据。</td></tr>
+            <tr><td>Index-only</td><td>文档、对象或链接存在。</td><td>不能证明内容、执行结果、评审批准或关闭有效性。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="evidence">
+        <h2>证据与双向追溯</h2>
+        <p>有效证据既要说明工作产品存在，也要说明相关过程已经实施并产生结果。对需求、设计、验证、问题与变更，应检查一致性和双向追溯是否持续成立。</p>
+        <div class="role-grid">
+          <article class="direct"><h3>Direct 直接证据</h3><p>正式范围内目标过程的可定位事实，直接证明某项 BP 或 GP 已执行。例如受控评审记录、可复现的测试结果、已批准的基线或已执行的活动记录。</p></article>
+          <article class="corroborating"><h3>Corroborating 佐证</h3><p>说明接口、依赖、一致性、配置、问题、变更或治理关系的相关信息。它提高可信度，但不能替代目标过程的直接实施证据。</p></article>
+          <article class="index"><h3>Index-only 仅索引</h3><p>仅证明文档、对象或链接存在。尚未检查内容、执行结果或定位时，应保持为索引，不应用它单独支持充分实施的结论。</p></article>
+        </div>
+        <div class="checklist">
+          <article><strong>定位性</strong><p>至少保留文件、表、章节、对象 ID、版本或记录时间等能让评估师回到原始事实的信息。</p></article>
+          <article><strong>一致性</strong><p>检查输入、工作产品、评审结果和后续使用对象是否匹配；发现矛盾应形成观察、弱项或补证请求。</p></article>
+          <article><strong>双向追溯</strong><p>从需求到设计、实现和验证结果，也从结果或问题回到需求和受影响工作产品，均应可验证。</p></article>
+          <article><strong>变更影响</strong><p>工作产品变化应能关联变更请求、影响分析、授权、实施、验证和关闭状态。</p></article>
+        </div>
+      </section>
+
+      <section id="support">
+        <h2>跨过程闭环</h2>
+        <p>对正式范围内过程的直接证据评级，不应被关联过程取代；但评估师需要利用下列过程检查管理、质量、配置、问题与变更闭环是否可信。</p>
+        <div class="support-grid">
+          <article><strong>MAN.3</strong><span>项目管理</span><p>范围、生命周期、可行性、计划、资源、接口、监控、纠正与状态沟通。</p></article>
+          <article><strong>SUP.1</strong><span>质量保证</span><p>独立性、质量准则、工作产品与过程保证、不符合项解决和升级。</p></article>
+          <article><strong>SUP.8</strong><span>配置管理</span><p>配置项、属性、控制、基线、状态、完整性、备份与恢复。</p></article>
+          <article><strong>SUP.9</strong><span>问题解决</span><p>问题记录、根因和影响、解决、验证、关闭、状态与趋势。</p></article>
+          <article><strong>SUP.10</strong><span>变更请求</span><p>变更登记、影响分析、授权、实施验证、追溯和关闭。</p></article>
+        </div>
+        <div class="callout"><strong>记录方式：</strong>跨过程观察应明确来源过程、目标过程、关系类型、证据编号、已支持的事实、缺口或风险，以及需要的后续证据或访谈问题。范围外过程只作为非评级观察呈现。</div>
+      </section>
+
+      <section id="security-audits">
+        <h2>功能安全与网络安全审核</h2>
+        <p>从顶部“自定义审核”选择内置方案。两类安全审核采用同一套六阶段交互，但审核问题、工作产品和生命周期范围分别依据 ISO 26262:2018 与 ISO/SAE 21434:2021 的项目活动组织。</p>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>范围</h3><p>确认适用标准、项目/Item、生命周期阶段、组织边界、供应商接口、审核目标和排除项。未纳入范围的支持关系只形成关联观察。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>计划</h3><p>为审核活动指定 Lead Assessor、Assessor 和 Data Logger，明确独立复核、访谈、样本、时间、输入输出和升级路径。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>证据</h3><p>上传 DOCX、DOC、PPTX、XLSX、PDF、CSV、JSON、HTML 或粘贴文本，核对作用域、抽取内容和定位。旧版 DOC 可能丢失表格与页码，需回到原件复核。</p></div></article>
+          <article class="step"><span class="step-no">04</span><div><h3>AI 分析</h3><p>按审核问题匹配 Direct、Corroborating 与 Index-only，生成八档候选、证据充分性、缺口、访谈问题、O/W/R 和最小关闭证据。</p></div></article>
+          <article class="step"><span class="step-no">05</span><div><h3>人工复核</h3><p>评估师打开每一项核对标准意图、原始证据、跨过程关系和未证明事项，必要时改定评分并留下理由、引用和发现。</p></div></article>
+          <article class="step"><span class="step-no">06</span><div><h3>关闭</h3><p>全部项目已人工复核、证据充分且弱项受控关闭后，由 Lead Assessor 执行关闭；系统记录操作人、时间和协作修订号。</p></div></article>
+        </div>
+        <div class="checklist">
+          <article><strong>功能安全重点</strong><p>总体/项目安全管理、Item Definition、HARA、FSC/TSC、系统/硬件/软件安全开发、V&V、配置与变更、供应商管理、生产发布和 Safety Case。</p></article>
+          <article><strong>网络安全重点</strong><p>治理与能力、项目 Cybersecurity Plan、职责与培训、TARA、Cybersecurity Concept、产品开发与验证、持续监控、漏洞/事件/更新管理、发布和 Cybersecurity Case。</p></article>
+          <article><strong>直接证据</strong><p>需要可定位内容证明活动已执行及结果已评审、批准、配置受控或验证完成；仅有模板、目录或文件名不构成充分实施证据。</p></article>
+          <article><strong>支持闭环</strong><p>项目管理、质量保证、配置、问题和变更信息用于核对责任、状态、影响和关闭一致性，但不能替代目标审核项的直接证据。</p></article>
+        </div>
+        <div class="callout warning"><strong>方法边界：</strong>内置模板用于内部审核准备和证据复核，不自动声明 ISO 26262 或 ISO/SAE 21434 合规、认证或独立评估结论。</div>
+      </section>
+
+      <section id="functions">
+        <h2>功能操作索引</h2>
+        <p>下表覆盖 AuditFlow 的主要入口、用途和推荐操作顺序。正式范围、人工复核和数据边界对所有功能均适用。</p>
+        <table class="feature-table">
+          <thead><tr><th>功能</th><th>入口</th><th>推荐操作</th></tr></thead>
+          <tbody>
+            <tr><td>审核总览</td><td>顶部“审核总览”</td><td>浏览项目状态、证据和复核进度；用作评估资源和阻塞项的管理看板。</td></tr>
+            <tr><td>ASPICE 评估</td><td>顶部“ASPICE 评估”</td><td>新建项目，明确 PAM、目标等级和正式范围；进入九阶段工作流完成评估。</td></tr>
+            <tr><td>自定义审核</td><td>顶部“自定义审核”</td><td>选择功能安全、网络安全或组织方案，按六阶段工作流上传材料、运行分析并逐项人工复核。</td></tr>
+            <tr><td>标准知识库</td><td>更多 → ASPICE 标准知识库</td><td>查看和维护 PAM、过程 BP、通用实践 GP、审核要素、评分规则和报告输出配置。</td></tr>
+            <tr><td>专业工具</td><td>更多</td><td>打开原工作区、专业能力或关联工具。使用外部工具所得材料仍需按本项目范围重新登记和判定。</td></tr>
+            <tr><td>账户与角色</td><td>设置 → 账户与角色</td><td>维护报告签署、记录创建人与职责边界。仅 Lead Assessor 可关闭评估和确认 PA。</td></tr>
+            <tr><td>本机单用户与项目设置</td><td>设置 → 账户与项目</td><td>当前档案固定为 Administrator；创建项目后可编辑项目名称、受评组织、评估范围、产品/项目、PAM 和目标等级。</td></tr>
+            <tr><td>Codex / Virtual Key</td><td>设置 → Codex / Virtual Key</td><td>仅在组织授权后配置企业网关与本机服务会话中的 Virtual Key；不将密钥写入工作区。</td></tr>
+            <tr><td>AI / MCP</td><td>设置 → AI / MCP</td><td>启用或检查本机 AI 服务；模型不可用时保留本地规则和人工评估工作流。</td></tr>
+            <tr><td>Helix 表格解析</td><td>设置 → Helix 表格解析</td><td>设置唯一标识与字段识别策略，导入后核对解析结果、范围和原始文件定位。</td></tr>
+            <tr><td>反馈建议</td><td>设置 → 反馈建议</td><td>记录功能、页面和改进建议，条目保存在本地工作区并可按需删除。</td></tr>
+            <tr><td>回收站</td><td>设置 → 回收站</td><td>恢复误删项目；彻底删除不可撤销，应先导出工作区备份。</td></tr>
+            <tr><td>数据与隐私</td><td>设置 → 数据与隐私</td><td>导出本地备份、恢复演示数据、调整证据文本保留策略和检查本地数据说明。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="collaboration">
+        <h2>本机单用户与项目设置</h2>
+        <p>v9.6.0 将扩展固定为单机工作区：登录只保存本机姓名和邮箱，所有档案均为 Administrator，不启用多人编辑、成员切换、编辑锁、远端事件或云端项目同步。</p>
+        <table class="feature-table">
+          <thead><tr><th>本机权限</th><th>可执行操作</th><th>边界</th></tr></thead>
+          <tbody>
+            <tr><td>Administrator</td><td>创建、编辑、导入、分析、复核、基线、关闭和导出本机项目</td><td>正式评级仍须由评估师依据证据链负责</td></tr>
+            <tr><td>CEP 授权档案</td><td>在获授权邮箱登录时查看完整 CEP XP ASPICE CL2 过程评估与整改项目</td><td>邮箱匹配不区分大小写，仅限三个批准地址</td></tr>
+            <tr><td>其他本机档案</td><td>查看和完整编辑本机默认项目，并可创建新项目</td><td>不会发现 CEP 专属项目</td></tr>
+          </tbody>
+        </table>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>建立本机档案</h3><p>输入姓名和邮箱即可进入本机工作区；密码、Microsoft 身份和远端服务不会参与登录。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>创建和编辑项目</h3><p>在“ASPICE 评估”创建项目；完成后可修改项目名称、受评组织、评估范围、产品/项目、PAM、目标等级和评估元数据。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>使用本机证据</h3><p>项目、证据、评分、人工复核和导出保存在当前浏览器工作区；Helix 和 Codex bridge 仅在用户主动启用时连接本机服务。</p></div></article>
+        </div>
+        <div class="callout warning"><strong>当前状态：</strong>v9.6.0 不提供网站部署、ECS / MySQL、Microsoft Entra、多人协作或远端项目同步；本页面描述的是浏览器内的本机工作区。</div>
+      </section>
+
+      <section id="close">
+        <h2>关闭与报告</h2>
+        <p>关闭动作应当发生在评估结论已经可追溯、开放问题已处置并且质量门通过之后。关闭不是报告导出的快捷入口，而是评估状态的正式转换。</p>
+        <div class="steps">
+          <article class="step"><span class="step-no">01</span><div><h3>完成逐项人工复核</h3><p>确认每个范围内 BP / GP 的正式评级、证据充分性、引用定位和评分理由。AI 候选、未确认追溯和草稿记录不能替代人工复核。</p></div></article>
+          <article class="step"><span class="step-no">02</span><div><h3>处理质量门与弱项</h3><p>关闭或受控处置证据不足、未处理 Guideline / TAA Broken、未定稿记录和开放弱项；验证 SUP.9 / SUP.10 关联的关闭结果。</p></div></article>
+          <article class="step"><span class="step-no">03</span><div><h3>生成受控报告</h3><p>导出前复查正式范围过滤、评级矩阵、发现和跨过程观察。Word 文档中的目录字段可在打开后使用 Ctrl+A、F9 刷新页码。</p></div></article>
+        </div>
+      </section>
+
+      <section id="privacy">
+        <h2>本地数据与 AI</h2>
+        <p>AuditFlow 采用本地单机工作流：项目、评分、记录、Administrator 档案和设置保存在浏览器本地工作区，附件 Blob 位于 IndexedDB，证据文件在浏览器中解析。v9.6.0 不启用服务器协作同步。</p>
+        <div class="checklist">
+          <article><strong>最小化传输</strong><p>只有在显式配置企业网关和 AI 服务后，才向该服务发送复核所需的评估上下文。</p></article>
+          <article><strong>会话密钥</strong><p>Virtual Key 仅保留在本机服务进程内存中，不写入浏览器存储、扩展包或报告。</p></article>
+          <article><strong>敏感项目</strong><p>在“数据与隐私”关闭证据文本保留；导出前按组织数据分类规则复查报告内容。</p></article>
+          <article><strong>先备份再清理</strong><p>恢复演示数据或彻底删除项目前，先导出本地工作区，保留可恢复的审计轨迹。</p></article>
+        </div>
+      </section>
+
+      <section id="faq">
+        <h2>常见问题</h2>
+        <div class="faq">
+          <details><summary>为什么关联过程证据不能提高目标过程的评级？</summary><p>它只能支持接口、配置、治理、问题或变更关系。目标过程的 BP / GP 必须由目标过程内可定位的直接证据来证明已经实施。</p></details>
+          <details><summary>为什么有文件仍然显示证据不足？</summary><p>文件索引不能证明内容、执行或结果。请检查是否能定位到相关指标、是否有版本/基线、执行记录、评审结论、验证结果和关闭信息。</p></details>
+          <details><summary>什么时候使用 AI 评审？</summary><p>在证据已解析、评估师记录已初步完成后，用它生成候选、发现建议和访谈问题。它不取代评估师的范围判断、证据判定和正式评级。</p></details>
+          <details><summary>审核员现在可以在不同电脑上同时修改吗？</summary><p>不能。v9.6.0 是单机工作区，不提供多人编辑、项目成员、编辑锁、事件轮询或跨电脑同步。</p></details>
+          <details><summary>CL3 为什么不能在本地引擎中直接给结论？</summary><p>CL3 需要评估组织标准过程及其在项目中的部署、能力、资源和监控。AuditFlow 明确将 GP 3.x 的正式评级留给组织批准的评估方法。</p></details>
+        </div>
+      </section>
+
+      <footer>基于 Automotive SPICE 4.0 评估方法，以及 ISO 26262:2018 和 ISO/SAE 21434:2021 项目生命周期审核主题编写；工具输出必须由具备职责和独立性的审核员复核。<a class="back-top" href="#overview">返回顶部</a></footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+﻿CM Audit (AGS Platform)
+
+
+
+
+
+Project Name	AGS Platform
+Release Identification		Audit Date		Auditor	
+Participants	Satya Gavara, Harishkumar M, Xuanjun Zhao, Anne q Liu, ZhiWei Wu
+Type	Result	Remark/ Details of NOK Findings	Helix Ticket No.	Date of Follow up	
+	OK	NOK	NA				
+FCA	OK						
+PCA	OK						
+CLA	OK						
+Remark:
+
+
+
+
+
+
+
+Final Result	 
+WRITTEN BY	VERIFICATION	APPROVAL
+ Signature	Signature	Signature
+		
+Function	Function	Function
+ 	 	 	 
+Date	Date 	Date
+ 	 	 
+
+FUNCTIONAL CONFIGURATION AUDIT (FCA) 
+
+FCA in Configuration Management audit is used to verify that all project artifacts—including requirements, code, tests, and supporting documents—are approved, traceable, properly versioned, and controlled as per the CM Plan. It also ensures consistency between test plans, reports, and requirements, confirms defect resolution and regression testing, and checks that all actions from reviews or audits are closed, supporting overall configuration integrity and ASPICE compliance.
+
+	Check Item	Evidence	OK	NOK	NA	Remark/ Details of findings for NOK
+1	Are System Requirements Approved?					
+2	Are SW/HW Requirements Approved?					
+3	Do the requirements documents state the requirements applicable for current version of the system ?					
+4	Are there evidences that all system requirements can be traced to the source code, test procedures, and test results?
+
+Hint: check all the trace links with sampling technique					
+5	Are all associated documentation placed under CM control in accordance with the CM Plan?					
+6	Are the QAC analyses and unit tests reports available?					
+7
+	Are all allocated System requirements validated (with success)?					
+8	Are all allocated SW/HW requirements tested (with success)?					
+9	Is the system/software/hardware test plan consistent with those applicable requirements?			.		
+10	Is the system/software/hardware test report consistent with the test plan?					
+11	Is the system/software/hardware test report free of known defects?					
+12	Are all the system/ software/ hardware items  traced in the test documentation?					
+13	Are all the actions coming from the review, audit, code inspection,  progress meeting,  etc. closed?					
+14	Is there evidence of regression testing  (in case defects were found) ?					
+15	Does the test report identify the proper version of  the system under test?			.		
+	Total	15	0	0	
+ 
+CONFIGURATION LIBRARY AUDIT (CLA)
+
+This audit is to ensure the configuration library is correctly established and all configuration items are retained properly at the correct location.
+
+	Check Item	Evidence	OK	NOK	NA	Remark/ Details of findings for NOK
+1	Are the folders and directories defined according to the requirements?					
+2.	Are all the configuration items in the correct locations, as specified in the CM Plan?					
+3	Are all the naming format, revision control and history of change of CM items done according to defined instruction?					
+4	Are access right of CM tools defined, controlled and consistent？					
+5	Is the Source code versioned and stored in the correct location inside the SVN as specified in the CM plan?					
+6	Are the Release Tag created with the proper name as specified in the CM plan? 					
+	Total	4	0	0	
+

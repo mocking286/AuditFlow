@@ -1,0 +1,43 @@
+/* AuditFlow v9.4.2: independent Trace relations scroll region. */
+.trace-link-list-v81 {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #8ba6bb transparent;
+}
+.trace-link-list-v81::-webkit-scrollbar { width: 10px; }
+.trace-link-list-v81::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: #8ba6bb; background-clip: padding-box; }
+.trace-link-list-v81::-webkit-scrollbar-thumb:hover { background-color: #48728f; }
+
+/* v9.6: keep the local Helix importer as the first, unmistakable Scope action. */
+.helix-import-featured {
+  border: 2px solid #0c66e4;
+  background: #edf6ff;
+  box-shadow: 0 4px 14px rgba(12, 102, 228, 0.14);
+  margin: 0 0 16px;
+}
+.helix-import-featured > header {
+  border-bottom-color: #b9d6f7;
+}
+.helix-import-featured h2 {
+  color: #074b9a;
+}
+.local-workspace-mode {
+  gap: 9px;
+  min-width: 224px;
+}
+.local-workspace-mode > span:first-child {
+  color: #0c66e4;
+}
+.local-workspace-mode strong,
+.local-workspace-mode small {
+  display: block;
+}
+@media (max-width: 1120px) {
+  .trace-link-list-v81 { flex: initial; max-height: 620px; }
+  .helix-import-featured { margin-left: 0; margin-right: 0; }
+}

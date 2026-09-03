@@ -1,0 +1,33 @@
+html.auth-pending .app-shell { visibility: hidden; }
+.auth-gate { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 32px 20px; color: var(--ink); background: var(--bg); }
+.auth-gate[hidden] { display: none; }
+.auth-panel { position:relative; width: min(100%, 440px); padding: 34px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel); box-shadow: var(--shadow-lg); }
+.auth-language-toggle { position:absolute; top:14px; right:14px; min-width:62px; min-height:30px; padding:0 9px; border:1px solid var(--line-strong); border-radius:5px; color:var(--ink); background:var(--bg); font-size:10px; font-weight:800; cursor:pointer; }
+.auth-language-toggle:hover { border-color:var(--teal); color:var(--teal); }
+.auth-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 42px; }
+.auth-brand strong { display: block; font-size: 19px; }
+.auth-brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+.auth-mark { position: relative; width: 38px; height: 38px; display: inline-grid; place-items: center; border: 1px solid #111; border-radius: 8px; background: #f48221; overflow: hidden; }
+.auth-mark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.auth-heading h1 { margin: 8px 0 8px; font-size: 26px; line-height: 1.2; letter-spacing: 0; }
+.auth-heading p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.auth-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin: 28px 0 20px; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: color-mix(in srgb, var(--panel) 84%, var(--line)); }
+.auth-tabs button { min-height: 34px; border: 0; border-radius: 4px; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; font-weight: 750; }
+.auth-tabs button.active { color: var(--ink); background: var(--panel); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.auth-form { display: grid; gap: 15px; }
+.auth-form label { display: grid; gap: 7px; color: var(--ink); font-size: 11px; font-weight: 700; }
+.auth-form input { width: 100%; height: 42px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 5px; outline: 0; color: var(--ink); background: var(--bg); }
+.auth-form input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 18%, transparent); }
+.auth-submit { min-height: 42px; margin-top: 3px; border: 1px solid var(--green-emphasis, var(--teal)); border-radius: 5px; color: #fff; background: var(--green-emphasis, var(--teal)); cursor: pointer; font-size: 12px; font-weight: 800; }
+.auth-submit:disabled { cursor: wait; opacity: .65; }
+.auth-error { margin: -3px 0 0; padding: 10px 11px; border: 1px solid color-mix(in srgb, var(--red) 45%, var(--line)); color: var(--red); background: color-mix(in srgb, var(--red-soft) 70%, var(--panel)); font-size: 11px; line-height: 1.5; }
+.auth-note { margin: 23px 0 0; color: var(--muted-2); font-size: 10px; line-height: 1.6; }
+.auth-account-button { max-width: 190px; min-height: 32px; padding: 0 10px; overflow: hidden; border: 1px solid var(--line); border-radius: 5px; color: var(--muted); background: var(--panel); cursor: pointer; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.auth-account-button:hover { color: var(--ink); border-color: var(--line-strong); }
+.auth-account-button[hidden] { display: none; }
+.auth-account-menu { position: absolute; top: calc(100% + 6px); right: 0; z-index: 120; display: grid; gap: 4px; min-width: 220px; padding: 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); box-shadow: var(--shadow-lg); }
+.auth-account-menu strong { padding: 4px 7px 8px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 10px; overflow-wrap: anywhere; }
+.auth-account-menu button { min-height: 30px; padding: 0 8px; border: 0; border-radius: 4px; color: var(--ink); background: transparent; text-align: left; cursor: pointer; font-size: 10px; }
+.auth-account-menu button:hover { background: var(--teal-soft); }
+.top-actions { position: relative; }
+@media (max-width: 640px) { .auth-gate { padding: 16px; } .auth-panel { padding: 26px 21px; } .auth-brand { margin-bottom: 30px; } .auth-account-button { max-width: 120px; } }
