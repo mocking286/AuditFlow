@@ -1,5 +1,18 @@
 # AuditFlow v9.6.0
 
+## GitHub Web Release
+
+The canonical source checkout is `/Users/maplemock/Documents/GitHub/AuditFlow`, and its `origin` remote is `https://github.com/mocking286/AuditFlow.git` on `main`. The static web and Manifest V3 extension package can be checked and packaged without Node dependencies:
+
+```bash
+bash scripts/release-web.sh check
+bash scripts/release-web.sh package
+```
+
+To commit and push the latest web client from a trusted local session, use the macOS launcher `scripts/commit-and-push-web.command`, or run `RELEASE_MESSAGE="fix: update web client" bash scripts/release-web.sh push`. GitHub credentials remain in GitHub CLI or the operating system credential manager; they are never stored in the repository.
+
+Every push and pull request runs the same static checks in the `AuditFlow Web Release` workflow and uploads a versioned ZIP plus SHA-256 checksum. Creating a GitHub Release is a separate manual workflow dispatch with `publish=true`.
+
 AuditFlow 是面向 Automotive SPICE、ISO 26262 功能安全和 ISO/SAE 21434 网络安全审核的本地单机工作台，覆盖范围、计划、证据解析、AI 候选、人工复核、项目元数据编辑、关闭与报告。
 
 v9.6.0 removes the remote login and collaboration path that could fail with a cross-origin request rejection. Authentication is a local profile (name and email only), every profile is an Administrator, and projects remain editable in the browser workspace. The full `CEP XP ASPICE CL2 过程评估与整改` project is visible only for the three approved Johnson Electric email addresses; all other profiles receive the editable local default project.

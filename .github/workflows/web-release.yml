@@ -1,0 +1,66 @@
+name: AuditFlow Web Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Create a GitHub release after validation
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Verify static web release
+        run: node scripts/verify-web-release.mjs .
+      - name: Build clean extension package
+        run: bash scripts/release-web.sh package
+      - name: Upload extension package
+        uses: actions/upload-artifact@v4
+        with:
+          name: auditflow-extension-${{ github.sha }}
+          path: |
+            dist/AuditFlow-v*-extension.zip
+            dist/AuditFlow-v*-extension.zip.sha256
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish == true
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Build release package
+        run: bash scripts/release-web.sh package
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("manifest.json", "utf8")).version)')
+          gh release create "AuditFlow-v${version}-extension" \
+            "dist/AuditFlow-v${version}-extension.zip" \
+            "dist/AuditFlow-v${version}-extension.zip.sha256" \
+            --title "AuditFlow v${version} extension" \
+            --generate-notes

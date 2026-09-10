@@ -80,3 +80,15 @@ start-auditflow-codex-bridge.cmd
 - 记录附件 Blob：IndexedDB。
 - 报告与备份：本机受控输出目录（仅在 AI 服务可用时生成）。
 - Helix Bridge：仍可使用 helix-bridge.ps1 或 start-helix-bridge.cmd；其状态独立于 AI 服务。
+# Release from the linked GitHub repository
+
+For maintainers, the repository is already linked to `mocking286/AuditFlow`:
+
+```text
+origin  https://github.com/mocking286/AuditFlow.git
+branch  main
+```
+
+Run `bash scripts/release-web.sh check` before changing release files, then `bash scripts/release-web.sh package` to produce `dist/AuditFlow-v<manifest.version>-extension.zip` and its checksum. The one-click macOS command is `scripts/commit-and-push-web.command`; it requires a commit message and pushes only after the validation and package checks pass. GitHub CLI authentication (`gh auth login`) or the system Git credential manager supplies the remote credentials. Do not put tokens, Virtual Keys, customer evidence, browser profiles, or local workspace data in the repository.
+
+The GitHub Actions workflow validates all pushes and pull requests. Use the workflow's manual dispatch and set `publish` to `true` only when the validated artifact should become a GitHub Release.

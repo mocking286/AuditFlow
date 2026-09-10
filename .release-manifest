@@ -1,0 +1,15 @@
+# Runtime and documentation assets included in the clean Edge/web package.
+manifest.json
+*.html
+*.js
+*.mjs
+*.css
+*.md
+LICENSE
+icons/
+vendor/
+templates/
+monitor/
+legacy-doc-text/
+reference-models/
+start-auditflow-codex-bridge.cmd

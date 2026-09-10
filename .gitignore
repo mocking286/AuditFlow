@@ -22,3 +22,15 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Generated release output and local credentials/data.
+.idea/
+dist/
+.DS_Store
+.env
+.env.*
+*.sqlite
+*.sqlite3
+*.db
+browser-data/
+workspace-data/
