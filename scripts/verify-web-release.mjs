@@ -115,8 +115,8 @@ if (!existsSync(releaseManifestPath)) {
 }
 
 try {
-  const remote = execFileSync('git', ['-C', root, 'remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim();
-  if (remote !== 'https://github.com/mocking286/AuditFlow.git') fail(`origin must target mocking286/AuditFlow.git, got ${remote}`);
+  const remote = execFileSync('git', ['-C', root, 'remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim().replace(/\/+$/, '').replace(/\.git$/, '');
+  if (remote !== 'https://github.com/mocking286/AuditFlow') fail(`origin must target mocking286/AuditFlow.git, got ${remote}`);
 } catch {
   fail('Git origin is not configured');
 }
