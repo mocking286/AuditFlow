@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "product": "JEAuditFlow",
+  "description": "ASPICE 内审桌面工作台（Windows 便携版）与后端服务端发布归档索引。二进制包托管在 GitHub Releases，本文件为机器可读清单。",
+  "repository": "https://github.com/mocking286/AuditFlow",
+  "releasesPage": "https://github.com/mocking286/AuditFlow/releases",
+  "checksumsFile": "released/SHA256SUMS.txt",
+  "assetStorage": "github-release-assets",
+  "assetStorageRationale": "便携包 181MB 超过 GitHub 单文件 100MB push 上限；Git LFS 免费额度仅 1GB 存储/1GB 月流量，约 5 个版本即耗尽。Release 附件免费且单文件上限 2GB。",
+  "updatedAt": "2026-09-22T17:49:20Z",
+  "archiveEpoch": "1.0.0",
+  "releases": [
+    {
+      "version": "4.2.0",
+      "tag": "JEAuditFlow-v4.2.0",
+      "releaseUrl": "https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v4.2.0",
+      "publishedAt": "2026-09-22T13:21:22Z",
+      "archivedAt": "2026-09-22",
+      "notesFile": "released/v4.2.0.md",
+      "notes": "JEAuditFlow 4.2.0 FileAnalyst offline resilience, backend status visibility, English Tree/requirements localization, and shared glossary/findings data contract release.",
+      "sourceManifests": [
+        "artifacts/release-manifest.json",
+        "artifacts/backend-release-manifest.json"
+      ],
+      "assets": [
+        {
+          "file": "JEAuditFlow-4.2.0-Backend.zip",
+          "channel": "backend-server",
+          "platform": "any",
+          "packageType": "backend-server",
+          "capabilityVersion": "12.1.0",
+          "size": 11820872,
+          "sha256": "35d7aea5568f2817f350f65ff93430e9b13f0e107114646fa808510e991e3c09",
+          "builtAt": "2026-09-22T13:22:40Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v4.2.0/JEAuditFlow-4.2.0-Backend.zip"
+        },
+        {
+          "file": "JEAuditFlow-4.2.0-Portable-win-x64.zip",
+          "channel": "windows-portable",
+          "platform": "win-x64",
+          "packageType": "portable",
+          "size": 189562957,
+          "sha256": "193783b0cc8f5f5212c8c3069d502311cd39fb1dac40e2cd5d701e23f38bfc82",
+          "builtAt": "2026-09-22T13:21:22Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v4.2.0/JEAuditFlow-4.2.0-Portable-win-x64.zip"
+        }
+      ]
+    }
+  ]
+}

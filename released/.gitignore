@@ -1,0 +1,12 @@
+# 二进制安装包不入库：一律以 GitHub Release 附件分发。
+# 原因见 released/README.md「为什么二进制不在本目录里」。
+*.zip
+*.7z
+*.exe
+*.msi
+*.dmg
+*.tar.gz
+
+# 发布脚本的临时产物
+.upload-staging/
+*.tmp
