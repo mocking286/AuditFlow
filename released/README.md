@@ -43,6 +43,11 @@ released/
 ## tag 与命名规范
 
 - **tag**：`JEAuditFlow-v<version>`，例如 `JEAuditFlow-v4.2.0`
+  - tag 由 `gh release create --target main` 在创建 Release 时自动创建，因此指向的是**当时默认分支的尖端提交**。
+    由于脚本采用「先上传附件、后提交索引」的顺序（上传失败时不会留下指向空 Release 的坏索引），
+    tag 可能比记录本版元数据的索引提交**早一个提交**。这是刻意的取舍：宁可 tag 位置略旧，也不要出现索引残缺或附件丢失。
+  - 如需精确对应，可在发布后手动 `git tag -f -a <tag> <索引提交> && git push -f origin <tag>`
+    —— 但已公开的 tag 不建议重写，这里仅作说明。
 - **文件名**：`JEAuditFlow-<version>-<channel>.zip`，`channel` 取值 `Portable-win-x64` / `Backend`
 - **发布说明**：`released/v<version>.md`，正文与 GitHub Release 描述保持一致
 - **提交信息**：`release(jeauditflow): v<version>`（遵循仓库既有的 Conventional Commits 风格）
