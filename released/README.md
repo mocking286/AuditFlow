@@ -33,6 +33,8 @@ released/
 
 | 版本 | 发布日期 | 渠道 | 文件 | 大小 | SHA256（前 16 位） | 下载 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 5.55.0 | 2026-10-09 | backend-server | `JEAuditFlow-5.55.0-Backend.zip` | 27.87 MiB | `c3d250d21c5eccdd` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Backend.zip) |
+| 5.55.0 | 2026-10-09 | generic | `JEAuditFlow-5.55.0-Browser-Extension.zip` | 13.07 MiB | `ba0b069e43c45ed5` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Browser-Extension.zip) |
 | 4.2.0 | 2026-09-22 | backend-server | `JEAuditFlow-4.2.0-Backend.zip` | 11.27 MiB | `35d7aea5568f2817` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v4.2.0/JEAuditFlow-4.2.0-Backend.zip) |
 | 4.2.0 | 2026-09-22 | windows-portable | `JEAuditFlow-4.2.0-Portable-win-x64.zip` | 180.78 MiB | `193783b0cc8f5f52` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v4.2.0/JEAuditFlow-4.2.0-Portable-win-x64.zip) |
 

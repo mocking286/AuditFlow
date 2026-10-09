@@ -5,3 +5,5 @@
 # 注意：校验前需先将对应 zip 下载到本目录。
 35d7aea5568f2817f350f65ff93430e9b13f0e107114646fa808510e991e3c09  JEAuditFlow-4.2.0-Backend.zip
 193783b0cc8f5f5212c8c3069d502311cd39fb1dac40e2cd5d701e23f38bfc82  JEAuditFlow-4.2.0-Portable-win-x64.zip
+c3d250d21c5eccdd49dda9f23997259c7bfb2d18ea35aba6330e8d6e93e078ea  JEAuditFlow-5.55.0-Backend.zip
+ba0b069e43c45ed57b6acb652a84aacf6d4f35b0362c84d1c6a42d7a44cc0fd8  JEAuditFlow-5.55.0-Browser-Extension.zip

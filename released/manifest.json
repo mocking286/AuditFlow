@@ -7,9 +7,39 @@
   "checksumsFile": "released/SHA256SUMS.txt",
   "assetStorage": "github-release-assets",
   "assetStorageRationale": "便携包 181MB 超过 GitHub 单文件 100MB push 上限；Git LFS 免费额度仅 1GB 存储/1GB 月流量，约 5 个版本即耗尽。Release 附件免费且单文件上限 2GB。",
-  "updatedAt": "2026-09-22T17:49:20Z",
+  "updatedAt": "2026-10-09T15:54:11Z",
   "archiveEpoch": "1.0.0",
   "releases": [
+    {
+      "version": "5.55.0",
+      "tag": "JEAuditFlow-v5.55.0",
+      "releaseUrl": "https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v5.55.0",
+      "archivedAt": "2026-10-09",
+      "publishedAt": "2026-10-09T15:54:11Z",
+      "notesFile": "/tmp/auditflow-github.J5JYEW/repo/released/v5.55.0.md",
+      "assets": [
+        {
+          "file": "JEAuditFlow-5.55.0-Backend.zip",
+          "channel": "backend-server",
+          "size": 29220651,
+          "sha256": "c3d250d21c5eccdd49dda9f23997259c7bfb2d18ea35aba6330e8d6e93e078ea",
+          "platform": "any",
+          "packageType": "backend-server",
+          "builtAt": "2026-10-09T15:54:11Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Backend.zip"
+        },
+        {
+          "file": "JEAuditFlow-5.55.0-Browser-Extension.zip",
+          "channel": "generic",
+          "size": 13709419,
+          "sha256": "ba0b069e43c45ed57b6acb652a84aacf6d4f35b0362c84d1c6a42d7a44cc0fd8",
+          "platform": "any",
+          "packageType": "generic",
+          "builtAt": "2026-10-09T15:54:11Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Browser-Extension.zip"
+        }
+      ]
+    },
     {
       "version": "4.2.0",
       "tag": "JEAuditFlow-v4.2.0",
