@@ -7,3 +7,6 @@
 193783b0cc8f5f5212c8c3069d502311cd39fb1dac40e2cd5d701e23f38bfc82  JEAuditFlow-4.2.0-Portable-win-x64.zip
 c3d250d21c5eccdd49dda9f23997259c7bfb2d18ea35aba6330e8d6e93e078ea  JEAuditFlow-5.55.0-Backend.zip
 ba0b069e43c45ed57b6acb652a84aacf6d4f35b0362c84d1c6a42d7a44cc0fd8  JEAuditFlow-5.55.0-Browser-Extension.zip
+d74ce9842f24e916d553e5437453b40aa989d67dc918ac707fce6dd999841a00  JEAuditFlow-7.4.0-Backend.zip
+576e7f2ff5a6cb3d0978f93c6221105f862b85f7ba3a1a5e29139dbc7feb076e  JEAuditFlow-7.4.0-Browser-Extension.zip
+91650a515b39d04f730447160cab347667d40eae693755094926aa9de2a8ba8b  JEAuditFlow-7.4.0-Installation-Guide.md

@@ -7,9 +7,49 @@
   "checksumsFile": "released/SHA256SUMS.txt",
   "assetStorage": "github-release-assets",
   "assetStorageRationale": "便携包 181MB 超过 GitHub 单文件 100MB push 上限；Git LFS 免费额度仅 1GB 存储/1GB 月流量，约 5 个版本即耗尽。Release 附件免费且单文件上限 2GB。",
-  "updatedAt": "2026-10-09T15:54:11Z",
+  "updatedAt": "2026-11-06T14:04:50Z",
   "archiveEpoch": "1.0.0",
   "releases": [
+    {
+      "version": "7.4.0",
+      "tag": "JEAuditFlow-v7.4.0",
+      "releaseUrl": "https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v7.4.0",
+      "archivedAt": "2026-11-06",
+      "publishedAt": "2026-11-06T14:04:50Z",
+      "notesFile": "released/v7.4.0.md",
+      "assets": [
+        {
+          "file": "JEAuditFlow-7.4.0-Backend.zip",
+          "channel": "backend-server",
+          "size": 929825,
+          "sha256": "d74ce9842f24e916d553e5437453b40aa989d67dc918ac707fce6dd999841a00",
+          "platform": "any",
+          "packageType": "backend-server",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Backend.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.4.0-Browser-Extension.zip",
+          "channel": "browser-extension",
+          "size": 71920491,
+          "sha256": "576e7f2ff5a6cb3d0978f93c6221105f862b85f7ba3a1a5e29139dbc7feb076e",
+          "platform": "any",
+          "packageType": "browser-extension",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Browser-Extension.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.4.0-Installation-Guide.md",
+          "channel": "installation-guide",
+          "size": 11727,
+          "sha256": "91650a515b39d04f730447160cab347667d40eae693755094926aa9de2a8ba8b",
+          "platform": "any",
+          "packageType": "documentation",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Installation-Guide.md"
+        }
+      ]
+    },
     {
       "version": "5.55.0",
       "tag": "JEAuditFlow-v5.55.0",

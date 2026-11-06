@@ -33,6 +33,9 @@ released/
 
 | 版本 | 发布日期 | 渠道 | 文件 | 大小 | SHA256（前 16 位） | 下载 |
 | --- | --- | --- | --- | --- | --- | --- |
+| 7.4.0 | 2026-11-06 | backend-server | `JEAuditFlow-7.4.0-Backend.zip` | 0.89 MiB | `d74ce9842f24e916` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Backend.zip) |
+| 7.4.0 | 2026-11-06 | browser-extension | `JEAuditFlow-7.4.0-Browser-Extension.zip` | 68.59 MiB | `576e7f2ff5a6cb3d` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Browser-Extension.zip) |
+| 7.4.0 | 2026-11-06 | installation-guide | `JEAuditFlow-7.4.0-Installation-Guide.md` | 0.01 MiB | `91650a515b39d04f` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Installation-Guide.md) |
 | 5.55.0 | 2026-10-09 | backend-server | `JEAuditFlow-5.55.0-Backend.zip` | 27.87 MiB | `c3d250d21c5eccdd` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Backend.zip) |
 | 5.55.0 | 2026-10-09 | generic | `JEAuditFlow-5.55.0-Browser-Extension.zip` | 13.07 MiB | `ba0b069e43c45ed5` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v5.55.0/JEAuditFlow-5.55.0-Browser-Extension.zip) |
 | 4.2.0 | 2026-09-22 | backend-server | `JEAuditFlow-4.2.0-Backend.zip` | 11.27 MiB | `35d7aea5568f2817` | [下载](https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v4.2.0/JEAuditFlow-4.2.0-Backend.zip) |
