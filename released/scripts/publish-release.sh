@@ -94,9 +94,11 @@ sha256_of() {
 human() { awk -v b="$1" 'BEGIN{printf "%.2f MiB", b/1048576}'; }
 channel_of() {
   case "$(basename "$1")" in
-    *Backend*)  echo "backend-server" ;;
-    *Portable*) echo "windows-portable" ;;
-    *)          echo "generic" ;;
+    *Backend*)          echo "backend-server" ;;
+    *Browser-Extension*) echo "browser-extension" ;;
+    *Portable*)         echo "windows-portable" ;;
+    *Installation-Guide*) echo "installation-guide" ;;
+    *)                  echo "generic" ;;
   esac
 }
 
