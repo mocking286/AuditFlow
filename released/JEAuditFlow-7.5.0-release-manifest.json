@@ -1,0 +1,88 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.5.0",
+  "candidate": false,
+  "productRuntimeDeployed": true,
+  "databaseWritesPerformed": true,
+  "generatedAt": "2026-11-10T01:37:11.953Z",
+  "notes": [
+    "INSTALL-7.5-ZH.md",
+    "RELEASE-NOTES-7.5-ZH.md",
+    "VERIFICATION-7.5.0.json"
+  ],
+  "clientCompatibility": {
+    "apiContractVersion": "1.0.0",
+    "backendRange": "7.5.x"
+  },
+  "database": {
+    "name": "jeauditflow_750",
+    "volume": "jeauditflow_750_mysql_data",
+    "port": 43322,
+    "sourceSchemaVersion": "7.4.0",
+    "schemaVersion": 28,
+    "ddlChanged": false
+  },
+  "artifacts": [
+    {
+      "file": "JEAuditFlow-7.5.0-Web-Client.zip",
+      "sizeBytes": 78539682,
+      "sha256": "ebe9d9c9e28900473f42229ad8152c6ef1cd01c50b566485b1130d0bbfa07efa",
+      "kind": "web-client",
+      "integrity": "passed"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Backend.zip",
+      "sizeBytes": 935729,
+      "sha256": "f9975648d1528036d99740470019aecb01c56592e9e1d57bbe493da54a48168e",
+      "kind": "backend-api",
+      "integrity": "passed"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Browser-Extension.zip",
+      "sizeBytes": 71946836,
+      "sha256": "e2ec4d0b4c57cead9d8a2d6b71a224f320bc8d9d9fbfa5142c7640a9e98ecb98",
+      "kind": "browser-extension",
+      "integrity": "passed"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Database.zip",
+      "sizeBytes": 18665,
+      "sha256": "dd3fa98c9e31e603513847bc50e118093841724c3b681ffad6213a8effde4225",
+      "kind": "database-zip",
+      "integrity": "passed"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Database.tar.gz",
+      "sizeBytes": 14507,
+      "sha256": "6b1204b0f7ada254f003bae8e51140699751f55c52ced4863c1a5897412305c5",
+      "kind": "database-tar-gz",
+      "integrity": "passed"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Deployment-Support.zip",
+      "sizeBytes": 140493,
+      "sha256": "068e16076973016668112fd8e78e6fe63fd48102cc31c04ae086e4c4986019b5",
+      "integrity": "passed",
+      "extractedAllowlist": "passed",
+      "syntax": {
+        "bash": "passed",
+        "node": "passed",
+        "swift": "not-run-by-support-packager"
+      },
+      "kind": "deployment-support"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-macOS-Launcher.app.zip",
+      "sizeBytes": 1457217,
+      "sha256": "be2f0cfc29897c010af130df874ebbfc1eb9eb7f6a94f2204fbcfd4a062bc6f2",
+      "integrity": "passed",
+      "kind": "macos-launcher"
+    }
+  ],
+  "releaseStatus": "locally-verified",
+  "releasedAt": "2026-11-10T02:11:14.038Z",
+  "completeInstall": {
+    "file": "JEAuditFlow-7.5.0-Complete-Install.zip",
+    "checksumManifest": "SHA256SUMS.txt"
+  }
+}

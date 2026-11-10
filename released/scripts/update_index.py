@@ -80,6 +80,10 @@ def update_manifest(root: Path, assets, env):
             item.setdefault("packageType", "portable")
         elif item["channel"] == "backend-server":
             item["packageType"] = "backend-server"
+        elif item["channel"] == "browser-extension":
+            item["packageType"] = "browser-extension"
+        elif item["channel"] == "installation-guide":
+            item["packageType"] = "documentation"
         else:
             item.setdefault("packageType", "generic")
         # 首次归档时记录构建时间；重复执行时保留原值，保证幂等，

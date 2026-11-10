@@ -7,9 +7,223 @@
   "checksumsFile": "released/SHA256SUMS.txt",
   "assetStorage": "github-release-assets",
   "assetStorageRationale": "便携包 181MB 超过 GitHub 单文件 100MB push 上限；Git LFS 免费额度仅 1GB 存储/1GB 月流量，约 5 个版本即耗尽。Release 附件免费且单文件上限 2GB。",
-  "updatedAt": "2026-10-09T15:54:11Z",
+  "updatedAt": "2026-11-10T02:13:16.615Z",
   "archiveEpoch": "1.0.0",
   "releases": [
+    {
+      "version": "7.5.0",
+      "tag": "JEAuditFlow-v7.5.0",
+      "releaseUrl": "https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v7.5.0",
+      "archivedAt": "2026-11-10",
+      "publishedAt": "2026-11-10T02:13:16.615Z",
+      "notesFile": "released/v7.5.0.md",
+      "installationNotesFile": "released/INSTALL-7.5-ZH.md",
+      "releaseManifestFile": "released/JEAuditFlow-7.5.0-release-manifest.json",
+      "verificationFile": "released/VERIFICATION-7.5.0.json",
+      "sourceArchiveNotice": "The inherited GitHub source tree is a distribution index, not the accepted local 7.5.0 build. Use the named release assets for installation.",
+      "assets": [
+        {
+          "file": "INSTALL-7.5-ZH.md",
+          "size": 4270,
+          "sha256": "e48b66aa06945533cbba3502eace09df3a57da9f40aedf3e47b6aaa2ee7505ae",
+          "channel": "installation-guide",
+          "platform": "any",
+          "packageType": "documentation",
+          "builtAt": "2026-11-10T01:50:22.119Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/INSTALL-7.5-ZH.md"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Backend.zip",
+          "size": 935729,
+          "sha256": "f9975648d1528036d99740470019aecb01c56592e9e1d57bbe493da54a48168e",
+          "channel": "backend-server",
+          "platform": "any",
+          "packageType": "backend-server",
+          "builtAt": "2026-11-10T01:37:11.732Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Backend.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Browser-Extension.manifest.json",
+          "size": 1655,
+          "sha256": "179fd8c41c28c48df87a12a38fac1ac895f432b27e8ae7a9bcb8a4e48d7ab8aa",
+          "channel": "release-manifest",
+          "platform": "any",
+          "packageType": "manifest",
+          "builtAt": "2026-11-10T01:37:03.164Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Browser-Extension.manifest.json"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Browser-Extension.zip",
+          "size": 71946836,
+          "sha256": "e2ec4d0b4c57cead9d8a2d6b71a224f320bc8d9d9fbfa5142c7640a9e98ecb98",
+          "channel": "browser-extension",
+          "platform": "any",
+          "packageType": "browser-extension",
+          "builtAt": "2026-11-10T01:37:02.929Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Browser-Extension.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Complete-Install.zip",
+          "size": 153079929,
+          "sha256": "b8183a265dba071f18e499ff407ce7dac36f35a74e0db647235b0a25536de019",
+          "channel": "complete-install",
+          "platform": "macos-arm64",
+          "packageType": "complete-install",
+          "builtAt": "2026-11-10T02:11:14.611Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Complete-Install.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Database.tar.gz",
+          "size": 14507,
+          "sha256": "6b1204b0f7ada254f003bae8e51140699751f55c52ced4863c1a5897412305c5",
+          "channel": "database-initialization",
+          "platform": "any",
+          "packageType": "database-initialization",
+          "builtAt": "2026-11-10T01:37:11.843Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Database.tar.gz"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Database.zip",
+          "size": 18665,
+          "sha256": "dd3fa98c9e31e603513847bc50e118093841724c3b681ffad6213a8effde4225",
+          "channel": "database-initialization",
+          "platform": "any",
+          "packageType": "database-initialization",
+          "builtAt": "2026-11-10T01:37:11.821Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Database.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Deployment-Support.manifest.json",
+          "size": 3895,
+          "sha256": "c4b6049b633b2f5cf61ea59043deb6f5326f39f74358925e7b1a33f6c44f5389",
+          "channel": "release-manifest",
+          "platform": "any",
+          "packageType": "manifest",
+          "builtAt": "2026-11-10T01:37:41.321Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Deployment-Support.manifest.json"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Deployment-Support.zip",
+          "size": 140493,
+          "sha256": "068e16076973016668112fd8e78e6fe63fd48102cc31c04ae086e4c4986019b5",
+          "channel": "deployment-support",
+          "platform": "macos-arm64",
+          "packageType": "deployment-support",
+          "builtAt": "2026-11-10T01:37:41.320Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Deployment-Support.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-Web-Client.zip",
+          "size": 78539682,
+          "sha256": "ebe9d9c9e28900473f42229ad8152c6ef1cd01c50b566485b1130d0bbfa07efa",
+          "channel": "web-client",
+          "platform": "any",
+          "packageType": "web-client",
+          "builtAt": "2026-11-10T01:37:07.939Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-Web-Client.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-macOS-Launcher.app.zip",
+          "size": 1457217,
+          "sha256": "be2f0cfc29897c010af130df874ebbfc1eb9eb7f6a94f2204fbcfd4a062bc6f2",
+          "channel": "macos-launcher",
+          "platform": "macos-arm64",
+          "packageType": "application-launcher",
+          "builtAt": "2026-11-10T01:37:53.741Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-macOS-Launcher.app.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.5.0-macOS-Launcher.manifest.json",
+          "size": 1543,
+          "sha256": "15d758661dc550bc7bec0a84c9e9ece60e3e59a9ebebcb5edb712a32470e292d",
+          "channel": "release-manifest",
+          "platform": "any",
+          "packageType": "manifest",
+          "builtAt": "2026-11-10T01:37:53.742Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/JEAuditFlow-7.5.0-macOS-Launcher.manifest.json"
+        },
+        {
+          "file": "RELEASE-NOTES-7.5-ZH.md",
+          "size": 4101,
+          "sha256": "c0096e8fd95b9cf16f066e6bac638a0e67538765d640cce5854cfe393da3f751",
+          "channel": "release-notes",
+          "platform": "any",
+          "packageType": "documentation",
+          "builtAt": "2026-11-10T02:10:55.857Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/RELEASE-NOTES-7.5-ZH.md"
+        },
+        {
+          "file": "SHA256SUMS.txt",
+          "size": 1515,
+          "sha256": "11e88ed866d6e6835a7e180498781f44c4d259519e811f89b558e8d2d9d8dff7",
+          "channel": "checksums",
+          "platform": "any",
+          "packageType": "checksum-manifest",
+          "builtAt": "2026-11-10T02:11:15.192Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/SHA256SUMS.txt"
+        },
+        {
+          "file": "VERIFICATION-7.5.0.json",
+          "size": 4104,
+          "sha256": "ad1d937cd812d56a699af97b22d4b99b180dad68a2f4d962de17280c501e2dcd",
+          "channel": "verification",
+          "platform": "any",
+          "packageType": "verification-evidence",
+          "builtAt": "2026-11-10T02:11:14.039Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/VERIFICATION-7.5.0.json"
+        },
+        {
+          "file": "release-manifest.json",
+          "size": 2638,
+          "sha256": "e03f099901d0dec785c02054552294558d1812f18b85501f9a36fdf453a39115",
+          "channel": "release-manifest",
+          "platform": "any",
+          "packageType": "manifest",
+          "builtAt": "2026-11-10T02:11:14.039Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.5.0/release-manifest.json"
+        }
+      ]
+    },
+    {
+      "version": "7.4.0",
+      "tag": "JEAuditFlow-v7.4.0",
+      "releaseUrl": "https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v7.4.0",
+      "archivedAt": "2026-11-06",
+      "publishedAt": "2026-11-06T14:04:50Z",
+      "notesFile": "released/v7.4.0.md",
+      "assets": [
+        {
+          "file": "JEAuditFlow-7.4.0-Backend.zip",
+          "channel": "backend-server",
+          "size": 929825,
+          "sha256": "d74ce9842f24e916d553e5437453b40aa989d67dc918ac707fce6dd999841a00",
+          "platform": "any",
+          "packageType": "backend-server",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Backend.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.4.0-Browser-Extension.zip",
+          "channel": "browser-extension",
+          "size": 71920491,
+          "sha256": "576e7f2ff5a6cb3d0978f93c6221105f862b85f7ba3a1a5e29139dbc7feb076e",
+          "platform": "any",
+          "packageType": "browser-extension",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Browser-Extension.zip"
+        },
+        {
+          "file": "JEAuditFlow-7.4.0-Installation-Guide.md",
+          "channel": "installation-guide",
+          "size": 11727,
+          "sha256": "91650a515b39d04f730447160cab347667d40eae693755094926aa9de2a8ba8b",
+          "platform": "any",
+          "packageType": "documentation",
+          "builtAt": "2026-11-06T14:04:50Z",
+          "url": "https://github.com/mocking286/AuditFlow/releases/download/JEAuditFlow-v7.4.0/JEAuditFlow-7.4.0-Installation-Guide.md"
+        }
+      ]
+    },
     {
       "version": "5.55.0",
       "tag": "JEAuditFlow-v5.55.0",

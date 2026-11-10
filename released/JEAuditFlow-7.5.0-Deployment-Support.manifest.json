@@ -1,0 +1,111 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.5.0",
+  "packageType": "deployment-support",
+  "generatedAt": "2026-11-10T01:37:41.256Z",
+  "sourceBuild": "7.5.0-final-20261110",
+  "sourceReleaseGeneratedAt": "2026-11-10T01:37:11.953Z",
+  "deploymentTargets": [
+    "macos-native-with-docker-mysql"
+  ],
+  "includesApplicationArchives": false,
+  "containsRuntimeCredentials": false,
+  "usesExplicitAllowlist": true,
+  "applicationArchives": [
+    {
+      "file": "JEAuditFlow-7.5.0-Web-Client.zip",
+      "sizeBytes": 78539682,
+      "sha256": "ebe9d9c9e28900473f42229ad8152c6ef1cd01c50b566485b1130d0bbfa07efa"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Backend.zip",
+      "sizeBytes": 935729,
+      "sha256": "f9975648d1528036d99740470019aecb01c56592e9e1d57bbe493da54a48168e"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Browser-Extension.zip",
+      "sizeBytes": 71946836,
+      "sha256": "e2ec4d0b4c57cead9d8a2d6b71a224f320bc8d9d9fbfa5142c7640a9e98ecb98"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Database.zip",
+      "sizeBytes": 18665,
+      "sha256": "dd3fa98c9e31e603513847bc50e118093841724c3b681ffad6213a8effde4225"
+    },
+    {
+      "file": "JEAuditFlow-7.5.0-Database.tar.gz",
+      "sizeBytes": 14507,
+      "sha256": "6b1204b0f7ada254f003bae8e51140699751f55c52ced4863c1a5897412305c5"
+    }
+  ],
+  "files": [
+    {
+      "source": "local-deploy/DEPLOYMENT-SUPPORT-7.5.md",
+      "file": "README.md",
+      "sizeBytes": 7635,
+      "sha256": "4ec6e85560b41328c804e798f7845852c838a2956e3875dba93beae90156b588",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/jeauditflow-local.sh",
+      "file": "local-deploy/scripts/jeauditflow-local.sh",
+      "sizeBytes": 51927,
+      "sha256": "d6967e3dfdaaf43d7ecb0f755330ba0690fd556cf729ad4c59054b069c7b00cb",
+      "executable": true
+    },
+    {
+      "source": "local-deploy/docker/compose.yaml",
+      "file": "local-deploy/docker/compose.yaml",
+      "sizeBytes": 874,
+      "sha256": "2bd64856e1ca35dca1c26605beb4adb9696439e2c58b6591f6d67403b3357080",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/templates/7.5.local-settings.env.example",
+      "file": "local-deploy/templates/7.5.local-settings.env.example",
+      "sizeBytes": 524,
+      "sha256": "d802d8454e0a1e334b560c6789cd4dc9df9a349d76a774321d67445fe879fd10",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Package.swift",
+      "file": "local-deploy/launcher/Package.swift",
+      "sizeBytes": 402,
+      "sha256": "64a9550118a31a1c9351383213bb406664460a03eb1cb7072ecdf996032d5255",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
+      "file": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
+      "sizeBytes": 59862,
+      "sha256": "30abf4fba439a758a08f278e32d62944c906db14993dfa0ff9021f34f4bfcb54",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/script/build_and_run.sh",
+      "file": "local-deploy/launcher/script/build_and_run.sh",
+      "sizeBytes": 4661,
+      "sha256": "7716d1ee7d48cd3381c7bb2daca8eaedd2c44a8b6b993c1f39f1711f8b147212",
+      "executable": true
+    },
+    {
+      "source": "local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png",
+      "file": "local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png",
+      "sizeBytes": 102001,
+      "sha256": "df90352d97bd99fa2716914bdfe52d14f46df7bf03ab289f98f2941c7a7b77eb",
+      "executable": false
+    }
+  ],
+  "artifact": {
+    "file": "JEAuditFlow-7.5.0-Deployment-Support.zip",
+    "sizeBytes": 140493,
+    "sha256": "068e16076973016668112fd8e78e6fe63fd48102cc31c04ae086e4c4986019b5",
+    "integrity": "passed",
+    "extractedAllowlist": "passed",
+    "syntax": {
+      "bash": "passed",
+      "node": "passed",
+      "swift": "not-run-by-support-packager"
+    }
+  }
+}
