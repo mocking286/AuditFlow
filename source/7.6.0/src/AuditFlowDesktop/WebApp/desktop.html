@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20282d">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https: http://127.0.0.1:* http://localhost:*; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>JEAuditFlow 7.6.0</title>
+  <link rel="icon" href="./icons/icon-32.png">
+  <link rel="stylesheet" href="./ops-ui.css?v=430">
+</head>
+<body>
+  <section class="auth-shell" id="authView">
+    <header class="site-header">
+      <a class="brand-lockup" href="./portal.html" target="_blank" rel="noopener">
+        <img src="./icons/auditflow-mascot.png" alt="">
+        <span><strong>JEAuditFlow</strong><small>版本 7.6.0 · AuditFlow v12.3 · FileAnalyst 6.5.0</small></span>
+      </a>
+      <button class="service-pill" id="backendStatus" type="button" title="检查后端连接" aria-live="polite">后端连接中</button>
+    </header>
+    <main class="auth-main">
+      <section class="auth-panel" aria-labelledby="authTitle">
+        <h1 id="authTitle">邮箱登录</h1>
+        <p id="authSubtitle">登录后进入 JEAuditFlow 本地审核工作台。</p>
+        <div class="segmented" role="tablist" aria-label="工作模式">
+          <button type="button" class="active" id="localModeTab" role="tab" aria-selected="true">本地应用</button>
+          <button type="button" id="cloudModeTab" role="tab" aria-selected="false">云端协作</button>
+        </div>
+        <div class="segmented" id="accountModeTabs" role="tablist" aria-label="账户操作">
+          <button type="button" class="active" id="loginTab" role="tab" aria-selected="true">登录</button>
+          <button type="button" id="registerTab" role="tab" aria-selected="false">注册</button>
+        </div>
+        <p class="form-help" id="localModeHint">本地应用无需登录，数据保存在当前电脑。切换到云端协作后才需要邮箱账户。</p>
+        <form id="authForm" hidden>
+          <div class="form-field">
+            <label for="remoteEndpoint">协作服务器地址</label>
+            <input id="remoteEndpoint" name="remoteEndpoint" type="url" inputmode="url" autocomplete="url" maxlength="512" required>
+          </div>
+          <div class="form-field">
+            <label for="email">邮箱</label>
+            <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required>
+          </div>
+          <div class="form-field">
+            <label for="password">密码</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required>
+          </div>
+          <label class="checkbox-line" id="consentRow" hidden>
+            <input id="telemetryConsent" type="checkbox" checked>
+            <span>允许在本机保存页面、动作、版本和使用时长；不采集审核正文、附件内容、密码或令牌。</span>
+          </label>
+          <button class="btn" id="authSubmit" type="submit">登录</button>
+          <p class="form-message" id="authMessage" role="alert"></p>
+        </form>
+      </section>
+    </main>
+  </section>
+
+  <section class="app-layout" id="appView" hidden>
+    <iframe class="workbench-frame" id="workbenchFrame" title="JEAuditFlow 工作台" src="about:blank"></iframe>
+  </section>
+
+  <div class="modal-backdrop" id="feedbackModal" hidden>
+    <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+      <div class="modal-title-row">
+        <h2 id="feedbackTitle">提交意见</h2>
+        <button class="icon-button" id="feedbackClose" type="button" aria-label="关闭">×</button>
+      </div>
+      <form id="feedbackForm">
+        <div class="form-field">
+          <label for="feedbackCategory">类型</label>
+          <select id="feedbackCategory">
+            <option value="usability">易用性</option>
+            <option value="function">功能建议</option>
+            <option value="defect">问题报告</option>
+            <option value="aspice">ASPICE 内容</option>
+            <option value="general">其他</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="feedbackRating">评分</label>
+          <select id="feedbackRating">
+            <option value="5">5 · 很好</option>
+            <option value="4">4 · 良好</option>
+            <option value="3" selected>3 · 一般</option>
+            <option value="2">2 · 待改进</option>
+            <option value="1">1 · 不满意</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="feedbackMessage">意见</label>
+          <textarea id="feedbackMessage" maxlength="3000" required></textarea>
+        </div>
+        <p class="form-message" id="feedbackMessageStatus" role="alert"></p>
+        <div class="modal-actions">
+          <button class="btn secondary" id="feedbackCancel" type="button">取消</button>
+          <button class="btn" id="feedbackSubmit" type="submit">提交</button>
+        </div>
+      </form>
+    </section>
+  </div>
+  <div class="toast" id="toast" hidden></div>
+  <script defer src="./desktop-shell.js?v=430"></script>
+</body>
+</html>
+

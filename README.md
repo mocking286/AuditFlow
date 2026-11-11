@@ -1,4 +1,31 @@
-# AuditFlow v9.6.0
+# JEAuditFlow 7.6.0
+
+The current JEAuditFlow desktop/server release is **7.6.0**, dated 2026-11-11.
+Download the versioned installation assets from the
+[JEAuditFlow v7.6.0 release](https://github.com/mocking286/AuditFlow/releases/tag/JEAuditFlow-v7.6.0).
+
+The actual public source snapshot for this release is in
+[`source/7.6.0`](source/7.6.0/README-SOURCE.md), including the WebApp and API,
+FileAnalyst, merged JiraFlow Java source, macOS launcher, database schema and
+focused synthetic tests. Installation notes, verification results and artifact
+checksums are in [`releases/7.6.0`](releases/7.6.0).
+
+The Complete Install ZIP contains the matching component archives. Database
+archives provide fresh-install schema and tools; customer assessments, uploaded
+files, account databases, credentials and runtime logs are omitted. The default
+local entry is `http://127.0.0.1:47583/`.
+
+Validation includes 457 WebApp tests and 144 tests run from a fresh extraction
+of the final public source ZIP. AI protocol tests used synthetic providers.
+This release does not claim paid DeepSeek inference, public server deployment,
+Atlassian SSO acceptance, Apple notarization or a clean-Mac installation.
+
+The repository-root extension below is a historical AuditFlow snapshot.
+Use `source/7.6.0` and the versioned JEAuditFlow release assets for this upgrade.
+
+---
+
+# AuditFlow v9.6.0 (Historical Root Snapshot)
 
 ## GitHub Web Release
 

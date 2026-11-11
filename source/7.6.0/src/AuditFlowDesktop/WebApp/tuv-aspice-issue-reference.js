@@ -1,0 +1,2 @@
+/* Public release: controlled assessment datasets are omitted. */
+window.AUDITFLOW_TUV_ISSUE_REFERENCE = {"schemaVersion":"auditflow.tuv-aspice-issue-reference/1","datasetId":"tuv-aspice-audit-issue-ledger-2026","title":"ASPICE issue ledger reference","sourceFile":"","sourceDeck":{"slideCount":0,"issueCount":0,"sourceWorkbook":"","scope":""},"usagePolicy":{"candidateOnly":true,"trainingOnly":true,"formalRating":false,"allowedUses":[],"forbiddenUses":[]},"summary":{"processCounts":{},"severityCounts":{},"statusCounts":{},"sourceKindCounts":{}},"issues":[]};

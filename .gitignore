@@ -34,3 +34,11 @@ dist/
 *.db
 browser-data/
 workspace-data/
+
+# Versioned public JEAuditFlow snapshots: generated and private local state.
+source/*/**/node_modules/
+source/*/local-deploy/config/
+source/*/local-deploy/runtime/
+source/*/artifacts/candidates/
+source/*/artifacts/releases/
+!source/*/database/*/.env.example

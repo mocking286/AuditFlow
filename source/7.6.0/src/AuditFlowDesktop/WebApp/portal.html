@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20282d">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'">
+  <title>JEAuditFlow 7.6.0 · 本地发布中心</title>
+  <link rel="icon" href="./icons/icon-32.png">
+    <link rel="stylesheet" href="./ops-ui.css?v=7.6.0">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand-lockup" href="./portal.html">
+      <img src="./icons/auditflow-mascot.png" alt="">
+      <span><strong>JEAuditFlow 7.6.0</strong><small>本地发布与运营中心</small></span>
+    </a>
+    <nav class="header-nav" aria-label="发布中心导航">
+      <a href="./portal.html" aria-current="page">版本下载</a>
+      <a href="./desktop.html">进入工作台</a>
+      <a href="./ops.html">运营后台</a>
+    </nav>
+    <span class="service-pill" id="serviceStatus">检查服务</span>
+  </header>
+
+  <main class="page-width">
+    <section class="page-title-row">
+      <div>
+        <h1>JEAuditFlow 免安装版下载</h1>
+        <p>获取经 SHA-256 校验的 JEAuditFlow 7.6.0 发行包；浏览器插件与本体保持同版本发布。</p>
+      </div>
+      <span class="version-stamp" id="releaseTimestamp">读取发布清单</span>
+    </section>
+
+    <div class="section-heading">
+      <h2>可用版本</h2>
+      <p>所有文件均由本机发布目录提供</p>
+    </div>
+    <section class="release-grid" id="releaseGrid" aria-live="polite">
+      <article class="release-card"><p class="release-notes">正在读取本地发布清单…</p></article>
+    </section>
+
+    <section class="integrity-band">
+      <strong>发布完整性</strong>
+      <span id="integritySummary">下载前核对卡片中的 SHA-256；Windows 便携包当前未做 Authenticode 签名。</span>
+    </section>
+
+    <section class="download-center-band">
+      <div class="section-heading">
+        <h2>操作手册与客户端</h2>
+        <p>本地手册可直接下载；外部客户端入口跳转到用户提供的百度网盘分享。</p>
+      </div>
+      <div class="download-link-grid">
+        <article class="download-link-card"><span class="download-link-kind">PDF · 中文</span><h3>JEAuditFlow 中文操作手册</h3><p>7.6.0 · 可检索版</p><a class="btn" href="./downloads/JEAuditFlow-Operation-Manual-7.6.0-ZH.pdf" download>下载中文版</a></article>
+        <article class="download-link-card"><span class="download-link-kind">PDF · English</span><h3>JEAuditFlow English Operation Manual</h3><p>7.6.0 · searchable edition</p><a class="btn" href="./downloads/JEAuditFlow-Operation-Manual-7.6.0-EN.pdf" download>Download English manual</a></article>
+        <article class="download-link-card"><span class="download-link-kind">macOS</span><h3>JEAuditFlow macOS 应用</h3><p>百度网盘 · 提取码 a2hg</p><a class="btn" href="https://pan.baidu.com/s/1JW1Lmk4JRU8jLW9QXm94kg?pwd=a2hg" target="_blank" rel="noopener noreferrer">打开 macOS 下载</a></article>
+        <article class="download-link-card"><span class="download-link-kind">Browser extension</span><h3>JEAuditFlow 浏览器插件</h3><p>百度网盘 · 提取码 a2hg</p><a class="btn" href="https://pan.baidu.com/s/1rRWi0ns5mz12y5N0LVHyGw?pwd=a2hg" target="_blank" rel="noopener noreferrer">打开插件下载</a></article>
+        <article class="download-link-card"><span class="download-link-kind">Windows</span><h3>JEAuditFlow Windows 便携版</h3><p>百度网盘 · 提取码 vfud</p><a class="btn" href="https://pan.baidu.com/s/1k3wNIgoXTGVVctu6g35kHQ?pwd=vfud" target="_blank" rel="noopener noreferrer">打开 Windows 下载</a></article>
+        <article class="download-link-card"><span class="download-link-kind">Source / Community</span><h3>社区维护的开放版本</h3><p>查看 AuditFlow 开源仓库与社区维护内容。</p><a class="btn" href="https://github.com/mocking286/AuditFlow" target="_blank" rel="noopener noreferrer">访问 GitHub 社区版本</a></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="page-width">JEAuditFlow 7.6.0 · 本机地址 127.0.0.1 · 社区开放版由 <a href="https://github.com/mocking286/AuditFlow" target="_blank" rel="noopener noreferrer">AuditFlow</a> 维护 · 审核结论由授权审核员最终确认</div>
+  </footer>
+  <script defer src="./portal.js?v=7.6.0"></script>
+</body>
+</html>

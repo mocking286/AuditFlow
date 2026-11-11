@@ -1,0 +1,119 @@
+/* AuditFlow v9.9.0: keep Trace Relations scrollable without collapsing findings. */
+
+/* The workbench owns a bounded row. Every child must be allowed to shrink
+   into that row so the center list, rather than the page, receives overflow. */
+.trace-studio-v81 {
+  min-height: 560px !important;
+  height: min(820px, calc(100vh - 190px)) !important;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.trace-center-v81 {
+  min-width: 0;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+/* Make the custom scrollbar a real grid column. Absolute positioning made
+   the v9.8 rail depend on whichever ancestor happened to have a height. */
+.trace-link-scroll-shell-v98 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 16px;
+  align-items: stretch;
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.trace-link-scroll-shell-v98 .trace-link-list-v81 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-auto-rows: max-content;
+  align-content: start;
+  align-items: start;
+  flex: 1 1 auto !important;
+  width: auto !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  padding: 10px 10px 14px !important;
+  scrollbar-gutter: stable;
+  scrollbar-width: none !important;
+}
+
+.trace-link-scroll-shell-v98 .trace-link-list-v81::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Finding actions are part of the card's content, not an overflow crop. A
+   minimum block size keeps dense lists scannable and leaves buttons usable. */
+.trace-link-scroll-shell-v98 .trace-link-card {
+  min-width: 0 !important;
+  min-height: 128px !important;
+  height: auto !important;
+  overflow: visible !important;
+  align-self: start;
+}
+
+.trace-link-scroll-shell-v98 .trace-link-card header,
+.trace-link-scroll-shell-v98 .trace-link-card .row-actions,
+.trace-link-scroll-shell-v98 .trace-link-card .trace-mark-toolbar {
+  min-width: 0;
+  flex: 0 0 auto;
+}
+
+.trace-link-scroll-shell-v98 .trace-link-card .row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.trace-scrollbar-v98 {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 4;
+  align-self: stretch;
+  width: 14px !important;
+  min-height: 0 !important;
+  margin: 8px 2px 8px 0;
+  box-sizing: border-box;
+}
+
+.trace-scrollbar-thumb-v98 {
+  right: 1px;
+}
+
+@media (max-width: 1120px) {
+  .trace-studio-v81 {
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-rows: none;
+  }
+
+  .trace-center-v81 {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .trace-link-scroll-shell-v98 {
+    flex: 0 1 auto !important;
+    height: clamp(220px, 65vh, 620px) !important;
+    min-height: 220px !important;
+    max-height: 620px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .trace-link-scroll-shell-v98 {
+    height: clamp(220px, 70vh, 620px) !important;
+    max-height: none !important;
+  }
+}

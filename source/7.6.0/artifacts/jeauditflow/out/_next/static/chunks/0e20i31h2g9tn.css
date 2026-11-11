@@ -1,0 +1,2 @@
+@import "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap";
+:root{--ink:#172121;--paper:#f7f8f3;--line:#dce3de;--blue:#185df5;--yellow:#eff18d;--coral:#f88672;--mint:#c7eadb}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{max-width:100vw;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;font-family:DM Sans,Arial,sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}button{color:inherit;font:inherit}

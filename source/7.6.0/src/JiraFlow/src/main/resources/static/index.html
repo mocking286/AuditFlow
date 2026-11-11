@@ -1,0 +1,2472 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JiraFlow</title>
+  <script src="./jiraflow-base-path.js"></script>
+  <script>
+    // Set the persisted theme before the first paint so light mode never
+    // flashes the dark navigation chrome.
+    try {
+      const savedTheme = localStorage.getItem("jiraflow-theme");
+      document.documentElement.dataset.theme = savedTheme === "light" ? "light" : "dark";
+    } catch (_) {
+      document.documentElement.dataset.theme = "dark";
+    }
+  </script>
+  <style>
+    :root {
+      --top: #171719;
+      --sidebar: #1f2023;
+      --top-ink: #fff;
+      --top-muted: #c8cbd1;
+      --top-icon: #a5adba;
+      --top-border: rgba(255,255,255,.08);
+      --top-hover: rgba(255,255,255,.1);
+      --top-control-bg: #2a2c30;
+      --top-control-border: #555861;
+      --sidebar-ink: #c8cbd1;
+      --sidebar-muted: #8c929d;
+      --sidebar-icon: #a5adba;
+      --sidebar-border: rgba(255,255,255,.08);
+      --sidebar-divider: rgba(255,255,255,.1);
+      --sidebar-hover: #2d3e5f;
+      --sidebar-active-icon: #79b8ff;
+      --canvas: #f4f5f7;
+      --panel: #fff;
+      --panel-soft: #fafbfc;
+      --ink: #172b4d;
+      --muted: #6b778c;
+      --line: #dfe1e6;
+      --line-strong: #b3bac5;
+      --blue: #0c66e4;
+      --blue-dark: #0747a6;
+      --blue-soft: #deebff;
+      --green: #00875a;
+      --green-soft: #e3fcef;
+      --orange: #974f00;
+      --orange-soft: #fff0b3;
+      --red: #de350b;
+      --red-soft: #ffebe6;
+      --purple: #6554c0;
+      --chart-0: #0c66e4;
+      --chart-1: #00875a;
+      --chart-2: #ff991f;
+      --chart-3: #6554c0;
+      --chart-4: #de350b;
+      --chart-5: #00a3bf;
+      --chart-6: #bf2600;
+      --shadow: 0 2px 7px rgba(9,30,66,.14);
+    }
+    :root[data-theme="light"] {
+      --top: #fff;
+      --sidebar: #f7f8fa;
+      --top-ink: #172b4d;
+      --top-muted: #42526e;
+      --top-icon: #5e6c84;
+      --top-border: #dfe1e6;
+      --top-hover: rgba(9,30,66,.08);
+      --top-control-bg: #f4f5f7;
+      --top-control-border: #b3bac5;
+      --sidebar-ink: #253858;
+      --sidebar-muted: #6b778c;
+      --sidebar-icon: #5e6c84;
+      --sidebar-border: #dfe1e6;
+      --sidebar-divider: #dfe1e6;
+      --sidebar-hover: #deebff;
+      --sidebar-active-icon: #0c66e4;
+    }
+    :root[data-theme="dark"] {
+      --top: #161719;
+      --sidebar: #202124;
+      --top-ink: #fff;
+      --top-muted: #c8cbd1;
+      --top-icon: #a5adba;
+      --top-border: rgba(255,255,255,.08);
+      --top-hover: rgba(255,255,255,.1);
+      --top-control-bg: #2a2c30;
+      --top-control-border: #555861;
+      --sidebar-ink: #c8cbd1;
+      --sidebar-muted: #8c929d;
+      --sidebar-icon: #a5adba;
+      --sidebar-border: rgba(255,255,255,.08);
+      --sidebar-divider: rgba(255,255,255,.1);
+      --sidebar-hover: #2d3e5f;
+      --sidebar-active-icon: #79b8ff;
+      --canvas: #1d1e20;
+      --panel: #252629;
+      --panel-soft: #202124;
+      --ink: #f1f2f4;
+      --muted: #a5adba;
+      --line: #3b3d42;
+      --line-strong: #656a73;
+      --blue: #579dff;
+      --blue-dark: #85b8ff;
+      --blue-soft: #17345c;
+      --green: #5bd69b;
+      --green-soft: #123b2d;
+      --orange: #f5cd72;
+      --orange-soft: #493d19;
+      --red: #ff8f73;
+      --red-soft: #4a2118;
+      --purple: #b8a7ff;
+      --chart-0: #579dff;
+      --chart-1: #5bd69b;
+      --chart-2: #f5cd72;
+      --chart-3: #b8a7ff;
+      --chart-4: #ff8f73;
+      --chart-5: #65d9e8;
+      --chart-6: #ffab8f;
+      --shadow: 0 2px 8px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 14px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    .topbar {
+      position: relative;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 0 18px;
+      color: var(--top-ink);
+      background: var(--top);
+      border-bottom: 1px solid var(--top-border);
+    }
+    .topbar > button,
+    .topbar > .search-wrap,
+    .topbar > .actor-select {
+      flex: 0 0 auto;
+    }
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 34px;
+      padding: 0;
+      color: inherit;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      font-size: 17px;
+    }
+    .icon-button:hover, .icon-button.active { background: var(--top-hover); }
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 150px; font-size: 18px; font-weight: 800; }
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      border-radius: 5px;
+      background: #1868db;
+      font-size: 11px;
+      letter-spacing: .02em;
+    }
+    .top-links { display: flex; align-items: center; gap: 1px; flex: 0 0 auto; min-width: max-content; }
+    .top-links button {
+      min-height: 36px;
+      padding: 9px 10px;
+      color: var(--top-muted);
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .top-links button:hover, .top-links button.active { color: var(--top-ink); background: var(--top-hover); }
+    .top-nav-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 36px;
+      line-height: 1.2;
+    }
+    .top-nav-item .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-grid;
+      flex: 0 0 18px;
+      place-items: center;
+      color: var(--top-icon);
+      font-size: 15px;
+      line-height: 1;
+    }
+    .top-nav-item.icon-button {
+      width: 34px;
+      height: 34px;
+      gap: 0;
+      padding: 0;
+    }
+    .top-nav-item.icon-button .nav-icon { width: 20px; height: 20px; flex-basis: 20px; }
+    .top-nav-item:hover .nav-icon, .top-nav-item.active .nav-icon { color: var(--top-ink); }
+    .top-nav-item .nav-caret {
+      width: 12px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--top-icon);
+      font-size: 11px;
+      line-height: 1;
+    }
+    .top-spacer { flex: 1; }
+    .global-search {
+      width: min(320px, 30vw);
+      height: 36px;
+      padding: 8px 12px 8px 35px;
+      color: var(--top-ink);
+      border: 1px solid var(--top-control-border);
+      border-radius: 4px;
+      outline: 0;
+      background: var(--top-control-bg);
+    }
+    .global-search::placeholder { color: var(--top-icon); }
+    .search-wrap { position: relative; }
+    .search-wrap span { position: absolute; left: 12px; top: 8px; color: var(--top-icon); }
+    .actor-select {
+      width: 112px;
+      height: 36px;
+      padding: 7px 8px;
+      color: var(--top-ink);
+      border: 1px solid var(--top-control-border);
+      border-radius: 4px;
+      background: var(--top-control-bg);
+    }
+    .actor-select option { color: #172b4d; background: #fff; }
+    .avatar {
+      width: 28px;
+      height: 28px;
+      display: inline-grid;
+      place-items: center;
+      color: #102a43;
+      border-radius: 50%;
+      background: #79d2bd;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .button {
+      min-height: 34px;
+      padding: 7px 12px;
+      color: var(--ink);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: transparent;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .button.primary { color: #fff; background: var(--blue); }
+    .button.primary:hover { background: var(--blue-dark); }
+    .button.subtle { color: var(--ink); border-color: var(--line); background: var(--panel); }
+    .button.subtle:hover { border-color: var(--line-strong); background: var(--panel-soft); }
+    .button.ghost { color: var(--blue-dark); }
+    .button.danger { color: var(--red); }
+    .button.icon-only { width: 34px; padding: 0; font-size: 18px; }
+    .shell { display: grid; grid-template-columns: 256px minmax(0,1fr); min-height: calc(100vh - 60px); transition: grid-template-columns .18s ease; }
+    .shell.sidebar-collapsed { grid-template-columns: 72px minmax(0,1fr); }
+    .sidebar {
+      min-width: 0;
+      padding: 15px 12px 22px;
+      color: var(--sidebar-ink);
+      background: var(--sidebar);
+      border-right: 1px solid var(--sidebar-border);
+    }
+    .space-head { display: flex; align-items: center; gap: 10px; padding: 8px 10px 17px; border-bottom: 1px solid var(--sidebar-divider); }
+    .space-icon { width: 28px; height: 28px; display: grid; place-items: center; color: #fff; border-radius: 6px; background: #2e7cf6; font-size: 12px; font-weight: 800; }
+    .space-title { min-width: 0; }
+    .space-title strong { display: block; color: var(--top-ink); font-size: 14px; }
+    .space-title small { display: block; margin-top: 3px; color: var(--sidebar-icon); }
+    .sidebar-section { padding-top: 17px; }
+    .sidebar-label { padding: 0 10px 7px; color: var(--sidebar-muted); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .side-link {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      color: var(--sidebar-ink);
+      text-align: left;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+    }
+    .side-link:hover, .side-link.active { color: var(--top-ink); background: var(--sidebar-hover); font-weight: 700; }
+    .side-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-grid;
+      flex: 0 0 20px;
+      place-items: center;
+      color: var(--sidebar-icon);
+      text-align: center;
+      font-size: 15px;
+      line-height: 1;
+    }
+    .side-link.active .side-icon { color: var(--sidebar-active-icon); }
+    .side-link .side-count { margin-left: auto; color: var(--sidebar-icon); font-size: 12px; }
+    .sidebar-foot { margin: 22px 10px 0; padding-top: 15px; color: var(--sidebar-muted); border-top: 1px solid var(--sidebar-divider); font-size: 12px; line-height: 1.5; }
+    .shell.sidebar-collapsed .sidebar { padding-left: 8px; padding-right: 8px; }
+    .shell.sidebar-collapsed .space-head { justify-content: center; padding-left: 0; padding-right: 0; }
+    .shell.sidebar-collapsed .space-title,
+    .shell.sidebar-collapsed .sidebar-label,
+    .shell.sidebar-collapsed .sidebar-foot,
+    .shell.sidebar-collapsed .side-text { display: none; }
+    .shell.sidebar-collapsed .space-head .icon-button { display: none; }
+    .shell.sidebar-collapsed .sidebar-section { padding-top: 13px; }
+    .shell.sidebar-collapsed .side-link { justify-content: center; gap: 0; padding-left: 0; padding-right: 0; }
+    .shell.sidebar-collapsed .side-icon { width: 28px; height: 28px; flex-basis: 28px; font-size: 16px; }
+    .shell.sidebar-collapsed .side-link .side-count { display: none; }
+    .main { min-width: 0; padding: 26px 30px 46px; }
+    .page-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+    .page-head-main { min-width: 0; flex: 1; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    h1 { margin: 5px 0 0; font-size: 26px; line-height: 1.2; }
+    h2 { margin: 0; font-size: 19px; line-height: 1.3; }
+    h3 { margin: 0; font-size: 15px; }
+    .page-actions, .inline-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 50px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .toolbar-label { color: var(--muted); font-weight: 700; }
+    .toolbar .spacer, .section-head .spacer, .list-foot .spacer, .detail-actions .spacer, .row .spacer { flex: 1; }
+    .field, .select {
+      width: 100%;
+      min-height: 34px;
+      padding: 7px 9px;
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      border-radius: 3px;
+      outline: 0;
+      background: var(--panel);
+    }
+    .field:focus, .select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+    textarea.field { resize: vertical; line-height: 1.45; }
+    .field.compact { width: 185px; }
+    .notice { display: flex; align-items: flex-start; gap: 9px; margin: 13px 0; padding: 10px 12px; color: var(--blue-dark); border-left: 3px solid var(--blue); background: var(--blue-soft); line-height: 1.4; }
+    .notice.error { color: var(--red); border-color: var(--red); background: var(--red-soft); }
+    .notice.success { color: var(--green); border-color: var(--green); background: var(--green-soft); }
+    .loading { padding: 50px; color: var(--muted); text-align: center; }
+    .panel { padding: 17px; border: 1px solid var(--line); background: var(--panel); }
+    .panel + .panel { margin-top: 16px; }
+    .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .section-count { color: var(--muted); font-size: 12px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+    .metric { padding: 15px; border: 1px solid var(--line); background: var(--panel); }
+    .metric-label { color: var(--muted); font-size: 12px; }
+    .metric-value { margin-top: 7px; font-size: 25px; font-weight: 800; }
+    .dashboard-grid { display: grid; grid-template-columns: minmax(0,1.3fr) minmax(310px,.7fr); gap: 16px; }
+    .dashboard-list { margin: 0; padding: 0; list-style: none; }
+    .dashboard-list li { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+    .dashboard-list li:last-child { border-bottom: 0; }
+    .dashboard-list-main { min-width: 0; flex: 1; }
+    .dashboard-list-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dashboard-list-main small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.35; }
+    .issue-layout { display: grid; grid-template-columns: minmax(280px,355px) minmax(0,1fr); min-height: 700px; border: 1px solid var(--line); background: var(--panel); }
+    .issue-list { min-width: 0; border-right: 1px solid var(--line); background: var(--panel-soft); }
+    .list-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+    .issue-row { display: block; width: 100%; padding: 12px 14px; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: transparent; }
+    .issue-row:hover { background: var(--blue-soft); }
+    .issue-row.selected { border-left: 3px solid var(--blue); padding-left: 11px; background: var(--blue-soft); }
+    .issue-row-top { display: flex; align-items: center; gap: 7px; }
+    .issue-key { color: var(--blue-dark); font-size: 12px; font-weight: 800; }
+    .issue-type { color: var(--muted); font-size: 11px; }
+    .issue-row-summary { margin: 7px 0; color: var(--ink); line-height: 1.35; }
+    .issue-row-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    .status-chip, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      padding: 2px 7px;
+      color: var(--muted);
+      border-radius: 3px;
+      background: var(--line);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .status-chip.done { color: var(--green); background: var(--green-soft); }
+    .status-chip.progress { color: var(--orange); background: var(--orange-soft); }
+    .status-chip.backlog { color: var(--blue-dark); background: var(--blue-soft); }
+    .tag { color: var(--purple); background: color-mix(in srgb, var(--purple) 18%, transparent); }
+    .list-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; color: var(--muted); font-size: 12px; background: var(--panel); }
+    .detail-pane { min-width: 0; background: var(--panel); }
+    .detail-empty { display: grid; place-items: center; min-height: 640px; color: var(--muted); }
+    .detail-head { display: flex; align-items: flex-start; gap: 13px; padding: 18px 20px 13px; border-bottom: 1px solid var(--line); }
+    .detail-head-main { min-width: 0; flex: 1; }
+    .detail-key { color: var(--blue-dark); font-size: 12px; font-weight: 800; }
+    .detail-title { margin: 5px 0 0; font-size: 20px; line-height: 1.35; word-break: break-word; }
+    .detail-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+    .detail-body { padding: 18px 20px 35px; }
+    .detail-status-row { display: flex; align-items: center; gap: 9px; margin-bottom: 18px; }
+    .detail-status-row label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .status-select { width: 164px; }
+    .revision { margin-left: auto; color: var(--muted); font-size: 11px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-bottom: 22px; }
+    .detail-field { min-width: 0; padding: 9px 10px; background: var(--panel-soft); }
+    .detail-field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .detail-field strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+    .tabs { display: flex; gap: 4px; margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+    .tab { padding: 9px 10px; color: var(--muted); border: 0; border-bottom: 2px solid transparent; background: transparent; font-weight: 700; }
+    .tab:hover, .tab.active { color: var(--blue-dark); border-bottom-color: var(--blue); }
+    .section { padding: 19px 0; border-top: 1px solid var(--line); }
+    .description-view { min-height: 76px; padding: 12px; color: var(--muted); line-height: 1.52; border: 1px solid var(--line); background: var(--panel-soft); white-space: pre-wrap; word-break: break-word; }
+    .description-editor { min-height: 125px; }
+    .form-stack { display: grid; gap: 11px; }
+    .form-field label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .inline-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+    .field-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+    .comment { padding: 11px 0; border-bottom: 1px solid var(--line); }
+    .comment:last-child { border-bottom: 0; }
+    .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .comment-head small { color: var(--muted); }
+    .comment-body { color: var(--muted); line-height: 1.45; white-space: pre-wrap; }
+    .comment-actions { display: flex; gap: 5px; margin-top: 7px; }
+    .empty-line { padding: 10px 0; color: var(--muted); }
+    .attachment-row, .subtask-row, .worklog-row, .link-row, .role-row, .workflow-row, .user-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .attachment-row:last-child, .subtask-row:last-child, .worklog-row:last-child, .link-row:last-child,
+    .role-row:last-child, .workflow-row:last-child, .user-row:last-child { border-bottom: 0; }
+    .attachment-name, .subtask-link, .link-name { color: var(--blue-dark); font-weight: 700; }
+    .row-main { min-width: 0; flex: 1; }
+    .row-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .row-main small { display: block; margin-top: 3px; color: var(--muted); }
+    .file-control { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .file-control input { max-width: 250px; }
+    .board-wrap { overflow-x: auto; padding: 14px 0 10px; }
+    .board-columns { display: grid; grid-template-columns: repeat(4,minmax(250px,1fr)); gap: 12px; min-width: 1080px; }
+    .board-column { min-height: 520px; background: var(--panel-soft); border: 1px solid var(--line); }
+    .board-column.wip-exceeded { border-color: var(--red); box-shadow: inset 0 3px 0 var(--red); }
+    .board-column-head { display: flex; align-items: center; gap: 8px; padding: 12px 13px; border-bottom: 1px solid var(--line); font-weight: 800; }
+    .board-column-head strong { color: var(--muted); font-size: 12px; }
+    .board-column-head button { margin-left: auto; }
+    .board-cards { padding: 10px 8px 12px; }
+    .lane-title { margin: 2px 0 8px; padding: 8px 9px; color: var(--ink); background: var(--panel); font-weight: 800; }
+    .board-card { display: block; width: 100%; margin-bottom: 8px; padding: 12px; text-align: left; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); box-shadow: var(--shadow); }
+    .board-card:hover { border-color: var(--blue); }
+    .board-card-summary { margin: 7px 0 11px; line-height: 1.36; }
+    .board-card-meta { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 11px; }
+    .type-dot { width: 9px; height: 9px; border-radius: 2px; background: #2684ff; }
+    .type-dot.bug { background: #de350b; }
+    .type-dot.story { background: #36b37e; }
+    .board-card select { width: 100%; margin-top: 9px; min-height: 30px; padding: 5px; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; background: var(--panel-soft); font-size: 12px; }
+    .report-grid, .settings-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .settings-layout { display: grid; grid-template-columns: minmax(180px,220px) minmax(0,1fr); gap: 16px; align-items: start; }
+    /* Project settings are a navigable document; keep each section in a
+       single vertical flow so anchor scrolling and active-section tracking
+       cannot select a side-by-side sibling at the same viewport position. */
+    .settings-layout > .settings-grid { grid-template-columns: minmax(0,1fr); }
+    .settings-nav { position: sticky; top: 16px; display: grid; gap: 3px; padding: 8px; border: 1px solid var(--line); background: var(--panel); }
+    .settings-nav-title { padding: 6px 9px 9px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+    .settings-nav button { display: block; width: 100%; padding: 9px 10px; color: var(--ink); text-align: left; border: 0; border-left: 3px solid transparent; background: transparent; border-radius: 2px; }
+    .settings-nav button:hover, .settings-nav button[aria-current="page"] { color: var(--ink); border-left-color: var(--blue); background: var(--blue-soft); }
+    .report-panel, .settings-panel { padding: 17px; border: 1px solid var(--line); background: var(--panel); }
+    .plan-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 14px; }
+    .plan-card { min-width: 0; padding: 16px; border: 1px solid var(--line); background: var(--panel); }
+    .plan-card.released { border-top: 3px solid var(--green); }
+    .plan-card.current { border-top: 3px solid var(--blue); }
+    .plan-card.archived { opacity: .72; }
+    .plan-card-head { display: flex; align-items: flex-start; gap: 10px; }
+    .plan-card-head-main { min-width: 0; flex: 1; }
+    .plan-card-head-main strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
+    .plan-card-head-main small { display: block; margin-top: 4px; color: var(--muted); }
+    .plan-progress { height: 8px; overflow: hidden; margin: 14px 0 8px; background: var(--line); }
+    .plan-progress i { display: block; height: 100%; background: var(--green); }
+    .plan-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin-top: 12px; }
+    .plan-metric { padding: 8px; background: var(--panel-soft); }
+    .plan-metric span { display: block; color: var(--muted); font-size: 11px; }
+    .plan-metric strong { display: block; margin-top: 3px; font-size: 16px; }
+    .plan-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .filter-grid, .admin-layout { display: grid; grid-template-columns: minmax(260px,320px) minmax(420px,1fr); gap: 16px; align-items: start; }
+    .filter-grid > *, .admin-layout > * { min-width: 0; }
+    .filter-list, .admin-nav { min-width: 0; border: 1px solid var(--line); background: var(--panel); }
+    .filter-list-head, .admin-nav-head { display: flex; align-items: center; gap: 8px; padding: 12px; border-bottom: 1px solid var(--line); }
+    .filter-list-head { flex-wrap: wrap; }
+    .filter-list-head .field { flex: 1 1 120px; min-width: 120px; max-width: none !important; }
+    .filter-list-row, .admin-nav-row { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 11px 12px; color: var(--ink); text-align: left; border: 0; border-bottom: 1px solid var(--line); background: transparent; }
+    .filter-list-row:hover, .filter-list-row.active, .admin-nav-row:hover, .admin-nav-row.active { background: var(--blue-soft); }
+    .filter-list-row strong, .admin-nav-row strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .filter-list-row small, .admin-nav-row small { display: block; margin-top: 4px; color: var(--muted); line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
+    .filter-star { color: var(--orange); font-size: 16px; }
+    .admin-content { min-width: 0; }
+    .admin-nav { position: sticky; top: 16px; max-height: calc(100vh - 92px); overflow: auto; }
+    .admin-nav-groups { padding: 3px 0 8px; }
+    .admin-nav-group { padding: 8px 0 2px; border-top: 1px solid var(--line); }
+    .admin-nav-group:first-child { border-top: 0; }
+    .admin-nav-group-label { padding: 4px 12px 6px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .admin-nav-row { align-items: center; min-height: 42px; }
+    .admin-nav-row .admin-nav-icon { width: 20px; flex: 0 0 20px; color: var(--muted); text-align: center; font-size: 14px; }
+    .admin-nav-row.active .admin-nav-icon { color: var(--blue-dark); }
+    .admin-content .panel { min-width: 0; }
+    .admin-table { min-width: 820px; }
+    .admin-table th, .admin-table td { vertical-align: top; }
+    .admin-table th:nth-child(1) { width: 28%; }
+    .admin-table th:nth-child(2) { width: 15%; }
+    .admin-table th:nth-child(3) { width: 25%; }
+    .admin-table th:nth-child(4) { width: 15%; }
+    .admin-table th:nth-child(5) { width: 17%; }
+    .admin-table .admin-description { display: block; max-width: 420px; margin-top: 4px; color: var(--muted); line-height: 1.4; white-space: normal; overflow-wrap: anywhere; }
+    .admin-table .admin-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+    .admin-stat-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
+    .admin-stat { padding: 11px; border: 1px solid var(--line); background: var(--panel-soft); }
+    .admin-stat strong { display: block; margin-top: 4px; font-size: 18px; }
+    .json-preview { max-height: 180px; overflow: auto; margin-top: 9px; padding: 10px; color: var(--muted); border: 1px solid var(--line); background: var(--panel-soft); font: 12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; white-space: pre-wrap; }
+    .bar-row { display: grid; grid-template-columns: 110px minmax(0,1fr) 36px; gap: 8px; align-items: center; margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .bar { height: 9px; overflow: hidden; background: var(--line); }
+    .bar i { display: block; height: 100%; background: var(--blue); }
+    .chart-card { min-width: 0; padding: 17px; border: 1px solid var(--line); background: var(--panel); }
+    .chart-card h3 { margin: 0 0 14px; font-size: 15px; }
+    .chart-layout { display: grid; grid-template-columns: minmax(150px,220px) minmax(0,1fr); gap: 20px; align-items: center; }
+    .pie-chart { width: min(190px,100%); aspect-ratio: 1; justify-self: center; border-radius: 50%; background: var(--line); }
+    .pie-chart::after { content: ""; display: block; width: 48%; aspect-ratio: 1; margin: 26%; border-radius: 50%; background: var(--panel); }
+    .chart-legend { display: grid; gap: 9px; min-width: 0; }
+    .chart-legend-item { display: grid; grid-template-columns: 10px minmax(0,1fr) auto; gap: 8px; align-items: center; font-size: 12px; }
+    .chart-legend-item span:nth-child(2) { overflow-wrap: anywhere; }
+    .chart-swatch { width: 10px; height: 10px; border-radius: 2px; background: var(--chart-0); }
+    .chart-svg { display: block; width: 100%; min-width: 0; height: 220px; overflow: visible; }
+    .chart-svg text { fill: var(--muted); font: 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .chart-svg .grid-line { stroke: var(--line); stroke-width: 1; }
+    .chart-svg .axis-line { stroke: var(--line-strong); stroke-width: 1; }
+    .chart-svg .average-line { stroke: var(--orange); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .chart-svg .cycle-line { fill: none; stroke: var(--blue); stroke-width: 2; }
+    .flow-chart { display: grid; gap: 3px; max-height: 360px; overflow-y: auto; padding: 2px 0; }
+    .flow-row { display: grid; grid-template-columns: 88px minmax(0,1fr) 36px; gap: 8px; align-items: center; min-height: 13px; font-size: 10px; }
+    .flow-row time { color: var(--muted); }
+    .flow-row strong { color: var(--muted); text-align: right; font-size: 10px; }
+    .flow-stack { position: relative; height: 11px; overflow: hidden; background: var(--line); }
+    .flow-stack span { position: absolute; inset-block: 0; }
+    .flow-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 12px; }
+    .flow-legend-item { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    @media (max-width:1350px) and (min-width:981px) {
+      .admin-layout { grid-template-columns: minmax(220px,260px) minmax(0,1fr); gap: 12px; }
+      .admin-table { width: 100%; min-width: 0; table-layout: fixed; }
+      .admin-table th, .admin-table td { overflow-wrap: anywhere; }
+      .admin-table th:nth-child(1) { width: 28%; }
+      .admin-table th:nth-child(2) { width: 13%; }
+      .admin-table th:nth-child(3) { width: 25%; }
+      .admin-table th:nth-child(4) { width: 14%; }
+      .admin-table th:nth-child(5) { width: 20%; }
+      .admin-table .admin-description { max-width: none; }
+    }
+    .report-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
+    .report-metric { padding: 11px; border: 1px solid var(--line); background: var(--panel-soft); }
+    .report-metric span { display: block; color: var(--muted); font-size: 11px; }
+    .report-metric strong { display: block; margin-top: 5px; font-size: 18px; }
+    .report-table { margin-top: 14px; }
+    .report-table table { min-width: 520px; }
+    .word-row { display: grid; grid-template-columns: minmax(90px,180px) minmax(0,1fr) 42px; gap: 9px; align-items: center; margin-top: 10px; font-size: 12px; }
+    .word-row span { overflow-wrap: anywhere; }
+    @media (max-width:700px) {
+      .chart-layout { grid-template-columns: 1fr; }
+      .pie-chart { width: min(160px,100%); }
+      .report-metrics { grid-template-columns: 1fr; }
+    }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+    table { width: 100%; min-width: 680px; border-collapse: collapse; }
+    th, td { padding: 12px 13px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); background: var(--panel-soft); font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    .audit-row { display: grid; grid-template-columns: 150px 105px 170px minmax(0,1fr); gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+    .audit-row:last-child { border-bottom: 0; }
+    .audit-row time, .audit-actor { color: var(--muted); }
+    .modal { position: fixed; inset: 0; z-index: 5; display: none; place-items: center; padding: 18px; background: rgba(9,30,66,.58); }
+    .modal.open { display: grid; }
+    body.overlay-open { overflow: hidden; }
+    .modal-box { width: min(650px,100%); max-height: calc(100vh - 36px); overflow: auto; padding: 23px; color: var(--ink); border: 1px solid var(--line); background: var(--panel); box-shadow: 0 12px 28px rgba(0,0,0,.28); }
+    .modal-head { display: flex; align-items: center; margin-bottom: 16px; }
+    .modal-head .spacer { flex: 1; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 17px; }
+    .account-menu {
+      position: fixed;
+      top: 54px;
+      right: 18px;
+      z-index: 7;
+      display: none;
+      width: min(320px, calc(100vw - 24px));
+      padding: 13px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--panel);
+      box-shadow: 0 12px 28px rgba(0,0,0,.28);
+    }
+    .account-menu.open { display: grid; gap: 10px; }
+    .account-menu-head { display: flex; align-items: center; gap: 9px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+    .account-menu-head .row-main small { color: var(--muted); }
+    .account-menu-actions { display: flex; justify-content: flex-end; gap: 7px; }
+    .app-tooltip {
+      position: fixed;
+      z-index: 30;
+      display: none;
+      width: max-content;
+      max-width: min(360px, calc(100vw - 16px));
+      max-height: calc(100vh - 16px);
+      padding: 7px 9px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 4px;
+      background: #172b4d;
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      overflow: auto;
+      pointer-events: none;
+    }
+    .app-tooltip.open { display: block; }
+    .project-list { display: grid; gap: 6px; max-height: min(56vh, 520px); overflow: auto; }
+    .project-option { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; color: var(--ink); text-align: left; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+    .project-option:hover, .project-option.active { border-color: var(--blue); background: var(--blue-soft); }
+    .project-option .space-icon { flex: 0 0 auto; }
+    .project-option-main { min-width: 0; flex: 1; }
+    .project-option-main strong, .project-option-main small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .project-option-main small { margin-top: 3px; color: var(--muted); }
+    .help-list { display: grid; gap: 9px; margin: 0; padding-left: 19px; color: var(--muted); line-height: 1.5; }
+    .help-list strong { color: var(--ink); }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 8; max-width: 390px; padding: 12px 14px; color: #fff; border-radius: 4px; background: #172b4d; box-shadow: 0 12px 28px rgba(0,0,0,.3); }
+    .toast.error { background: var(--red); }
+    .toast.success { background: var(--green); }
+    .hidden { display: none !important; }
+    @media (max-width:1120px) {
+      .top-links { max-width: min(42vw, 420px); overflow-x: auto; scrollbar-width: thin; }
+      .top-links button { padding-left: 8px; padding-right: 8px; }
+      .global-search { width: min(260px, 32vw); }
+      .detail-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .metric-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:980px) {
+      .topbar {
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+        align-content: center;
+        row-gap: 4px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .top-links {
+        order: 20;
+        flex: 1 0 100%;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+      .top-spacer { display: none; }
+      .actor-select { display: none; }
+      .global-search { width: min(220px, 26vw); }
+    }
+    @media (max-width:980px) {
+      .topbar { gap: 8px; padding: 0 10px; }
+      .brand { min-width: 120px; }
+      .global-search { width: 150px; }
+      .actor-select { width: 92px; }
+      .shell, .shell.sidebar-collapsed { grid-template-columns: 1fr; }
+      .sidebar { padding: 8px 10px; border-right: 0; border-bottom: 1px solid var(--sidebar-border); }
+      .space-head { padding: 4px 6px 10px; }
+      .sidebar-section { display: flex; flex-wrap: wrap; gap: 2px; padding-top: 8px; }
+      .sidebar-label { width: 100%; padding: 0 6px 3px; }
+      .side-link { width: auto; padding: 7px 9px; }
+      .sidebar-foot { display: none; }
+      .shell.sidebar-collapsed .sidebar { padding: 8px 10px; }
+      .shell.sidebar-collapsed .space-title,
+      .shell.sidebar-collapsed .sidebar-label,
+      .shell.sidebar-collapsed .side-text { display: block; }
+      .shell.sidebar-collapsed .space-head .icon-button { display: inline-grid; }
+      .shell.sidebar-collapsed .side-link { justify-content: flex-start; gap: 10px; padding-left: 9px; padding-right: 9px; }
+      .shell.sidebar-collapsed .side-icon { width: 18px; }
+      .main { padding: 18px 12px 30px; }
+      .page-head { flex-direction: column; }
+      .dashboard-grid, .report-grid, .settings-grid, .filter-grid, .admin-layout, .settings-layout { grid-template-columns: 1fr; }
+      .filter-grid, .admin-layout { min-width: 0; }
+      .settings-nav { position: static; display: flex; gap: 3px; overflow-x: auto; padding: 5px; }
+      .settings-nav-title { flex: 0 0 auto; padding: 8px 9px; }
+      .settings-nav button { flex: 0 0 auto; width: auto; white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent; }
+      .settings-nav button:hover, .settings-nav button[aria-current="page"] { border-left-color: transparent; border-bottom-color: var(--blue); }
+      .plan-grid { grid-template-columns: 1fr; }
+      .issue-layout { grid-template-columns: 1fr; }
+      .issue-list { border-right: 0; border-bottom: 1px solid var(--line); }
+      .issue-row:nth-child(n+8) { display: none; }
+      .detail-head { flex-direction: column; }
+      .detail-actions { justify-content: flex-start; }
+      .revision { margin-left: 0; }
+      .inline-fields, .field-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-wrap: wrap; }
+      .admin-stat-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .admin-nav { position: static; max-height: none; overflow: visible; }
+    }
+    @media (max-width:560px) {
+      .topbar { row-gap: 2px; }
+      .brand { min-width: auto; font-size: 16px; }
+      .brand-mark { width: 23px; height: 23px; }
+      .search-wrap, .global-search, .topbar .theme-label { display: none; }
+      .topbar .button { padding: 7px 9px; }
+      .metric-grid { gap: 8px; }
+      .metric { padding: 11px; }
+      .metric-value { font-size: 21px; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .audit-row { grid-template-columns: 1fr; gap: 3px; }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <header class="topbar">
+    <button class="icon-button" id="sidebarToggle" title="收起侧边栏" aria-label="收起侧边栏" aria-controls="sidebar" aria-expanded="true">☰</button>
+    <div class="brand"><span class="brand-mark">JF</span><span>JiraFlow</span></div>
+    <nav class="top-links" aria-label="全局导航">
+      <button class="top-nav-item" data-view="dashboard" title="仪表板" aria-label="仪表板"><span class="nav-icon">⌂</span><span>仪表板</span></button>
+      <button class="top-nav-item" id="projectsTrigger" data-global-action="projects" title="项目" aria-label="项目" aria-haspopup="dialog" aria-controls="projectModal" aria-expanded="false"><span class="nav-icon">▦</span><span>项目</span><span class="nav-caret">▾</span></button>
+      <button class="top-nav-item" data-view="plans" title="计划" aria-label="计划"><span class="nav-icon">◷</span><span>计划</span></button>
+      <button class="top-nav-item" data-view="issues" data-filter-target="all" title="筛选器" aria-label="筛选器"><span class="nav-icon">≡</span><span>筛选器</span></button>
+      <button class="top-nav-item" data-view="plugins" title="应用" aria-label="应用"><span class="nav-icon">◇</span><span>应用</span></button>
+    </nav>
+    <div class="top-spacer"></div>
+    <div class="search-wrap">
+      <span>⌕</span>
+      <input id="globalSearch" class="global-search" placeholder="搜索问题或项目" title="搜索问题或项目" aria-label="搜索问题或项目">
+    </div>
+    <button class="top-nav-item button primary" id="createTop" data-global-action="create" title="创建问题" aria-label="创建问题" aria-haspopup="dialog" aria-controls="createModal" aria-expanded="false"><span class="nav-icon">＋</span><span>创建</span></button>
+    <button class="top-nav-item icon-button" data-global-action="search" title="搜索" aria-label="搜索"><span class="nav-icon">⌕</span></button>
+    <button class="top-nav-item icon-button" id="helpTrigger" data-global-action="help" title="帮助" aria-label="帮助" aria-haspopup="dialog" aria-controls="helpModal" aria-expanded="false"><span class="nav-icon">?</span></button>
+    <button class="top-nav-item icon-button" data-view="admin" title="管理" aria-label="管理"><span class="nav-icon">⚙</span></button>
+    <button class="icon-button" data-view="notifications" title="通知" aria-label="通知">♧<span id="notificationBadge" class="side-count"></span></button>
+    <button class="icon-button" id="themeToggle" title="切换明暗主题" aria-label="切换明暗主题">◐</button>
+    <button class="icon-button" id="languageToggle" type="button" title="切换到英文" aria-label="切换到英文" aria-pressed="false">EN</button>
+    <button class="top-nav-item icon-button" id="accountTrigger" data-global-action="account" title="账户和个人资料" aria-label="账户和个人资料" aria-haspopup="menu" aria-controls="accountMenu" aria-expanded="false"><span class="nav-icon">◎</span></button>
+    <select id="actorSelect" class="actor-select" title="当前绑定用户" aria-label="当前绑定用户" disabled>
+      <option value="testuser">testuser</option>
+      <option value="alice">alice</option>
+      <option value="bob">bob</option>
+      <option value="guest">guest</option>
+    </select>
+  </header>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="项目导航" aria-expanded="true">
+      <div class="space-head">
+        <span class="space-icon">AF</span>
+        <div class="space-title"><strong id="spaceName">KsimpleKanbanProj</strong><small id="spaceMeta">KTEST · software</small></div>
+        <button class="icon-button" title="项目更多操作" aria-label="项目更多操作">⋯</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">空间</div>
+        <button class="side-link" data-view="dashboard" title="项目摘要" aria-label="项目摘要"><span class="side-icon">⌂</span><span class="side-text">摘要</span></button>
+        <button class="side-link" data-view="board" title="项目看板" aria-label="项目看板"><span class="side-icon">▦</span><span class="side-text">看板</span></button>
+        <button class="side-link" data-view="issues" title="项目问题" aria-label="项目问题"><span class="side-icon">≡</span><span class="side-text">问题</span></button>
+        <button class="side-link" data-view="releases" title="发布版本" aria-label="发布版本"><span class="side-icon">◷</span><span class="side-text">发布版本</span></button>
+        <button class="side-link" data-view="reports" title="报告" aria-label="报告"><span class="side-icon">▥</span><span class="side-text">报告</span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">协作</div>
+        <button class="side-link" data-view="issues" data-filter-target="mine" title="分配给我" aria-label="分配给我"><span class="side-icon">@</span><span class="side-text">分配给我</span></button>
+        <button class="side-link" data-view="issues" data-filter-target="recent" title="最近更新" aria-label="最近更新"><span class="side-icon">↻</span><span class="side-text">最近更新</span></button>
+        <button class="side-link" data-view="notifications" title="通知" aria-label="通知"><span class="side-icon">♧</span><span class="side-text">通知</span><span id="sidebarUnread" class="side-count"></span></button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">管理</div>
+        <button class="side-link" data-view="settings" title="项目设置" aria-label="项目设置"><span class="side-icon">⚙</span><span class="side-text">项目设置</span></button>
+        <button class="side-link" data-view="admin" title="管理" aria-label="管理"><span class="side-icon">☷</span><span class="side-text">管理</span></button>
+        <button class="side-link" data-view="users" title="用户管理" aria-label="用户管理"><span class="side-icon">◎</span><span class="side-text">用户管理</span></button>
+        <button class="side-link" data-view="audit" title="审计历史" aria-label="审计历史"><span class="side-icon">▤</span><span class="side-text">审计历史</span></button>
+        <button class="side-link" data-view="plugins" title="插件" aria-label="插件"><span class="side-icon">◇</span><span class="side-text">插件</span></button>
+      </div>
+    <div class="sidebar-foot">JiraFlow<br>ASPICE / Cybersecurity / Functional Safety<br>Local collaboration mode</div>
+    </aside>
+    <main class="main" id="main"></main>
+  </div>
+  <div class="modal" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="createModalTitle">创建问题</h2><div class="spacer"></div><button class="button subtle icon-only" id="closeCreate" title="关闭" aria-label="关闭创建问题">×</button></div>
+      <div class="form-stack">
+        <div class="form-field"><label for="createSummary">概要</label><input id="createSummary" class="field" placeholder="输入问题概要"></div>
+        <div class="form-field"><label for="createDescription">描述</label><textarea id="createDescription" class="field" rows="5" placeholder="补充背景、验收条件或上下文"></textarea></div>
+        <div class="field-grid">
+          <div class="form-field"><label for="createType">类型</label><select id="createType" class="select"><option>Task</option><option>Bug</option><option>Story</option><option>Sub-task</option></select></div>
+          <div class="form-field"><label for="createPriority">优先级</label><select id="createPriority" class="select"><option>Medium</option><option>Highest</option><option>High</option><option>Low</option></select></div>
+          <div class="form-field"><label for="createAssignee">经办人</label><select id="createAssignee" class="select"><option value="testuser">testuser</option><option value="alice">alice</option><option value="bob">bob</option><option value="">未分配</option></select></div>
+          <div class="form-field"><label for="createAnalysisDomain">分析领域</label><select id="createAnalysisDomain" class="select"><option value="ASPICE">ASPICE</option><option value="CYBERSECURITY">网络安全</option><option value="FUNCTIONAL_SAFETY">功能安全</option></select></div>
+          <div class="form-field"><label for="createProcessArea">过程区域</label><input id="createProcessArea" class="field" placeholder="例如 SWE.1、SUP.8、MAN.3"></div>
+          <div class="form-field"><label for="createLabels">标签</label><input id="createLabels" class="field" placeholder="comma-separated"></div>
+        </div>
+      </div>
+      <div class="modal-actions"><button class="button subtle" id="cancelCreate">取消</button><button class="button primary" id="submitCreate">创建</button></div>
+    </div>
+  </div>
+  <div class="modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="projectModalTitle">选择项目</h2><div class="spacer"></div><button class="button subtle icon-only" id="closeProjects" title="关闭" aria-label="关闭">×</button></div>
+      <div class="project-list" id="projectList"><div class="loading">正在加载项目...</div></div>
+      <div class="modal-actions"><button class="button subtle" id="cancelProjects">取消</button><button class="button primary" data-view="settings">打开项目设置</button></div>
+    </div>
+  </div>
+  <div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head"><h2 id="helpModalTitle">JiraFlow 帮助</h2><div class="spacer"></div><button class="button subtle icon-only" id="closeHelp" title="关闭" aria-label="关闭">×</button></div>
+      <ul class="help-list">
+        <li><strong>项目：</strong>切换当前项目，项目级导航保留在左侧菜单。</li>
+        <li><strong>问题：</strong>使用 JQL、快速筛选器和保存筛选器查找工作项。</li>
+        <li><strong>面板：</strong>拖动问题卡片或使用状态选择器更新工作流。</li>
+        <li><strong>计划：</strong>以版本时间线查看当前项目的发布计划。</li>
+        <li><strong>项目设置：</strong>配置角色、组件、工作流和看板状态。</li>
+      </ul>
+      <div class="modal-actions"><button class="button primary" id="closeHelpAction">完成</button></div>
+    </div>
+  </div>
+  <div class="account-menu" id="accountMenu" role="menu" aria-labelledby="accountTrigger" aria-hidden="true">
+    <div class="account-menu-head">
+      <span class="avatar" id="accountAvatar">?</span>
+      <div class="row-main"><strong id="accountName">未绑定用户</strong><small id="accountMeta">本地 JiraFlow 账户</small></div>
+    </div>
+    <div class="account-menu-actions">
+      <button class="button subtle" type="button" role="menuitem" data-account-action="profile">账户信息</button>
+      <button class="button primary" type="button" role="menuitem" data-account-action="close">关闭</button>
+    </div>
+  </div>
+  <div class="app-tooltip" id="appTooltip" role="tooltip" aria-hidden="true"></div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="./jiraflow-i18n.js"></script>
+  <script>
+    const requestedProjectKey = new URLSearchParams(window.location.search).get("project") || "";
+    const state = {
+      actor: "",
+      view: "project-gate",
+      filter: "all",
+      projectKey: "",
+      projectName: "请选择项目",
+      projectType: "software",
+      projects: [],
+      auditFlowProjects: [],
+      mappingOptions: [],
+      selectedAuditFlowProjectId: "",
+      selectedJiraFlowProjectKey: "",
+      mappingOpen: false,
+      mappingLoading: false,
+      mappingError: "",
+      projectError: "",
+      sidebarCollapsed: localStorage.getItem("jiraflow-sidebar-collapsed") === "true",
+      jql: "",
+      issues: [],
+      total: 0,
+      startAt: 0,
+      maxResults: 12,
+      selectedKey: "KTEST-1",
+      issue: null,
+      issueTab: "details",
+      history: [],
+      board: null,
+      boardSearch: "",
+      boardGroup: "none",
+      collapsedColumns: new Set(),
+      versions: [],
+      planIssues: [],
+      components: [],
+      report: null,
+      settings: null,
+      workflow: [],
+      dashboard: null,
+      notifications: [],
+      users: [],
+      audit: [],
+      plugins: [],
+      projectStatuses: [],
+      projectStatusNames: {},
+      filters: [],
+      filterSearch: "",
+      selectedFilterId: 0,
+      filterSubscriptions: [],
+      reportTypes: [],
+      reportTemplates: [],
+      reportType: "summary",
+      reportTemplateId: 0,
+      reportFilterId: 0,
+      reportJql: "",
+      reportParametersText: "{}",
+      reportResult: null,
+      adminCatalog: null,
+      adminOverview: null,
+      adminCategory: "issue-types",
+      adminQuery: "",
+      adminEntries: [],
+      loading: false
+    };
+    const $ = (id) => document.getElementById(id);
+    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[char]));
+    const overlayState = {
+      focus: new Map(),
+      stack: []
+    };
+    const displayStatus = (status) => ({
+      BACKLOG:"待办", TODO:"待开发", IN_PROGRESS:"正在进行", DONE:"完成",
+      status:"状态", priority:"优先级", issueType:"问题类型", assignee:"经办人", reporter:"报告人",
+      analysisDomain:"分析领域", processArea:"过程区域", evidenceRole:"证据角色",
+      assessmentRating:"候选评级", reviewStatus:"审核状态", summary:"概要", description:"描述", combined:"概要+描述"
+    }[status] || status);
+    const statusClass = (status) => status === "DONE" ? "done" : status === "IN_PROGRESS" ? "progress" : "backlog";
+    const formatDate = (value) => value ? new Date(value).toLocaleString(document.documentElement.lang === "en" ? "en-US" : "zh-CN", { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" }) : "-";
+    const initials = (value) => String(value || "?").slice(0, 2).toUpperCase();
+    const listValue = (value) => String(value || "").split(",").map((item) => item.trim()).filter(Boolean);
+    const selectedValues = (node) => node ? Array.from(node.selectedOptions || []).map((option) => option.value).filter(Boolean) : [];
+    const api = async (url, options = {}) => {
+      const headers = { "Content-Type":"application/json", ...(options.headers || {}) };
+      if (state.actor) headers["X-JiraFlow-User"] = state.actor;
+      else delete headers["X-JiraFlow-User"];
+      const request = { ...options, headers };
+      if (request.body && typeof request.body !== "string") request.body = JSON.stringify(request.body);
+      const apiUrl = typeof window.resolveJiraFlowApiPath === "function"
+        ? window.resolveJiraFlowApiPath(url)
+        : url;
+      const response = await fetch(apiUrl, request);
+      const text = await response.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (_) { data = { error: text }; }
+      if (!response.ok) {
+        const error = new Error(data.error || "请求失败");
+        error.status = response.status;
+        error.payload = data;
+        throw error;
+      }
+      return data;
+    };
+    const hostApi = async (url, options = {}) => {
+      const headers = { "Content-Type":"application/json", ...(options.headers || {}) };
+      const request = { ...options, credentials:"same-origin", headers };
+      if (request.body && typeof request.body !== "string") request.body = JSON.stringify(request.body);
+      const response = await fetch(url, request);
+      const text = await response.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (_) { data = { error: text }; }
+      if (!response.ok) {
+        const error = new Error(data.error || "请求失败");
+        error.status = response.status;
+        error.payload = data;
+        throw error;
+      }
+      return data;
+    };
+    const toast = (message, tone = "") => {
+      const node = $("toast");
+      node.textContent = message;
+      node.className = `toast ${tone}`;
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => node.classList.add("hidden"), 3400);
+    };
+    const showError = (error) => {
+      console.error(error);
+      toast(error.message || "请求失败", "error");
+    };
+    const filterJql = (filter) => ({
+      all:`project = ${state.projectKey} ORDER BY priority DESC`,
+      mine:`project = ${state.projectKey} AND assignee = currentUser() ORDER BY priority DESC`,
+      recent:`project = ${state.projectKey} AND updated >= -1d ORDER BY updated DESC`,
+      open:`project = ${state.projectKey} AND status != DONE ORDER BY priority DESC`,
+      created:`project = ${state.projectKey} ORDER BY created DESC`,
+      done:`project = ${state.projectKey} AND status = DONE ORDER BY updated DESC`
+    }[filter] || `project = ${state.projectKey} ORDER BY priority DESC`);
+
+    function applySidebarState(collapsed = state.sidebarCollapsed) {
+      // The toggle keeps focus while the sidebar changes. Clear the shared
+      // tooltip before updating its label so an open tooltip cannot retain
+      // the previous action text.
+      hideTooltip();
+      state.sidebarCollapsed = Boolean(collapsed);
+      const shell = document.querySelector(".shell");
+      const toggle = $("sidebarToggle");
+      if (shell) shell.classList.toggle("sidebar-collapsed", state.sidebarCollapsed);
+      if (toggle) {
+        toggle.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
+        toggle.setAttribute("aria-label", state.sidebarCollapsed ? "展开侧边栏" : "收起侧边栏");
+        toggle.title = state.sidebarCollapsed ? "展开侧边栏" : "收起侧边栏";
+        toggle.dataset.tooltip = toggle.title;
+      }
+      const sidebar = $("sidebar");
+      if (sidebar) sidebar.setAttribute("aria-expanded", String(!state.sidebarCollapsed));
+      localStorage.setItem("jiraflow-sidebar-collapsed", String(state.sidebarCollapsed));
+      if (toggle && document.activeElement === toggle) {
+        window.requestAnimationFrame(() => {
+          if (document.activeElement === toggle) showTooltip(toggle);
+        });
+      }
+    }
+
+    function focusableElements(root) {
+      if (!root) return [];
+      return Array.from(root.querySelectorAll("button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1']), [contenteditable='true']"))
+        .filter(node => !node.hidden && node.getClientRects().length > 0);
+    }
+
+    function overlayTrigger(id) {
+      return document.querySelector(`[aria-controls="${id}"]`);
+    }
+
+    function syncBodyScrollLock() {
+      document.body.classList.toggle("overlay-open", Boolean(document.querySelector(".modal.open")));
+    }
+
+    function openModal(id, trigger = null, initialFocus = null) {
+      const modal = $(id);
+      if (!modal) return;
+      document.querySelectorAll(".modal.open").forEach(other => {
+        if (other.id !== id) closeModal(other.id);
+      });
+      closeAccountMenu(false);
+      const opener = trigger || document.activeElement || overlayTrigger(id);
+      if (opener && opener !== document.body) overlayState.focus.set(id, opener);
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      const associatedTrigger = trigger || overlayTrigger(id);
+      associatedTrigger?.setAttribute("aria-expanded", "true");
+      overlayState.stack = overlayState.stack.filter(item => item !== id);
+      overlayState.stack.push(id);
+      syncBodyScrollLock();
+      const target = initialFocus || focusableElements(modal)[0];
+      window.requestAnimationFrame(() => target?.focus());
+    }
+
+    function closeModal(id) {
+      const modal = $(id);
+      if (!modal) return;
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      overlayState.stack = overlayState.stack.filter(item => item !== id);
+      overlayTrigger(id)?.setAttribute("aria-expanded", "false");
+      const opener = overlayState.focus.get(id);
+      overlayState.focus.delete(id);
+      syncBodyScrollLock();
+      if (opener && document.contains(opener)) window.requestAnimationFrame(() => opener.focus());
+    }
+
+    function updateAccountMenu() {
+      const actor = state.actor || "未绑定用户";
+      const avatar = $("accountAvatar");
+      const name = $("accountName");
+      const meta = $("accountMeta");
+      if (avatar) avatar.textContent = initials(actor);
+      if (name) name.textContent = actor;
+      if (meta) meta.textContent = `${state.projectName || state.projectKey || "JiraFlow"} · 本地账户`;
+    }
+
+    function openAccountMenu(trigger = $("accountTrigger")) {
+      const menu = $("accountMenu");
+      if (!menu) return;
+      if (menu.classList.contains("open")) {
+        closeAccountMenu();
+        return;
+      }
+      closeAccountMenu(false);
+      updateAccountMenu();
+      const opener = trigger || document.activeElement;
+      if (opener && opener !== document.body) overlayState.focus.set("accountMenu", opener);
+      menu.classList.add("open");
+      menu.setAttribute("aria-hidden", "false");
+      opener?.setAttribute("aria-expanded", "true");
+      const target = focusableElements(menu)[0];
+      window.requestAnimationFrame(() => target?.focus());
+    }
+
+    function closeAccountMenu(restoreFocus = true) {
+      const menu = $("accountMenu");
+      if (!menu) return;
+      menu.classList.remove("open");
+      menu.setAttribute("aria-hidden", "true");
+      $("accountTrigger")?.setAttribute("aria-expanded", "false");
+      const opener = overlayState.focus.get("accountMenu");
+      overlayState.focus.delete("accountMenu");
+      if (restoreFocus && opener && document.contains(opener)) window.requestAnimationFrame(() => opener.focus());
+    }
+
+    function currentOverlayRoot() {
+      const accountMenu = $("accountMenu");
+      if (accountMenu?.classList.contains("open")) return accountMenu;
+      for (let index = overlayState.stack.length - 1; index >= 0; index -= 1) {
+        const modal = $(overlayState.stack[index]);
+        if (modal?.classList.contains("open")) return modal;
+      }
+      return document.querySelector(".modal.open");
+    }
+
+    function trapOverlayFocus(event, root) {
+      if (event.key !== "Tab" || !root) return;
+      const nodes = focusableElements(root);
+      if (!nodes.length) {
+        event.preventDefault();
+        return;
+      }
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !root.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !root.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", event => {
+      const root = currentOverlayRoot();
+      if (!root) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (root.id === "accountMenu") closeAccountMenu();
+        else closeModal(root.id);
+        return;
+      }
+      trapOverlayFocus(event, root);
+    });
+
+    // Keep keyboard activation predictable for any future non-button navigation
+    // nodes that use the same data attributes as the current button controls.
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " " && event.key !== "Spacebar") return;
+      const target = event.target;
+      if (!(target instanceof HTMLElement) || target.matches("button, a, input, select, textarea, [contenteditable='true']")) return;
+      const actionable = target.closest("[data-global-action], [data-view], [role='button']");
+      if (!actionable || actionable === target) return;
+      event.preventDefault();
+      actionable.click();
+    });
+
+    document.addEventListener("pointerdown", event => {
+      const modal = event.target?.closest?.(".modal.open");
+      if (modal && event.target === modal) {
+        closeModal(modal.id);
+        return;
+      }
+      const menu = $("accountMenu");
+      if (menu?.classList.contains("open") && !event.target?.closest?.("#accountMenu, #accountTrigger")) {
+        closeAccountMenu();
+      }
+    });
+
+    function syncTooltipTitles(root = document) {
+      if (!root?.querySelectorAll) return;
+      root.querySelectorAll("[title]").forEach(node => {
+        const text = node.getAttribute("title");
+        if (!text) return;
+        node.dataset.tooltip = text;
+        if ((node.matches("button, input, select, textarea, [role='button']")) && !node.getAttribute("aria-label")) {
+          node.setAttribute("aria-label", text);
+        }
+        node.removeAttribute("title");
+      });
+    }
+
+    let tooltipTarget = null;
+    function hideTooltip(target = null) {
+      const tooltip = $("appTooltip");
+      if (!tooltip) return;
+      if (target && tooltipTarget && target !== tooltipTarget) return;
+      tooltipTarget?.removeAttribute("aria-describedby");
+      tooltip.classList.remove("open");
+      tooltip.setAttribute("aria-hidden", "true");
+      tooltip.textContent = "";
+      tooltipTarget = null;
+    }
+
+    function showTooltip(target) {
+      const tooltip = $("appTooltip");
+      const text = target?.dataset?.tooltip;
+      if (!tooltip || !text || target.disabled) return;
+      tooltip.textContent = text;
+      tooltip.classList.add("open");
+      tooltip.setAttribute("aria-hidden", "false");
+      tooltip.style.left = "-9999px";
+      tooltip.style.top = "-9999px";
+      tooltip.style.maxWidth = `${Math.max(120, Math.min(360, window.innerWidth - 16))}px`;
+      const targetRect = target.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const gap = 8;
+      const viewportPadding = 8;
+      let left = targetRect.left + ((targetRect.width - tooltipRect.width) / 2);
+      left = Math.max(viewportPadding, Math.min(left, window.innerWidth - tooltipRect.width - viewportPadding));
+      let top = targetRect.top - tooltipRect.height - gap;
+      if (top < viewportPadding) {
+        const below = targetRect.bottom + gap;
+        top = below + tooltipRect.height <= window.innerHeight - viewportPadding
+          ? below
+          : window.innerHeight - tooltipRect.height - viewportPadding;
+      }
+      top = Math.max(viewportPadding, top);
+      tooltip.style.left = `${Math.round(left)}px`;
+      tooltip.style.top = `${Math.round(top)}px`;
+      target.setAttribute("aria-describedby", "appTooltip");
+      tooltipTarget = target;
+    }
+
+    function tooltipNode(target) {
+      return typeof Element !== "undefined" && target instanceof Element ? target.closest("[data-tooltip]") : null;
+    }
+
+    document.addEventListener("pointerover", event => {
+      const target = tooltipNode(event.target);
+      if (!target || (event.relatedTarget && target.contains(event.relatedTarget))) return;
+      showTooltip(target);
+    });
+    document.addEventListener("pointerout", event => {
+      const target = tooltipNode(event.target);
+      if (!target || (event.relatedTarget && target.contains(event.relatedTarget))) return;
+      hideTooltip(target);
+    });
+    document.addEventListener("focusin", event => {
+      const target = tooltipNode(event.target);
+      if (target) showTooltip(target);
+    });
+    document.addEventListener("focusout", event => {
+      const target = tooltipNode(event.target);
+      if (target) hideTooltip(target);
+    });
+    window.addEventListener("resize", () => hideTooltip());
+    window.addEventListener("scroll", () => hideTooltip(), true);
+
+    function updateProjectChrome(project = {}) {
+      const key = project.key || state.projectKey;
+      const name = project.name || state.projectName || key;
+      const type = project.type || state.projectType || "software";
+      state.projectKey = key;
+      state.projectName = name;
+      state.projectType = type;
+      const nameNode = $("spaceName");
+      const metaNode = $("spaceMeta");
+      if (nameNode) nameNode.textContent = name;
+      if (metaNode) metaNode.textContent = `${key} · ${type}`;
+    }
+
+    async function loadProjects() {
+      let result = await hostApi("/api/integrations/jiraflow/projects");
+      const auditProjects = await loadAuditFlowProjects();
+      const mapped = new Set((result.projects || []).map(project => project.auditflowProjectId));
+      let createdMapping = false;
+      for (const project of auditProjects) {
+        const id = String(project.projectId || "");
+        if (!id || mapped.has(id)) continue;
+        try {
+          await hostApi(`/api/integrations/jiraflow/projects/${encodeURIComponent(id)}/sync`, { method:"POST", body:{} });
+          createdMapping = true;
+        } catch (error) {
+          if (error.status !== 403) state.projectError = error.message || "项目自动同步失败，请重试。";
+        }
+      }
+      if (createdMapping) result = await hostApi("/api/integrations/jiraflow/projects");
+      state.projects = result.projects || [];
+      const current = state.projects.find(item => item.key === state.projectKey);
+      if (current) updateProjectChrome(current);
+      renderProjectList();
+      return state.projects;
+    }
+
+    async function loadAuditFlowProjects() {
+      const result = await hostApi("/api/projects");
+      state.auditFlowProjects = result.projects || [];
+      return state.auditFlowProjects;
+    }
+
+    function renderProjectList() {
+      const list = $("projectList");
+      if (!list) return;
+      const mappedProjects = state.projects.length
+        ? state.projects.map(project => `<button class="project-option ${project.key === state.projectKey ? "active" : ""}" data-project-key="${escapeHtml(project.key)}" title="切换到 ${escapeHtml(project.name || project.key)}" aria-label="切换到 ${escapeHtml(project.name || project.key)}"><span class="space-icon">${escapeHtml(initials(project.key))}</span><span class="project-option-main"><strong>${escapeHtml(project.name || project.key)}</strong><small>${escapeHtml(project.key)} · ${escapeHtml(project.auditflowProjectName || project.auditflowProjectId)}</small></span></button>`).join("")
+        : `<div class="empty-line" style="padding:14px 12px">当前没有可访问的项目。</div>`;
+      const mappingMarkup = state.mappingOpen
+        ? `<section class="settings-panel" style="margin:12px 0 0;padding:14px"><div class="section-head"><h3>关联 AuditFlow 项目</h3><span class="section-count">仅关联现有项目，不会新建项目</span></div><div class="form-stack">${state.auditFlowProjects.length ? `<div class="form-field"><label for="auditFlowProjectSelect">AuditFlow 项目</label><select id="auditFlowProjectSelect" class="select"><option value="">选择一个可访问项目</option>${state.auditFlowProjects.map(project => { const id=String(project.projectId || ""); return `<option value="${escapeHtml(id)}" ${id===state.selectedAuditFlowProjectId?"selected":""}>${escapeHtml(project.name || id)} · ${escapeHtml(id)}</option>`; }).join("")}</select></div><div class="form-field"><label for="jiraFlowProjectSelect">JiraFlow 项目</label><select id="jiraFlowProjectSelect" class="select" ${state.mappingLoading || !state.selectedAuditFlowProjectId ? "disabled" : ""}><option value="">${state.mappingLoading ? "正在加载项目…" : state.selectedAuditFlowProjectId ? "选择要关联的项目" : "先选择 AuditFlow 项目"}</option>${state.mappingOptions.map(project => { const occupied=Boolean(project.auditflowProjectId && project.auditflowProjectId!==state.selectedAuditFlowProjectId); const same=project.auditflowProjectId===state.selectedAuditFlowProjectId; return `<option value="${escapeHtml(project.key)}" ${project.key===state.selectedJiraFlowProjectKey?"selected":""} ${occupied?"disabled":""}>${escapeHtml(project.name || project.key)} · ${escapeHtml(project.key)}${same?" · 已关联":""}${occupied?" · 已关联其他项目":""}</option>`; }).join("")}</select></div>` : `<div class="notice">当前账户没有可关联的 AuditFlow 项目。切换到有项目访问权限的账户后可重试。</div>`}${state.mappingError ? `<div class="notice error" role="alert">${escapeHtml(state.mappingError)}</div>` : ""}<div class="inline-actions"><button class="button primary" data-project-action="submit-mapping" ${state.mappingLoading || !state.selectedAuditFlowProjectId || !state.selectedJiraFlowProjectKey ? "disabled" : ""}>保存映射</button><button class="button subtle" data-project-action="cancel-mapping">取消</button></div><div class="section-count">权限由项目服务端校验；权限不足时可调整后重试。</div></div></section>`
+        : "";
+      list.innerHTML = `<div class="project-list-options">${mappedProjects}</div>${state.projectError ? `<div class="notice error" role="alert">${escapeHtml(state.projectError)}</div>` : ""}${mappingMarkup}`;
+      list.querySelectorAll("[data-project-key]").forEach(node => node.addEventListener("click", () => selectProject(node.dataset.projectKey).catch(showError)));
+      list.querySelector('[data-project-action="open-mapping"]')?.addEventListener("click", () => openProjectMapping().catch(showProjectError));
+      list.querySelector('[data-project-action="cancel-mapping"]')?.addEventListener("click", () => { state.mappingOpen=false; state.mappingError=""; renderProjectList(); });
+      list.querySelector('[data-project-action="submit-mapping"]')?.addEventListener("click", () => submitProjectMapping().catch(showProjectError));
+      $("auditFlowProjectSelect")?.addEventListener("change", event => selectAuditFlowProject(event.target.value).catch(showProjectError));
+      $("jiraFlowProjectSelect")?.addEventListener("change", event => { state.selectedJiraFlowProjectKey=event.target.value; renderProjectList(); });
+      syncTooltipTitles(list);
+    }
+
+    function showProjectError(error) {
+      state.projectError = error.message || "项目目录读取失败，请重试。";
+      renderProjectList();
+      if ($("projectGateError")) $("projectGateError").textContent = state.projectError;
+    }
+
+    async function openProjectMapping() {
+      state.mappingOpen = true;
+      state.mappingError = "";
+      if (!state.auditFlowProjects.length) await loadAuditFlowProjects();
+      if (!state.selectedAuditFlowProjectId && state.auditFlowProjects.length === 1) {
+        state.selectedAuditFlowProjectId = String(state.auditFlowProjects[0].projectId || "");
+        await loadMappingOptions(state.selectedAuditFlowProjectId);
+      }
+      renderProjectList();
+    }
+
+    async function selectAuditFlowProject(projectId) {
+      state.selectedAuditFlowProjectId = String(projectId || "");
+      state.selectedJiraFlowProjectKey = "";
+      state.mappingOptions = [];
+      state.mappingError = "";
+      if (state.selectedAuditFlowProjectId) await loadMappingOptions(state.selectedAuditFlowProjectId);
+      renderProjectList();
+    }
+
+    async function loadMappingOptions(projectId) {
+      state.mappingLoading = true;
+      state.mappingOptions = [];
+      renderProjectList();
+      try {
+        const result = await hostApi(`/api/integrations/jiraflow/projects/${encodeURIComponent(projectId)}/mapping-options`);
+        state.mappingOptions = result.projects || [];
+      } catch (error) {
+        state.mappingError = error.message || "无法读取 JiraFlow 项目列表，请重试。";
+      } finally {
+        state.mappingLoading = false;
+        renderProjectList();
+      }
+    }
+
+    async function submitProjectMapping() {
+      const projectKey = state.selectedJiraFlowProjectKey;
+      const auditflowProjectId = state.selectedAuditFlowProjectId;
+      if (!projectKey || !auditflowProjectId) return;
+      state.mappingError = "";
+      state.mappingLoading = true;
+      renderProjectList();
+      try {
+        await hostApi(`/api/integrations/jiraflow/projects/${encodeURIComponent(projectKey)}/auditflow-mapping`, {
+          method:"PUT", body:{ auditflowProjectId }
+        });
+        state.mappingOpen = false;
+        state.mappingLoading = false;
+        await loadProjects();
+        await selectProject(projectKey);
+      } catch (error) {
+        state.mappingLoading = false;
+        state.mappingError = error.message || "保存映射失败，请检查项目权限后重试。";
+        renderProjectList();
+      }
+    }
+
+    async function openProjectSwitcher() {
+      openModal("projectModal", $("projectsTrigger"), $("closeProjects"));
+      try {
+        state.projectError = "";
+        await loadProjects();
+      } catch (error) {
+        showProjectError(error);
+      }
+    }
+
+    async function selectProject(key) {
+      const project = state.projects.find(item => item.key === key);
+      if (!project) return;
+      state.projectKey = key;
+      state.projectName = project.name || key;
+      state.projectType = project.type || "software";
+      state.projectError = "";
+      state.view = "dashboard";
+      state.filter = "all";
+      state.jql = filterJql("all");
+      state.startAt = 0;
+      state.selectedKey = "";
+      state.issue = null;
+      state.dashboard = null;
+      state.board = null;
+      state.report = null;
+      state.settings = null;
+      updateProjectChrome(project);
+      closeModal("projectModal");
+      await loadView();
+    }
+
+    async function loadIssues() {
+      const result = await api(`/api/search?project=${state.projectKey}&jql=${encodeURIComponent(state.jql)}&startAt=${state.startAt}&maxResults=${state.maxResults}`);
+      state.issues = result.issues || [];
+      state.total = result.total || 0;
+      if (!state.selectedKey || !state.issues.some((item) => item.key === state.selectedKey)) state.selectedKey = state.issues[0]?.key || "";
+      state.issue = state.selectedKey ? (await api(`/api/issues/${state.selectedKey}`)).issue : null;
+    }
+    async function loadView() {
+      if (!state.projectKey && state.view !== "project-gate") {
+        state.view = "project-gate";
+        state.loading = false;
+        render();
+        return;
+      }
+      state.loading = true;
+      render();
+      try {
+        if (state.view === "dashboard") state.dashboard = await api(`/api/dashboard?project=${encodeURIComponent(state.projectKey)}`);
+        if (state.view === "board") {
+          state.board = (await api(`/api/boards/${state.projectKey}?q=${encodeURIComponent(state.boardSearch)}`)).board;
+          state.projectStatuses = (state.board.columns || []).map(column => column.id);
+          state.projectStatusNames = Object.fromEntries((state.board.columns || []).map(column => [column.id, column.name]));
+        }
+        if (state.view === "issues") {
+          const project = (await api(`/api/projects/${state.projectKey}`)).project;
+          state.projectStatuses = Object.keys(project.settings?.boardColumns || {});
+          state.projectStatusNames = project.settings?.boardColumns || {};
+          state.components = (await api(`/api/projects/${state.projectKey}/components`)).components || project.components || [];
+          state.filters = (await api(`/api/filters?project=${state.projectKey}&q=${encodeURIComponent(state.filterSearch)}`)).filters || [];
+          if (state.selectedFilterId && !state.filters.some(filter => Number(filter.id) === Number(state.selectedFilterId))) state.selectedFilterId = 0;
+          await loadIssues();
+        }
+        if (state.view === "releases" || state.view === "plans") {
+          state.versions = (await api(`/api/projects/${state.projectKey}/versions`)).versions || [];
+          if (state.view === "plans") {
+            const planSearch = await api(`/api/search?project=${encodeURIComponent(state.projectKey)}&jql=${encodeURIComponent(`project = ${state.projectKey} ORDER BY priority DESC`)}&startAt=0&maxResults=200`);
+            state.planIssues = planSearch.issues || [];
+          }
+        }
+        if (state.view === "reports") {
+          state.reportTypes = (await api(`/api/reports/types`)).types || [];
+          state.reportTemplates = (await api(`/api/reports/templates?project=${state.projectKey}`)).templates || [];
+          state.filters = (await api(`/api/filters?project=${state.projectKey}`)).filters || [];
+          if (!state.reportType) state.reportType = "summary";
+          if (state.reportTemplateId && !state.reportTemplates.some(template => Number(template.id) === Number(state.reportTemplateId))) state.reportTemplateId = 0;
+          const params = new URLSearchParams({ project: state.projectKey });
+          if (state.reportTemplateId) params.set("templateId", String(state.reportTemplateId));
+          else params.set("type", state.reportType);
+          if (state.reportFilterId) params.set("filterId", String(state.reportFilterId));
+          if (state.reportJql.trim()) params.set("jql", state.reportJql.trim());
+          state.report = (await api(`/api/reports?${params.toString()}`)).report;
+          state.reportResult = state.report;
+          if (!state.reportJql) state.reportJql = state.report?.jql || "";
+          if (!state.reportFilterId) state.reportFilterId = Number(state.report?.filterId || 0);
+        }
+        if (state.view === "settings") {
+          state.settings = await api(`/api/projects/${state.projectKey}/settings`);
+          state.components = (await api(`/api/projects/${state.projectKey}/components`)).components || state.settings.project?.components || [];
+          state.projectStatuses = Object.keys(state.settings.project?.settings?.boardColumns || {});
+          state.projectStatusNames = state.settings.project?.settings?.boardColumns || {};
+          state.workflow = (await api(`/api/projects/${state.projectKey}/workflow`)).transitions || [];
+        }
+        if (state.view === "notifications") state.notifications = (await api(`/api/notifications`)).notifications || [];
+        if (state.view === "users") state.users = (await api(`/api/admin/users`)).users || [];
+        if (state.view === "admin") {
+          state.adminOverview = await api(`/api/admin/overview`);
+          state.adminCatalog = await api(`/api/admin/catalog`);
+          state.adminEntries = state.adminCategory
+            ? ((await api(`/api/admin/${encodeURIComponent(state.adminCategory)}?q=${encodeURIComponent(state.adminQuery)}`)).entries || [])
+            : [];
+        }
+        if (state.view === "audit") state.audit = (await api(`/api/audit?limit=250`)).events || [];
+        if (state.view === "plugins") state.plugins = (await api(`/api/plugins`)).plugins || [];
+        const session = await api(`/api/session`);
+        const boundActor = session.user?.username || "";
+        if (boundActor) {
+          state.actor = boundActor;
+          const actorControl = $("actorSelect");
+          if (actorControl) {
+            if (!Array.from(actorControl.options).some(option => option.value === boundActor)) {
+              actorControl.add(new Option(boundActor, boundActor));
+            }
+            actorControl.value = boundActor;
+            actorControl.title = `当前绑定用户：${boundActor}`;
+            actorControl.dataset.tooltip = actorControl.title;
+            actorControl.setAttribute("aria-label", `当前绑定用户：${boundActor}`);
+          }
+        }
+        updateUnread(Number(session.unreadNotifications || 0));
+      } catch (error) {
+        showError(error);
+      } finally {
+        state.loading = false;
+        render();
+      }
+    }
+    function updateUnread(count) {
+      $("notificationBadge").textContent = count ? ` ${count}` : "";
+      $("sidebarUnread").textContent = count ? String(count) : "";
+    }
+    async function selectIssue(key) {
+      state.selectedKey = key;
+      state.issueTab = "details";
+      try {
+        state.issue = (await api(`/api/issues/${key}`)).issue;
+        render();
+        await api(`/api/projects/${state.projectKey}/presence`, { method:"POST", body:{ route:`issues/${key}`, state:"viewing" } });
+      } catch (error) { showError(error); }
+    }
+    function shellHead(title, crumb, action = "") {
+      return `<div class="page-head"><div class="page-head-main"><div class="crumb">${escapeHtml(crumb)}</div><h1>${escapeHtml(title)}</h1></div><div class="page-actions">${action}</div></div>`;
+    }
+    function setSettingsNavigationActive(id, nav) {
+      nav?.querySelectorAll("[data-settings-section]").forEach(node => {
+        const active = node.dataset.settingsSection === id;
+        node.toggleAttribute("aria-current", active);
+        if (!active) node.removeAttribute("aria-current");
+      });
+    }
+    function enhanceSettingsNavigation() {
+      const main = $("main");
+      const grid = main?.querySelector(".settings-grid");
+      if (!grid) return;
+      const sections = Array.from(grid.querySelectorAll(".settings-panel"));
+      if (!sections.length) return;
+      const labels = ["项目信息", "项目角色", "组件", "工作流", "看板状态"];
+      const ids = ["project-details", "project-roles", "project-components", "project-workflow", "project-board"];
+      const layout = document.createElement("div");
+      layout.className = "settings-layout";
+      const nav = document.createElement("nav");
+      nav.className = "settings-nav";
+      nav.setAttribute("aria-label", "项目设置导航");
+      nav.innerHTML = `<div class="settings-nav-title">项目设置</div>${sections.map((section, index) => `<button type="button" data-settings-section="${ids[index] || `project-section-${index + 1}`}" aria-controls="${ids[index] || `project-section-${index + 1}`}">${labels[index] || `设置 ${index + 1}`}</button>`).join("")}`;
+      sections.forEach((section, index) => {
+        const id = ids[index] || `project-section-${index + 1}`;
+        section.id = id;
+        section.tabIndex = -1;
+        const heading = section.querySelector("h3");
+        if (heading) {
+          const headingId = `${id}-title`;
+          heading.id = headingId;
+          section.setAttribute("aria-labelledby", headingId);
+        }
+      });
+      grid.parentNode.insertBefore(layout, grid);
+      layout.append(nav, grid);
+      setSettingsNavigationActive(ids[0], nav);
+      nav.addEventListener("click", event => {
+        const button = event.target.closest("[data-settings-section]");
+        if (!button) return;
+        const target = $(button.dataset.settingsSection);
+        if (!target) return;
+        setSettingsNavigationActive(button.dataset.settingsSection, nav);
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        target.focus({ preventScroll: true });
+      });
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(entries => {
+          // IntersectionObserver only reports changed entries. Re-evaluate all
+          // sections so a previously intersecting section cannot retain the
+          // active state when the next section is closer to the observer edge.
+          const rootBounds = entries.find(entry => entry.rootBounds)?.rootBounds;
+          const rootTop = rootBounds?.top ?? 72;
+          const rootBottom = rootBounds?.bottom ?? Math.max(rootTop + 1, window.innerHeight * 0.45);
+          const visible = sections
+            .map(section => ({ section, rect: section.getBoundingClientRect() }))
+            .filter(({ rect }) => rect.bottom > rootTop && rect.top < rootBottom)
+            .sort((left, right) =>
+              Math.abs(left.rect.top - rootTop) -
+              Math.abs(right.rect.top - rootTop)
+            )[0];
+          if (visible) setSettingsNavigationActive(visible.section.id, nav);
+        }, { rootMargin: "-72px 0px -55% 0px", threshold: [0, 0.25, 0.6] });
+        sections.forEach(section => observer.observe(section));
+      }
+    }
+    function render() {
+      document.querySelectorAll("[data-view]").forEach((node) => {
+        const active = node.dataset.view === state.view;
+        node.classList.toggle("active", active);
+        if (active) node.setAttribute("aria-current", "page");
+        else node.removeAttribute("aria-current");
+      });
+      if (state.loading && !state.dashboard && !state.issue && !state.board && !state.report && !state.settings && !state.versions.length) {
+        $("main").innerHTML = `<div class="loading">正在加载 JiraFlow 工作区...</div>`;
+        syncTooltipTitles($("main"));
+        return;
+      }
+      const renderers = { "project-gate":renderProjectGate, dashboard:renderDashboard, board:renderBoard, issues:renderIssues, releases:renderReleases, plans:renderPlans, reports:renderReports, settings:renderSettings, notifications:renderNotifications, users:renderUsers, audit:renderAudit, plugins:renderPlugins, admin:renderAdmin };
+      $("main").innerHTML = (renderers[state.view] || renderDashboard)();
+      bindView();
+      enhanceSettingsNavigation();
+      syncTooltipTitles($("main"));
+    }
+    function renderProjectGate() {
+      return shellHead("选择项目", "JiraFlow / 项目", "") + `<section class="panel" style="max-width:760px"><div class="section-head"><h2>暂无可访问项目</h2></div>${state.projectError ? `<div class="notice error" id="projectGateError" role="alert">${escapeHtml(state.projectError)}</div>` : ""}<div class="inline-actions" style="margin-top:14px"><button class="button primary" data-action="choose-project">选择项目</button><button class="button subtle" data-action="retry-projects">重试</button></div></section>`;
+    }
+    function projectCrumb(section = "") {
+      return `${state.projectName || state.projectKey} / ${state.projectKey}${section ? ` ${section}` : ""}`;
+    }
+    function renderDashboard() {
+      const data = state.dashboard || { assignedIssues:[], activity:[], unreadNotifications:[], issueCount:0, openCount:0, inProgressCount:0, completedCount:0 };
+      const issueRows = data.assignedIssues.length ? data.assignedIssues.map(issue => `<li><span class="avatar">${initials(issue.assignee)}</span><div class="dashboard-list-main"><strong><a href="#" data-open-issue="${escapeHtml(issue.key)}" style="color:var(--blue-dark);text-decoration:none">${escapeHtml(issue.key)} · ${escapeHtml(issue.summary)}</a></strong><small><span class="status-chip ${statusClass(issue.status)}">${escapeHtml(displayStatus(issue.status))}</span> ${escapeHtml(issue.priority)} · 更新于 ${formatDate(issue.updatedAt)}</small></div></li>`).join("") : `<li><div class="empty-line">没有分配给当前用户的未完成问题。</div></li>`;
+      const activityRows = data.activity.length ? data.activity.map(item => `<li><span class="avatar">${initials(item.actor)}</span><div class="dashboard-list-main"><strong>${escapeHtml(item.action)}</strong><small>${escapeHtml(item.actor)} · ${escapeHtml(item.entityKey)} · ${escapeHtml(item.detail)} · ${formatDate(item.timestamp)}</small></div></li>`).join("") : `<li><div class="empty-line">暂无活动记录。</div></li>`;
+      const notificationRows = data.unreadNotifications.length ? data.unreadNotifications.map(item => `<li><div class="dashboard-list-main"><strong>${escapeHtml(item.message)}</strong><small>${formatDate(item.createdAt)}</small></div></li>`).join("") : `<li><div class="empty-line">没有未读通知。</div></li>`;
+      return shellHead("项目摘要",projectCrumb("摘要"),`<button class="button primary" data-action="create">＋ 创建问题</button>`) +
+        `<div class="metric-grid">
+          <div class="metric"><div class="metric-label">全部问题</div><div class="metric-value">${data.issueCount || 0}</div></div>
+          <div class="metric"><div class="metric-label">未完成</div><div class="metric-value">${data.openCount || 0}</div></div>
+          <div class="metric"><div class="metric-label">正在进行</div><div class="metric-value">${data.inProgressCount || 0}</div></div>
+          <div class="metric"><div class="metric-label">已完成</div><div class="metric-value">${data.completedCount || 0}</div></div>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel"><div class="section-head"><h2>分配给我的</h2><span class="section-count">${data.assignedIssues.length} 个问题</span><div class="spacer"></div><button class="button ghost" data-view="issues" data-filter-target="mine">查看全部</button></div><ul class="dashboard-list">${issueRows}</ul></section>
+          <section class="panel"><div class="section-head"><h2>未读通知</h2><span class="section-count">${data.unreadNotifications.length}</span><div class="spacer"></div><button class="button ghost" data-view="notifications">打开通知</button></div><ul class="dashboard-list">${notificationRows}</ul></section>
+          <section class="panel"><div class="section-head"><h2>活动日志</h2><span class="section-count">最近 12 条</span><div class="spacer"></div><button class="button ghost" data-view="audit">查看审计</button></div><ul class="dashboard-list">${activityRows}</ul></section>
+          <section class="panel"><div class="section-head"><h2>空间入口</h2></div><div class="form-stack"><button class="button subtle" data-view="board">▦ 打开看板</button><button class="button subtle" data-view="issues">≡ 浏览问题</button><button class="button subtle" data-view="settings">⚙ 配置项目</button></div></section>
+        </div>`;
+    }
+    function renderBoard() {
+      const board = state.board;
+      if (!board) return shellHead("看板",projectCrumb("看板")) + `<div class="loading">正在加载看板...</div>`;
+      const cards = (issue) => `<div class="board-card">
+        <button style="width:100%;padding:0;text-align:left;border:0;color:inherit;background:transparent" data-open-issue="${escapeHtml(issue.key)}">
+          <div class="issue-row-top"><span class="issue-key">${escapeHtml(issue.key)}</span><span class="status-chip ${statusClass(issue.status)}">${escapeHtml(issue.priority)}</span><span class="spacer"></span><span class="section-count">${escapeHtml(issue.assignee || "未分配")}</span></div>
+          <div class="board-card-summary">${escapeHtml(issue.summary)}</div>
+          <div class="board-card-meta"><span class="type-dot ${issue.type.toLowerCase().includes("bug") ? "bug" : issue.type.toLowerCase().includes("story") ? "story" : ""}"></span><span>${escapeHtml(issue.type)}</span><span>更新于 ${formatDate(issue.updatedAt)}</span></div>
+        </button>
+        <select data-card-status="${escapeHtml(issue.key)}" aria-label="移动问题">
+          ${board.columns.map(column => `<option value="${escapeHtml(column.id)}" ${column.id === issue.status ? "selected":""}>移动到 ${escapeHtml(column.name)}</option>`).join("")}
+        </select>
+      </div>`;
+      const columns = board.columns.map((column) => {
+        const collapsed = state.collapsedColumns.has(column.id);
+        const filtered = column.issues || [];
+        const grouped = {};
+        filtered.forEach((issue) => {
+          const key = state.boardGroup === "assignee" ? (issue.assignee || "未分配") : state.boardGroup === "swimlane" ? (issue.swimlane || "Other") : "全部";
+          (grouped[key] ||= []).push(issue);
+        });
+        const laneMarkup = Object.entries(grouped).map(([lane, items]) => `<div class="lane-title">${escapeHtml(lane)} <span class="section-count">${items.length}</span></div>${collapsed ? "" : items.map(cards).join("")}`).join("");
+        return `<section class="board-column ${column.wipExceeded ? "wip-exceeded":""}">
+          <div class="board-column-head"><span>${escapeHtml(column.name)}</span><strong>${column.issues.length}${column.wipLimit ? ` / ${column.wipLimit}` : ""}</strong><button class="icon-button" data-toggle-column="${escapeHtml(column.id)}" title="${collapsed ? "展开":"收起"}">${collapsed ? "＋":"−"}</button></div>
+          <div class="board-cards">${laneMarkup || `<div class="empty-line">无工作项</div>`}</div>
+          ${!collapsed ? `<button class="button ghost" style="width:100%" data-action="create" data-create-status="${escapeHtml(column.id)}">＋ 创建</button>` : ""}
+        </section>`;
+      }).join("");
+      return shellHead("看板",projectCrumb("看板"),`<button class="button primary" data-action="create">＋ 创建问题</button><button class="button subtle" data-action="refresh">刷新</button>`) +
+        `<div class="toolbar"><div class="search-wrap"><span style="top:8px">⌕</span><input id="boardSearch" class="field compact" value="${escapeHtml(state.boardSearch)}" placeholder="搜索看板"></div><select id="boardGroup" class="select" style="width:150px"><option value="none" ${state.boardGroup==="none"?"selected":""}>不分组</option><option value="swimlane" ${state.boardGroup==="swimlane"?"selected":""}>按泳道分组</option><option value="assignee" ${state.boardGroup==="assignee"?"selected":""}>按经办人分组</option></select><button class="button subtle" data-action="board-mine">仅我的问题</button><button class="button subtle" data-action="board-recent">最近更新</button><div class="spacer"></div><span class="section-count">${board.columns.reduce((total, column) => total + column.issues.length, 0)} 个工作项</span></div><div class="board-wrap"><div class="board-columns">${columns}</div></div>`;
+    }
+    function renderIssues() {
+      const filters = [["all","所有问题"],["mine","分配给我"],["open","打开问题"],["done","已完成"],["recent","最近更新"],["created","最近创建"]];
+      return shellHead("问题",projectCrumb("问题"),`<button class="button primary" data-action="create">＋ 创建问题</button>`) +
+        `<div class="toolbar"><span class="toolbar-label">快速筛选</span><select id="filterSelect" class="select" style="width:150px">${filters.map(([value,label]) => `<option value="${value}" ${state.filter===value?"selected":""}>${label}</option>`).join("")}</select><input id="jqlInput" class="field" style="flex:1;min-width:220px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace" value="${escapeHtml(state.jql)}" aria-label="JQL"><button class="button subtle" data-action="run-jql">搜索</button><button class="button subtle" data-action="save-filter">保存筛选器</button><button class="button subtle" data-action="refresh">刷新</button></div>
+        <div class="filter-grid" style="margin:12px 0 16px"><section class="filter-list"><div class="filter-list-head"><strong>已保存筛选器</strong><span class="section-count">${state.filters.length}</span><div class="spacer"></div><input id="filterSearch" class="field" placeholder="搜索筛选器" value="${escapeHtml(state.filterSearch)}"></div>${state.filters.length ? state.filters.map(filter => `<button class="filter-list-row ${Number(filter.id)===Number(state.selectedFilterId)?"active":""}" data-filter-run="${filter.id}"><span class="filter-star">${filter.favourite ? "★":"☆"}</span><span class="row-main"><strong>${escapeHtml(filter.name)}</strong><small>${escapeHtml(filter.owner)} · ${escapeHtml(filter.visibility)} · ${escapeHtml(filter.jql)}</small></span></button>`).join("") : `<div class="empty-line" style="padding:18px 12px">暂无可见筛选器。运行 JQL 后点击“保存筛选器”。</div>`}</section><section class="panel filter-description-panel" style="margin:0"><div class="section-head"><h3>${state.selectedFilterId ? "筛选器操作":"筛选器说明"}</h3><div class="spacer"></div></div>${state.selectedFilterId ? renderSelectedFilterActions() : `<p class="section-count filter-description">筛选器支持私有、共享和全局可见性，可执行、收藏及订阅。选中左侧筛选器后可管理它。</p>`}</section></div>
+        ${state.loading ? `<div class="loading">正在加载问题...</div>` : `<div class="issue-layout">${renderIssueList()}${renderIssueDetail()}</div>`}`;
+    }
+    function renderSelectedFilterActions() {
+      const filter = state.filters.find(item => Number(item.id) === Number(state.selectedFilterId));
+      if (!filter) return `<div class="empty-line">筛选器不可用。</div>`;
+      return `<div class="form-stack"><div><strong>${escapeHtml(filter.name)}</strong><div class="section-count" style="margin-top:5px">${escapeHtml(filter.description || "无描述")}</div></div><div class="notice">${escapeHtml(filter.jql)}</div><div class="inline-actions"><button class="button primary" data-filter-action="run" data-filter-id="${filter.id}">运行筛选器</button><button class="button subtle" data-filter-action="edit" data-filter-id="${filter.id}">编辑</button><button class="button subtle" data-filter-action="favourite" data-filter-id="${filter.id}">${filter.favourite ? "取消收藏":"收藏"}</button><button class="button subtle" data-filter-action="share" data-filter-id="${filter.id}">共享设置</button><button class="button subtle" data-filter-action="subscribe" data-filter-id="${filter.id}">订阅</button><button class="button danger" data-filter-action="delete" data-filter-id="${filter.id}">删除</button></div></div>`;
+    }
+    function renderIssueList() {
+      return `<section class="issue-list"><div class="list-head"><strong>问题</strong><span class="section-count">${state.total} 个</span></div>${state.issues.length ? state.issues.map(issue => `<button class="issue-row ${issue.key===state.selectedKey?"selected":""}" data-issue-key="${escapeHtml(issue.key)}"><div class="issue-row-top"><span class="issue-key">${escapeHtml(issue.key)}</span><span class="issue-type">${escapeHtml(issue.type)}</span><span class="spacer"></span><span class="status-chip ${statusClass(issue.status)}">${escapeHtml(displayStatus(issue.status))}</span></div><div class="issue-row-summary">${escapeHtml(issue.summary)}</div><div class="issue-row-meta"><span>${escapeHtml(issue.priority)}</span><span>·</span><span>${escapeHtml(issue.assignee || "未分配")}</span><span>·</span><span>${formatDate(issue.updatedAt)}</span></div></button>`).join("") : `<div class="empty-line" style="padding:22px 14px">没有符合当前 JQL 的问题。</div>`}<div class="list-foot"><button class="button ghost" data-action="prev-page" ${state.startAt<=0?"disabled":""}>‹ 上一页</button><span>${state.total ? `${state.startAt+1}-${Math.min(state.startAt+state.maxResults,state.total)}` : "0"} / ${state.total}</span><button class="button ghost" data-action="next-page" ${state.startAt+state.maxResults>=state.total?"disabled":""}>下一页 ›</button></div></section>`;
+    }
+    function renderIssueDetail() {
+      const issue = state.issue;
+      if (!issue) return `<section class="detail-pane"><div class="detail-empty">选择一个问题查看详情</div></section>`;
+      const content = state.issueTab === "history" ? renderHistory() : state.issueTab === "activity" ? renderActivity() : renderIssueDetails();
+      const availableStatuses = state.projectStatuses.length ? state.projectStatuses : ["BACKLOG","TODO","IN_PROGRESS","DONE"];
+      return `<section class="detail-pane"><div class="detail-head"><div class="detail-head-main"><div class="detail-key">${escapeHtml(issue.key)}</div><div class="detail-title">${escapeHtml(issue.summary)}</div></div><div class="detail-actions"><button class="button subtle" data-action="focus-fields">编辑</button><button class="button subtle" data-action="focus-comment">添加评论</button><button class="button subtle" data-action="toggle-watch">${issue.watchers.includes(state.actor) ? "取消关注":"关注"}</button><button class="button subtle" data-action="toggle-vote">${issue.voters.includes(state.actor) ? "取消投票":"投票"} (${issue.voters.length})</button></div></div><div class="detail-body"><div class="detail-status-row"><label>状态</label><select id="statusSelect" class="select status-select">${availableStatuses.map(status => `<option value="${escapeHtml(status)}" ${status===issue.status?"selected":""}>${escapeHtml(state.projectStatusNames[status] || displayStatus(status))}</option>`).join("")}</select><span class="status-chip ${statusClass(issue.status)}">${escapeHtml(state.projectStatusNames[issue.status] || displayStatus(issue.status))}</span><span class="revision">revision ${issue.revision}</span></div><div class="detail-grid"><div class="detail-field"><label>类型</label><strong>${escapeHtml(issue.type)}</strong></div><div class="detail-field"><label>优先级</label><strong>${escapeHtml(issue.priority)}</strong></div><div class="detail-field"><label>经办人</label><strong>${escapeHtml(issue.assignee || "未分配")}</strong></div><div class="detail-field"><label>报告人</label><strong>${escapeHtml(issue.reporter || "-")}</strong></div><div class="detail-field"><label>解决结果</label><strong>${escapeHtml(issue.resolution || "未解决")}</strong></div><div class="detail-field"><label>分析领域</label><strong>${escapeHtml(issue.analysisDomain || "ASPICE")}</strong></div><div class="detail-field"><label>过程区域</label><strong>${escapeHtml(issue.processArea || "未映射")}</strong></div><div class="detail-field"><label>审核状态</label><strong>${escapeHtml(issue.reviewStatus || "open")}</strong></div><div class="detail-field"><label>标签</label><strong>${escapeHtml(issue.labels.join(", ") || "无")}</strong></div><div class="detail-field"><label>修复版本</label><strong>${escapeHtml(issue.fixVersions.join(", ") || "无")}</strong></div><div class="detail-field"><label>子任务</label><strong>${issue.subtasks.length}</strong></div></div><div class="tabs"><button class="tab ${state.issueTab==="details"?"active":""}" data-tab="details">详情</button><button class="tab ${state.issueTab==="activity"?"active":""}" data-tab="activity">活动日志</button><button class="tab ${state.issueTab==="history"?"active":""}" data-tab="history">改动记录</button></div>${content}</div></section>`;
+    }
+    function renderComponentField(issue) {
+      const selected = new Set(issue.components || []);
+      const options = state.components.map(component => `<option value="${escapeHtml(component.name)}" ${selected.has(component.name) ? "selected" : ""}>${escapeHtml(component.name)}</option>`).join("");
+      const fallback = state.components.length ? "" : `<div class="section-count">当前项目暂无组件，请先在项目设置中创建。</div>`;
+      return `<div class="form-field"><label for="editComponents">组件</label><select id="editComponents" class="select" multiple size="${Math.min(6, Math.max(3, state.components.length || 3))}">${options}</select>${fallback}</div>`;
+    }
+    function renderIssueDetails() {
+      const issue = state.issue;
+      const comments = issue.comments || [];
+      const attachments = issue.attachments || [];
+      const links = issue.links || [];
+      const worklogs = issue.worklogs || [];
+      return `<div id="editFields" class="section" style="padding-top:0;border-top:0"><div class="section-head"><h3>字段</h3><span class="section-count">问题模块</span><div class="spacer"></div><button class="button primary" data-action="save-fields">保存字段</button></div><div class="field-grid"><div class="form-field"><label>概要</label><input id="editSummary" class="field" value="${escapeHtml(issue.summary)}"></div><div class="form-field"><label>类型</label><select id="editType" class="select">${["Task","Bug","Story","Sub-task"].map(value => `<option ${issue.type===value?"selected":""}>${value}</option>`).join("")}</select></div><div class="form-field"><label>优先级</label><select id="editPriority" class="select">${["Highest","High","Medium","Low"].map(value => `<option ${issue.priority===value?"selected":""}>${value}</option>`).join("")}</select></div><div class="form-field"><label>经办人</label><select id="editAssignee" class="select">${["testuser","alice","bob",""].map(value => `<option value="${value}" ${issue.assignee===value?"selected":""}>${value || "未分配"}</option>`).join("")}</select></div><div class="form-field"><label>报告人</label><input id="editReporter" class="field" value="${escapeHtml(issue.reporter)}"></div><div class="form-field"><label>解决结果</label><select id="editResolution" class="select"><option value="" ${!issue.resolution?"selected":""}>未解决</option><option value="Done" ${issue.resolution==="Done"?"selected":""}>完成</option><option value="Won't Do" ${issue.resolution==="Won't Do"?"selected":""}>不处理</option></select></div><div class="form-field"><label>标签</label><input id="editLabels" class="field" value="${escapeHtml(issue.labels.join(", "))}" placeholder="comma-separated"></div>${renderComponentField(issue)}<div class="form-field"><label>修复版本</label><input id="editFixVersions" class="field" value="${escapeHtml(issue.fixVersions.join(", "))}" placeholder="comma-separated"></div><div class="form-field"><label>影响版本</label><input id="editAffectsVersions" class="field" value="${escapeHtml(issue.affectsVersions.join(", "))}" placeholder="comma-separated"></div><div class="form-field"><label>到期日</label><input id="editDueDate" class="field" type="date" value="${escapeHtml(issue.dueDate)}"></div><div class="form-field"><label>环境</label><input id="editEnvironment" class="field" value="${escapeHtml(issue.environment)}"></div></div></div>
+      <div class="section"><div class="section-head"><h3>评估</h3><span class="section-count">候选结论需由审核员确认</span><div class="spacer"></div></div><div class="field-grid"><div class="form-field"><label>分析领域</label><select id="editAnalysisDomain" class="select"><option value="ASPICE" ${issue.analysisDomain==="ASPICE"?"selected":""}>ASPICE</option><option value="CYBERSECURITY" ${issue.analysisDomain==="CYBERSECURITY"?"selected":""}>网络安全</option><option value="FUNCTIONAL_SAFETY" ${issue.analysisDomain==="FUNCTIONAL_SAFETY"?"selected":""}>功能安全</option></select></div><div class="form-field"><label>过程区域</label><input id="editProcessArea" class="field" value="${escapeHtml(issue.processArea || "")}" placeholder="例如 SWE.1、SUP.8、MAN.3"></div><div class="form-field"><label>正式范围</label><input id="editFormalScope" class="field" value="${escapeHtml(issue.formalScope || "")}" placeholder="评估范围或功能边界"></div><div class="form-field"><label>证据角色</label><select id="editEvidenceRole" class="select"><option value="direct" ${issue.evidenceRole==="direct"?"selected":""}>直接证据</option><option value="corroborating" ${issue.evidenceRole==="corroborating"?"selected":""}>佐证证据</option><option value="index-only" ${issue.evidenceRole==="index-only"?"selected":""}>索引证据</option></select></div><div class="form-field"><label>候选评级</label><input id="editAssessmentRating" class="field" value="${escapeHtml(issue.assessmentRating || "")}" placeholder="例如 N、P、L、F（由审核员确认）"></div><div class="form-field"><label>审核决定</label><select id="editAssessorDecision" class="select"><option value="pending" ${issue.assessorDecision==="pending"?"selected":""}>待审核</option><option value="accepted" ${issue.assessorDecision==="accepted"?"selected":""}>审核接受</option><option value="rejected" ${issue.assessorDecision==="rejected"?"selected":""}>审核驳回</option></select></div><div class="form-field"><label>ASIL</label><input id="editAsil" class="field" value="${escapeHtml(issue.asil || "")}" placeholder="QM / A / B / C / D"></div><div class="form-field"><label>网络安全等级</label><input id="editCybersecurityLevel" class="field" value="${escapeHtml(issue.cybersecurityLevel || "")}" placeholder="CAL / 风险等级"></div><div class="form-field"><label>审核状态</label><select id="editReviewStatus" class="select"><option value="open" ${issue.reviewStatus==="open"?"selected":""}>开放</option><option value="in-review" ${issue.reviewStatus==="in-review"?"selected":""}>审核中</option><option value="closed" ${issue.reviewStatus==="closed"?"selected":""}>已关闭</option></select></div></div><div class="field-grid"><div class="form-field"><label>风险陈述</label><textarea id="editRiskStatement" class="field" rows="3">${escapeHtml(issue.riskStatement || "")}</textarea></div><div class="form-field"><label>客观证据</label><textarea id="editObjectiveEvidence" class="field" rows="3">${escapeHtml(issue.objectiveEvidence || "")}</textarea></div><div class="form-field"><label>验证方法</label><textarea id="editVerificationMethod" class="field" rows="3">${escapeHtml(issue.verificationMethod || "")}</textarea></div><div class="form-field"><label>关闭证据</label><textarea id="editClosureEvidence" class="field" rows="3">${escapeHtml(issue.closureEvidence || "")}</textarea></div></div><div class="form-field"><label>双向追踪链接</label><input id="editTraceLinks" class="field" value="${escapeHtml((issue.traceLinks || []).join(", "))}" placeholder="需求、设计、代码、测试或证据 ID，用逗号分隔"></div></div>
+      <div class="section"><div class="section-head"><h3>描述</h3><div class="spacer"></div><button class="button ghost" data-action="save-description">保存描述</button></div><textarea id="descriptionEditor" class="field description-editor">${escapeHtml(issue.description || "")}</textarea></div>
+      <div class="section" id="attachmentsSection"><div class="section-head"><h3>附件</h3><span class="section-count">${attachments.length}</span><div class="spacer"></div></div>${attachments.length ? attachments.map(item => `<div class="attachment-row"><span>□</span><span class="attachment-name">${escapeHtml(item.filename)}</span><span class="section-count">${item.size} bytes · ${escapeHtml(item.author)}</span><span class="spacer"></span><button class="button ghost" data-download-attachment="${item.id}">下载</button><button class="button danger" data-delete-attachment="${item.id}">删除</button></div>`).join("") : `<div class="empty-line">暂无附件。</div>`}<div class="file-control"><input id="attachmentFile" type="file"><button class="button subtle" data-action="upload-attachment">添加附件</button></div></div>
+      <div class="section"><div class="section-head"><h3>子任务</h3><span class="section-count">${issue.subtasks.length}</span><div class="spacer"></div></div>${issue.subtasks.length ? issue.subtasks.map(key => `<div class="subtask-row"><span>□</span><span class="subtask-link">${escapeHtml(key)}</span><span class="spacer"></span><button class="button ghost" data-open-issue="${escapeHtml(key)}">打开</button></div>`).join("") : `<div class="empty-line">暂无子任务。</div>`}<div class="inline-actions"><input id="subtaskSummary" class="field" style="flex:1" placeholder="输入子任务概要"><button class="button subtle" data-action="create-subtask">创建子任务</button></div></div>
+      <div class="section"><div class="section-head"><h3>问题链接</h3><span class="section-count">${links.length}</span><div class="spacer"></div></div>${links.length ? links.map(link => `<div class="link-row"><span class="link-name">${escapeHtml(link.type)}</span><span class="section-count">${escapeHtml(link.outward)} ↔ ${escapeHtml(link.inward)}</span><span class="spacer"></span><button class="button danger" data-delete-link='${escapeHtml(JSON.stringify({linkedIssueKey:link.inward === issue.key ? link.outward : link.inward, type:link.type}))}'>删除</button></div>`).join("") : `<div class="empty-line">暂无问题链接。</div>`}<div class="inline-actions"><input id="linkIssueKey" class="field" placeholder="例如 ${escapeHtml(state.projectKey)}-2"><input id="linkType" class="field" style="max-width:160px" value="relates to"><button class="button subtle" data-action="add-link">添加链接</button></div></div>
+      <div class="section"><div class="section-head"><h3>工作日志</h3><span class="section-count">${worklogs.length}</span><div class="spacer"></div></div>${worklogs.length ? worklogs.map(item => `<div class="worklog-row"><span class="avatar">${initials(item.author)}</span><div class="row-main"><strong>${item.minutes} 分钟 · ${escapeHtml(item.author)}</strong><small>${escapeHtml(item.body || "无备注")} · ${formatDate(item.startedAt)}</small></div></div>`).join("") : `<div class="empty-line">暂无工作日志。</div>`}<div class="inline-actions"><input id="worklogMinutes" class="field" type="number" min="1" placeholder="分钟" style="max-width:120px"><input id="worklogBody" class="field" placeholder="工作说明" style="flex:1"><button class="button subtle" data-action="add-worklog">记录工作</button></div></div>
+      <div class="section" id="commentSection"><div class="section-head"><h3>评论</h3><span class="section-count">${comments.length}</span><div class="spacer"></div></div>${comments.length ? comments.map(comment => `<div class="comment"><div class="comment-head"><strong>${escapeHtml(comment.author)}</strong><small>${formatDate(comment.createdAt)}${comment.pinned ? " · 已固定":""}</small></div><div class="comment-body">${escapeHtml(comment.body)}</div><div class="comment-actions"><button class="button ghost" data-comment-action="edit" data-comment-id="${comment.id}">编辑</button><button class="button ghost" data-comment-action="${comment.pinned ? "unpin":"pin"}" data-comment-id="${comment.id}">${comment.pinned ? "取消固定":"固定"}</button><button class="button danger" data-comment-action="delete" data-comment-id="${comment.id}">删除</button></div></div>`).join("") : `<div class="empty-line">暂无评论。</div>`}<textarea id="commentEditor" class="field" rows="3" placeholder="添加评论"></textarea><div class="inline-actions"><button class="button primary" data-action="add-comment">添加评论</button></div></div>`;
+    }
+    function renderActivity() {
+      const rows = (state.issue.comments || []).map(comment => ({ timestamp:comment.createdAt, actor:comment.author, detail:comment.body }));
+      return `<div class="section" style="padding-top:0;border-top:0">${rows.length ? rows.map(item => `<div class="audit-row"><time>${formatDate(item.timestamp)}</time><span class="audit-actor">${escapeHtml(item.actor)}</span><span>评论</span><span>${escapeHtml(item.detail)}</span></div>`).join("") : `<div class="empty-line">暂无活动。</div>`}</div>`;
+    }
+    function renderHistory() {
+      return `<div class="section" style="padding-top:0;border-top:0">${state.history.length ? state.history.map(item => `<div class="audit-row"><time>${formatDate(item.timestamp)}</time><span class="audit-actor">${escapeHtml(item.actor)}</span><span>${escapeHtml(item.action)}</span><span>${escapeHtml(item.detail)}</span></div>`).join("") : `<div class="empty-line">暂无改动记录。</div>`}</div>`;
+    }
+    function renderReleases() {
+      return shellHead("发布版本",projectCrumb("发布版本"),`<button class="button primary" data-action="create-version">＋ 创建版本</button><button class="button subtle" data-view="plans">计划视图</button>`) + `<div class="notice">版本可以绑定到问题的修复版本和影响版本。发布和归档操作会进入项目审计历史。</div><div class="table-wrap"><table><thead><tr><th>版本</th><th>描述</th><th>状态</th><th>发布日期</th><th>操作</th></tr></thead><tbody>${state.versions.map(version => `<tr><td><strong>${escapeHtml(version.name)}</strong></td><td>${escapeHtml(version.description || "-")}</td><td>${version.released ? `<span class="status-chip done">已发布</span>` : `<span class="status-chip backlog">未发布</span>`}${version.archived ? ` <span class="status-chip">已归档</span>` : ""}</td><td>${escapeHtml(version.releaseDate || "-")}</td><td><button class="button ghost" data-edit-version="${version.id}">编辑</button> ${version.released ? "" : `<button class="button subtle" data-release-version="${version.id}">发布</button>`} <button class="button ghost" data-archive-version="${version.id}" data-archived="${version.archived ? "true" : "false"}">${version.archived ? "取消归档" : "归档"}</button></td></tr>`).join("")}</tbody></table></div>`;
+    }
+    function renderPlans() {
+      const issues = state.planIssues || [];
+      const versions = [...(state.versions || [])].sort((left, right) => {
+        const leftDate = left.releaseDate || "9999-12-31";
+        const rightDate = right.releaseDate || "9999-12-31";
+        return leftDate.localeCompare(rightDate) || String(left.name).localeCompare(String(right.name));
+      });
+      const totalIssues = issues.length;
+      const releasedIssues = issues.filter(issue => issue.status === "DONE").length;
+      const releasedVersions = versions.filter(version => version.released).length;
+      const versionCards = versions.length ? versions.map(version => {
+        const related = issues.filter(issue => (issue.fixVersions || []).includes(version.name));
+        const done = related.filter(issue => issue.status === "DONE").length;
+        const progress = related.length ? Math.round(done / related.length * 100) : 0;
+        const status = version.archived ? "archived" : version.released ? "released" : "current";
+        return `<article class="plan-card ${status}"><div class="plan-card-head"><div class="plan-card-head-main"><strong>${escapeHtml(version.name)}</strong><small>${version.releaseDate ? `发布日期 ${escapeHtml(version.releaseDate)}` : "尚未设置发布日期"}</small></div><span class="status-chip ${version.released ? "done" : "backlog"}">${version.archived ? "已归档" : version.released ? "已发布" : "计划中"}</span></div><p class="section-count">${escapeHtml(version.description || "暂无版本描述。")}</p><div class="plan-progress" aria-label="${progress}% 完成"><i style="width:${progress}%"></i></div><div class="section-count">${done} / ${related.length} 个关联问题已完成</div><div class="plan-metrics"><div class="plan-metric"><span>全部</span><strong>${related.length}</strong></div><div class="plan-metric"><span>进行中</span><strong>${related.filter(issue => issue.status === "IN_PROGRESS").length}</strong></div><div class="plan-metric"><span>待办</span><strong>${related.filter(issue => issue.status !== "DONE" && issue.status !== "IN_PROGRESS").length}</strong></div></div><div class="plan-actions"><button class="button ghost" data-view="issues" data-version-filter="${escapeHtml(version.name)}">查看问题</button><button class="button ghost" data-edit-version="${version.id}">编辑</button>${version.released ? "" : `<button class="button subtle" data-release-version="${version.id}">发布</button>`}</div></article>`;
+      }).join("") : `<div class="empty-line">当前项目暂无版本计划。</div>`;
+      return shellHead("计划",projectCrumb("计划"),`<button class="button primary" data-action="create-version">＋ 创建版本</button><button class="button subtle" data-view="releases">版本列表</button>`) +
+        `<div class="metric-grid"><div class="metric"><div class="metric-label">版本总数</div><div class="metric-value">${versions.length}</div></div><div class="metric"><div class="metric-label">已发布</div><div class="metric-value">${releasedVersions}</div></div><div class="metric"><div class="metric-label">关联问题</div><div class="metric-value">${totalIssues}</div></div><div class="metric"><div class="metric-label">已完成问题</div><div class="metric-value">${releasedIssues}</div></div></div><div class="notice">计划视图按修复版本汇总问题进度；未绑定修复版本的问题仍保留在问题列表中。</div><div class="plan-grid">${versionCards}</div>`;
+    }
+    function renderReports() {
+      const report = state.report;
+      if (!report) return shellHead("报告",projectCrumb("报告")) + `<div class="loading">正在加载报告...</div>`;
+      const barSet = (title, values) => {
+        const entries = Object.entries(values || {});
+        const max = Math.max(1, ...entries.map(([,value]) => value));
+        return `<div class="report-panel"><h3>${title}</h3>${entries.map(([key,value]) => `<div class="bar-row"><span>${escapeHtml(displayStatus(key))}</span><div class="bar"><i style="width:${Math.round(value/max*100)}%"></i></div><strong>${value}</strong></div>`).join("") || `<div class="empty-line">暂无数据。</div>`}</div>`;
+      };
+      const payload = report.payload || {};
+      const reportType = String(payload.reportType || report.type || "summary").toLowerCase();
+      const number = (value, digits = 2) => Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "0.00";
+      const uiText = value => window.JiraFlowI18n?.translateText(String(value ?? "")) || String(value ?? "");
+      const displayLabel = value => uiText(displayStatus(value));
+      const chartColor = index => `var(--chart-${index % 7})`;
+      const reportTable = (headers, rows, empty = "暂无数据。") => rows.length
+        ? `<div class="table-wrap report-table"><table><thead><tr>${headers.map(header => `<th>${header}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`
+        : `<div class="empty-line">${empty}</div>`;
+      const pieVisual = () => {
+        const segments = Array.isArray(payload.segments) ? payload.segments : [];
+        let cursor = 0;
+        const stops = segments.map((segment, index) => {
+          const start = cursor;
+          cursor += Number(segment.percentage || 0);
+          return `${chartColor(index)} ${start}% ${cursor}%`;
+        });
+        const legend = segments.map((segment, index) => `<div class="chart-legend-item"><i class="chart-swatch" style="background:${chartColor(index)}"></i><span>${escapeHtml(displayLabel(segment.label))}</span><strong>${segment.value} · ${number(segment.percentage)}%</strong></div>`).join("");
+        const rows = segments.map(segment => `<tr><td>${escapeHtml(displayLabel(segment.label))}</td><td>${segment.value}</td><td>${number(segment.percentage)}%</td></tr>`);
+        return `<div class="chart-card"><h3>${escapeHtml(uiText("饼图"))} · ${escapeHtml(uiText("按"))}${escapeHtml(displayLabel(payload.groupBy || "status"))}</h3>${segments.length ? `<div class="chart-layout"><div class="pie-chart" role="img" aria-label="${escapeHtml(uiText("饼图"))}，${segments.length} ${escapeHtml(uiText("分组"))}" style="background:conic-gradient(${stops.join(",")})"></div><div class="chart-legend">${legend}</div></div>${reportTable([uiText("分组"),uiText("数量"),uiText("百分比")], rows)}` : `<div class="empty-line">${escapeHtml(uiText("暂无数据。"))}</div>`}</div>`;
+      };
+      const cumulativeFlowVisual = () => {
+        const series = Array.isArray(payload.series) ? payload.series : [];
+        const statuses = [...new Set([...(payload.statuses || []), ...series.flatMap(point => Object.keys(point.counts || {}))])];
+        const visibleSeries = series.length > 90
+          ? Array.from({length: 90}, (_, index) => series[Math.round(index * (series.length - 1) / 89)])
+          : series;
+        const bars = visibleSeries.map(point => {
+          const total = Math.max(1, Object.values(point.counts || {}).reduce((sum, value) => sum + Number(value || 0), 0));
+          let offset = 0;
+          const cells = statuses.map((status, index) => {
+            const count = Number(point.counts?.[status] || 0);
+            const width = count / total * 100;
+            const cell = `<span title="${escapeHtml(displayLabel(status))}: ${count}" style="left:${offset}%;width:${width}%;background:${chartColor(index)}"></span>`;
+            offset += width;
+            return cell;
+          }).join("");
+          return `<div class="flow-row"><time>${escapeHtml(point.date || "")}</time><div class="flow-stack" role="img" aria-label="${escapeHtml(point.date || "")} ${statuses.map(status => `${displayLabel(status)} ${point.counts?.[status] || 0}`).join(", ")}">${cells}</div><strong>${total === 1 && !Object.keys(point.counts || {}).length ? 0 : total}</strong></div>`;
+        }).join("");
+        const legend = statuses.map((status, index) => `<span class="flow-legend-item"><i class="chart-swatch" style="background:${chartColor(index)}"></i>${escapeHtml(displayLabel(status))}</span>`).join("");
+        const rows = series.slice(-30).map(point => `<tr><td>${escapeHtml(point.date || "")}</td>${statuses.map(status => `<td>${Number(point.counts?.[status] || 0)}</td>`).join("")}</tr>`);
+        return `<div class="chart-card"><h3>${escapeHtml(uiText("累计流量图"))}</h3>${series.length ? `<div class="flow-legend">${legend}</div><div class="flow-chart" aria-label="${escapeHtml(uiText("累计流量图"))}">${bars}</div>${reportTable([uiText("日期"), ...statuses.map(status => displayLabel(status))], rows, uiText("暂无流程历史数据。"))}` : `<div class="empty-line">${escapeHtml(uiText("暂无流程历史数据。"))}</div>`}</div>`;
+      };
+      const controlChartVisual = () => {
+        const rows = Array.isArray(payload.rows) ? payload.rows : [];
+        const values = rows.map(row => Number(row.cycleDays || 0));
+        const max = Math.max(1, ...values);
+        const average = Number(payload.averageCycleDays || 0);
+        const width = 760;
+        const height = 220;
+        const left = 42;
+        const right = 12;
+        const top = 16;
+        const bottom = 34;
+        const plotWidth = width - left - right;
+        const plotHeight = height - top - bottom;
+        const x = index => rows.length <= 1 ? left + plotWidth / 2 : left + index * plotWidth / (rows.length - 1);
+        const y = value => top + plotHeight - Math.min(max, value) / max * plotHeight;
+        const points = values.map((value, index) => `${x(index).toFixed(1)},${y(value).toFixed(1)}`).join(" ");
+        const circles = rows.map((row, index) => `<circle cx="${x(index).toFixed(1)}" cy="${y(values[index]).toFixed(1)}" r="3" fill="${chartColor(0)}"><title>${escapeHtml(row.key || "")} · ${number(values[index])} ${escapeHtml(uiText("天"))}</title></circle>`).join("");
+        const averageY = y(average).toFixed(1);
+        const labels = rows.length ? `<text x="${left}" y="${height - 9}">${escapeHtml(rows[0].key || "")}</text><text x="${width - right}" y="${height - 9}" text-anchor="end">${escapeHtml(rows[rows.length - 1].key || "")}</text>` : "";
+        return `<div class="chart-card"><h3>${escapeHtml(uiText("控制图"))} · ${escapeHtml(uiText("周期时间"))}</h3>${rows.length ? `<svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(uiText("控制图"))}，${escapeHtml(uiText("平均周期"))} ${number(average)} ${escapeHtml(uiText("天"))}"><line class="grid-line" x1="${left}" y1="${y(max)}" x2="${width-right}" y2="${y(max)}"></line><line class="grid-line" x1="${left}" y1="${y(max/2)}" x2="${width-right}" y2="${y(max/2)}"></line><line class="axis-line" x1="${left}" y1="${top}" x2="${left}" y2="${height-bottom}"></line><line class="axis-line" x1="${left}" y1="${height-bottom}" x2="${width-right}" y2="${height-bottom}"></line><line class="average-line" x1="${left}" y1="${averageY}" x2="${width-right}" y2="${averageY}"></line><polyline class="cycle-line" points="${points}"></polyline>${circles}<text x="4" y="${y(max)+4}">${number(max,1)}d</text><text x="4" y="${y(max/2)+4}">${number(max/2,1)}d</text><text x="4" y="${height-bottom+4}">0d</text>${labels}</svg>${reportTable([uiText("问题"),uiText("概要"),uiText("周期时间")], rows.slice(0, 20).map(row => `<tr><td>${escapeHtml(row.key || "")}</td><td>${escapeHtml(row.summary || "")}</td><td>${number(row.cycleDays)} ${escapeHtml(uiText("天"))}</td></tr>`))}` : `<div class="empty-line">${escapeHtml(uiText("暂无已完成问题。"))}</div>`}</div>`;
+      };
+      const durationVisual = () => {
+        const buckets = payload.buckets || {};
+        const rows = Array.isArray(payload.rows) ? payload.rows : [];
+        const max = Math.max(1, ...Object.values(buckets).map(value => Number(value || 0)));
+        const bucketRows = Object.entries(buckets).map(([bucket, value]) => `<div class="bar-row"><span>${escapeHtml(bucket)}</span><div class="bar"><i style="width:${Math.round(Number(value || 0) / max * 100)}%"></i></div><strong>${Number(value || 0)}</strong></div>`).join("");
+        return `<div class="chart-card"><h3>${escapeHtml(uiText("问题持续时间报告"))}</h3><div class="report-metrics"><div class="report-metric"><span>${escapeHtml(uiText("平均持续时间"))}</span><strong>${number(payload.averageDays)} ${escapeHtml(uiText("天"))}</strong></div><div class="report-metric"><span>${escapeHtml(uiText("中位持续时间"))}</span><strong>${number(payload.medianDays)} ${escapeHtml(uiText("天"))}</strong></div><div class="report-metric"><span>${escapeHtml(uiText("问题数"))}</span><strong>${rows.length}</strong></div></div><div class="duration-buckets">${bucketRows || `<div class="empty-line">${escapeHtml(uiText("暂无数据。"))}</div>`}</div>${reportTable([uiText("问题"),uiText("概要"),uiText("状态"),uiText("持续时间"),uiText("区间")], rows.slice(0, 30).map(row => `<tr><td>${escapeHtml(row.key || "")}</td><td>${escapeHtml(row.summary || "")}</td><td>${escapeHtml(displayLabel(row.status || ""))}</td><td>${number(row.durationDays)} ${escapeHtml(uiText("天"))}</td><td>${escapeHtml(row.bucket || "")}</td></tr>`))}</div>`;
+      };
+      const wordGroupVisual = () => {
+        const words = Array.isArray(payload.words) ? payload.words : Object.entries(payload.groups || {}).map(([word, count]) => ({word, count}));
+        const max = Math.max(1, ...words.map(item => Number(item.count || 0)));
+        return `<div class="chart-card"><h3>${escapeHtml(uiText("单词分组报告"))} · ${escapeHtml(displayLabel(payload.field || "summary"))}</h3>${words.length ? words.map(item => `<div class="word-row"><span>${escapeHtml(item.word || "")}</span><div class="bar"><i style="width:${Math.round(Number(item.count || 0) / max * 100)}%"></i></div><strong>${Number(item.count || 0)}</strong></div>`).join("") : `<div class="empty-line">${escapeHtml(uiText("暂无可分组的词语。"))}</div>`}</div>`;
+      };
+      const specializedVisual = reportType === "pie" ? pieVisual()
+        : reportType === "cumulative-flow" ? cumulativeFlowVisual()
+        : reportType === "control-chart" ? controlChartVisual()
+        : reportType === "issue-duration" ? durationVisual()
+        : reportType === "word-group" ? wordGroupVisual()
+        : "";
+      const selectedTemplate = state.reportTemplates.find(template => Number(template.id) === Number(state.reportTemplateId));
+      const payloadEntries = Object.entries(payload).filter(([, value]) => value !== undefined);
+      return shellHead("报告",projectCrumb("报告"),`<button class="button primary" data-action="run-report">运行报告</button><button class="button subtle" data-action="new-template">＋ 新建模板</button>`) +
+        `<section class="panel" style="margin-bottom:16px"><div class="section-head"><h2>报告配置</h2><span class="section-count">${state.reportTypes.length} 个内置类型 · ${state.reportTemplates.length} 个可见模板</span></div><div class="field-grid"><div class="form-field"><label for="reportType">报告类型</label><select id="reportType" class="select">${state.reportTypes.map(type => `<option value="${escapeHtml(type.key)}" ${!state.reportTemplateId && state.reportType===type.key?"selected":""}>${escapeHtml(type.name)} · ${escapeHtml(type.category)}</option>`).join("")}</select></div><div class="form-field"><label for="reportTemplate">模板</label><select id="reportTemplate" class="select"><option value="0">使用报告类型</option>${state.reportTemplates.map(template => `<option value="${template.id}" ${Number(template.id)===Number(state.reportTemplateId)?"selected":""}>${escapeHtml(template.name)}${template.builtIn ? " · 内置":""}</option>`).join("")}</select></div><div class="form-field"><label for="reportFilterId">筛选器</label><select id="reportFilterId" class="select"><option value="0">不使用筛选器</option>${state.filters.map(filter => `<option value="${filter.id}" ${Number(filter.id)===Number(state.reportFilterId)?"selected":""}>${escapeHtml(filter.name)}</option>`).join("")}</select></div><div class="form-field"><label for="reportJql">附加 JQL</label><input id="reportJql" class="field" value="${escapeHtml(state.reportJql || "")}" placeholder="可选：project = ${escapeHtml(state.projectKey)} AND status != DONE"></div></div><div class="form-field" style="margin-top:10px"><label for="reportParameters">模板参数 JSON</label><textarea id="reportParameters" class="field" rows="3" placeholder='例如 {"status":"IN_PROGRESS"}'>${escapeHtml(state.reportParametersText || "{}")}</textarea></div>${selectedTemplate ? `<div class="notice">当前模板：${escapeHtml(selectedTemplate.name)} · ${escapeHtml(selectedTemplate.jql || "无模板 JQL")} · 参数 schema ${escapeHtml(JSON.stringify(selectedTemplate.parameters || {}))}</div>` : ""}</section>` +
+        `<div class="metric-grid"><div class="metric"><div class="metric-label">问题总数</div><div class="metric-value">${report.issueCount}</div></div><div class="metric"><div class="metric-label">已完成</div><div class="metric-value">${report.completedCount}</div></div><div class="metric"><div class="metric-label">正在进行</div><div class="metric-value">${report.inProgressCount}</div></div><div class="metric"><div class="metric-label">评估覆盖率</div><div class="metric-value">${report.assessmentCoverage || 0}%</div></div></div>${specializedVisual ? `<div class="report-grid">${specializedVisual}</div>` : `<div class="report-grid">${barSet("按状态",report.statusCounts)}${barSet("按优先级",report.priorityCounts)}${barSet("按类型",report.typeCounts)}${barSet("按分析领域",report.analysisDomainCounts)}${barSet("按过程区域",report.processAreaCounts)}${barSet("按证据角色",report.evidenceRoleCounts)}${barSet("按候选评级",report.assessmentRatingCounts)}${barSet("按审核状态",report.reviewStatusCounts)}<div class="report-panel"><h3>评估完整性</h3><div class="notice ${report.assessmentCoverage >= 80 ? "success":"error"}">已填写候选评级 ${report.assessedCount || 0} / ${report.issueCount}；已关闭 ${report.closedAssessmentCount || 0}。</div><div class="section-count">正式评级、证据确认、范围和关闭决定由审核员负责。</div></div><div class="report-panel"><h3>WIP 限制</h3><div class="notice ${report.wipExceeded ? "error":"success"}">${report.wipExceeded ? "正在进行列已超过 WIP 限制。":"当前正在进行列未超过 WIP 限制。"}</div><div class="section-count">当前 ${report.inProgressCount} / 限制 ${report.wipLimit || "未设置"}</div></div></div>`}<section class="panel" style="margin-top:16px"><div class="section-head"><h2>模板目录</h2><span class="section-count">可编辑模板允许保存 JQL、参数和共享范围</span></div><div class="table-wrap"><table><thead><tr><th>名称</th><th>类别</th><th>可见性</th><th>所有者</th><th>操作</th></tr></thead><tbody>${state.reportTemplates.map(template => `<tr><td><strong>${escapeHtml(template.name)}</strong><br><span class="section-count">${escapeHtml(template.key)} · ${escapeHtml(template.description || "无描述")}</span></td><td>${escapeHtml(template.category)}</td><td>${escapeHtml(template.visibility)}${template.builtIn ? " · 内置":""}</td><td>${escapeHtml(template.owner)}</td><td><button class="button ghost" data-report-template-run="${template.id}">运行</button>${template.builtIn ? "" : ` <button class="button ghost" data-report-template-edit="${template.id}">编辑</button><button class="button danger" data-report-template-delete="${template.id}">删除</button>`}</td></tr>`).join("") || `<tr><td colspan="5"><div class="empty-line">暂无模板。</div></td></tr>`}</tbody></table></div>${payloadEntries.length ? `<h3 style="margin-top:16px">报告结果载荷</h3><div class="json-preview">${escapeHtml(JSON.stringify(payload, null, 2))}</div>` : ""}</section>`;
+    }
+    function adminCategoryLabel(category, entries = []) {
+      const first = entries.find(entry => entry.category === category);
+      if (first?.categoryLabel) return first.categoryLabel;
+      const labels = {
+        application:"应用程序", projects:"项目", issues:"问题", addons:"管理应用",
+        users:"用户管理", "upgrade-reports":"最新升级报告", system:"系统",
+        "issue-types":"问题类型", "issue-type-schemes":"问题类型方案", subtasks:"子任务",
+        "archived-issues":"已存档事务", workflows:"工作流", "workflow-schemes":"工作流方案",
+        screens:"界面", "field-screen-schemes":"界面方案", "issue-type-screen-schemes":"问题类型界面方案",
+        "custom-fields":"自定义字段", "system-fields":"系统字段", "field-configurations":"字段配置",
+        "field-configuration-schemes":"字段配置方案", priorities:"优先级", "priority-schemes":"优先级方案",
+        "time-tracking":"时间跟踪", "issue-links":"问题链接", statuses:"状态", resolutions:"解决方式",
+        "issue-security-schemes":"问题安全方案", "notification-schemes":"通知方案",
+        "permission-schemes":"权限方案"
+      };
+      return labels[category] || category;
+    }
+    function adminCategoryGroups(categories) {
+      const groups = [
+        { label: "主要", categories: ["application", "projects", "issues", "addons", "users", "upgrade-reports", "system"] },
+        { label: "问题", categories: ["issue-types", "issue-type-schemes", "subtasks", "archived-issues"] },
+        { label: "工作流", categories: ["workflows", "workflow-schemes"] },
+        { label: "界面", categories: ["screens", "field-screen-schemes", "issue-type-screen-schemes"] },
+        { label: "字段", categories: ["custom-fields", "system-fields", "field-configurations", "field-configuration-schemes"] },
+        { label: "优先级", categories: ["priorities", "priority-schemes"] },
+        { label: "问题特性", categories: ["time-tracking", "issue-links"] },
+        { label: "问题属性", categories: ["statuses", "resolutions"] },
+        { label: "方案", categories: ["issue-security-schemes", "notification-schemes", "permission-schemes"] }
+      ];
+      const known = new Set();
+      const result = groups.map(group => ({
+        ...group,
+        categories: group.categories.filter(category => categories.includes(category))
+      })).filter(group => group.categories.length);
+      categories.filter(category => !known.has(category) && !result.some(group => group.categories.includes(category))).forEach(category => {
+        result.push({ label: "其他", categories: [category] });
+      });
+      return result;
+    }
+    function adminCategoryIcon(category) {
+      if (category === "issue-types" || category === "subtasks") return "◈";
+      if (category.includes("scheme")) return "◇";
+      if (category === "workflows" || category === "workflow-schemes") return "↻";
+      if (category.includes("field")) return "▤";
+      if (category === "priorities" || category === "priority-schemes") return "↑";
+      if (category === "statuses" || category === "resolutions") return "●";
+      if (category === "users") return "◎";
+      if (category === "system" || category === "application") return "⚙";
+      return "•";
+    }
+    function renderAdmin() {
+      const overview = state.adminOverview || {};
+      const catalog = state.adminCatalog || { categories:{} };
+      const categories = Object.keys(catalog.categories || {}).sort((a, b) => adminCategoryLabel(a, catalog.entries || []).localeCompare(adminCategoryLabel(b, catalog.entries || []), "zh-CN"));
+      const selectedCategory = state.adminCategory || categories[0] || "";
+      const entries = state.adminEntries || [];
+      const groups = adminCategoryGroups(categories);
+      const stat = (label, value) => `<div class="admin-stat"><span class="section-count">${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+      const rows = entries.length ? entries.map(entry => {
+        const properties = Object.entries(entry.properties || {}).map(([key, value]) => `${key}=${typeof value === "object" ? JSON.stringify(value) : value}`).join(" · ");
+        const readOnly = Boolean(entry.system && !entry.editable);
+        const type = entry.properties?.type || (entry.system ? "Standard" : "Custom");
+        const scheme = entry.properties?.scheme || entry.properties?.project || entry.properties?.scope || "-";
+        return `<tr><td><strong>${escapeHtml(entry.name)}</strong><span class="admin-description">${escapeHtml(entry.description || entry.key || "-")}</span></td><td>${escapeHtml(type)}</td><td>${escapeHtml(scheme)}${properties ? `<span class="admin-description">${escapeHtml(properties)}</span>` : ""}</td><td><span class="status-chip ${entry.enabled ? "done":"backlog"}">${entry.enabled ? "启用":"停用"}</span>${entry.system ? ` <span class="status-chip">系统</span>` : ""}</td><td><div class="admin-actions"><button class="button ghost" data-admin-edit="${entry.id}" ${readOnly ? "disabled title=\"系统条目只读\"":""}>编辑</button><button class="button danger" data-admin-delete="${entry.id}" ${readOnly ? "disabled title=\"系统条目只读\"":""}>删除</button></div></td></tr>`;
+      }).join("") : `<tr><td colspan="5"><div class="empty-line">当前分类暂无条目。</div></td></tr>`;
+      const nav = groups.map(group => `<div class="admin-nav-group"><div class="admin-nav-group-label">${escapeHtml(group.label)}</div>${group.categories.map(category => `<button class="admin-nav-row ${category===selectedCategory ? "active":""}" data-admin-category="${escapeHtml(category)}"><span class="admin-nav-icon" aria-hidden="true">${adminCategoryIcon(category)}</span><span class="row-main"><strong>${escapeHtml(adminCategoryLabel(category, catalog.entries || []))}</strong><small>${((catalog.categories || {})[category] || []).length} 项</small></span></button>`).join("")}</div>`).join("");
+      return shellHead("管理","JiraFlow / 管理",`<button class="button primary" data-admin-action="create">＋ 新建条目</button><button class="button subtle" data-action="refresh">刷新</button>`) +
+        `<div class="admin-stat-grid">${stat("版本", overview.version || "-")}${stat("项目", overview.projects || 0)}${stat("问题", overview.issues || 0)}${stat("用户", overview.activeUsers !== undefined ? `${overview.activeUsers}/${overview.users || 0}` : 0)}${stat("筛选器", overview.filters || 0)}${stat("报告模板", overview.reportTemplates || 0)}${stat("管理条目", overview.adminEntries || 0)}${stat("审计事件", overview.auditEvents || 0)}</div>` +
+        `<div class="admin-layout"><section class="admin-nav"><div class="admin-nav-head"><strong>管理区域</strong><span class="section-count">${categories.length}</span><div class="spacer"></div></div><input id="adminQuery" class="field" style="margin:10px;width:calc(100% - 20px)" placeholder="搜索分类或条目" value="${escapeHtml(state.adminQuery)}"><div class="admin-nav-groups">${nav || `<div class="empty-line" style="padding:18px 12px">暂无管理目录。</div>`}</div></section><section class="admin-content"><div class="panel"><div class="section-head"><div><h2>${escapeHtml(adminCategoryLabel(selectedCategory, catalog.entries || []))}</h2><span class="section-count">${escapeHtml(selectedCategory)} · ${entries.length} 项</span></div><div class="spacer"></div><button class="button subtle" data-admin-action="create">＋ 新建</button></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>名称</th><th>类型</th><th>相关的方案</th><th>状态</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table></div></div></section></div>`;
+    }
+    function renderSettings() {
+      const settings = state.settings;
+      if (!settings) return shellHead("项目设置",projectCrumb("项目设置")) + `<div class="loading">正在加载项目设置...</div>`;
+      const project = settings.project;
+      const roles = project.roles || {};
+      const boardColumns = project.settings.boardColumns || {};
+      const components = state.components.length ? state.components : (project.components || []);
+      const statusOptions = Object.keys(boardColumns).map(status => `<option value="${escapeHtml(status)}">${escapeHtml(displayStatus(status))}</option>`).join("");
+      const componentRows = components.length
+        ? components.map(component => `<tr><td><strong>${escapeHtml(component.name)}</strong><br><span class="section-count">ID ${escapeHtml(component.id)}</span></td><td>${escapeHtml(component.description || "-")}</td><td>${escapeHtml(component.lead || "未分配")}</td><td>${formatDate(component.updatedAt || component.createdAt)}</td><td><button class="button ghost" data-edit-component="${escapeHtml(component.id)}">编辑</button><button class="button danger" data-delete-component="${escapeHtml(component.id)}">删除</button></td></tr>`).join("")
+        : `<tr><td colspan="5"><div class="empty-line">当前项目暂无组件。</div></td></tr>`;
+      return shellHead("项目设置",projectCrumb("项目设置"),`<button class="button primary" data-action="save-settings">保存设置</button>`) + `<div class="settings-grid"><section class="settings-panel"><h3>项目信息</h3><div class="form-stack"><div class="form-field"><label>项目名称</label><input id="settingName" class="field" value="${escapeHtml(project.name)}"></div><div class="form-field"><label>项目负责人</label><input id="settingLead" class="field" value="${escapeHtml(project.lead)}"></div><div class="form-field"><label>项目描述</label><textarea id="settingDescription" class="field" rows="4">${escapeHtml(project.description)}</textarea></div><div class="form-field"><label>默认经办人</label><input id="settingAssignee" class="field" value="${escapeHtml(project.settings.defaultAssignee)}"></div><div class="field-grid"><div class="form-field"><label>权限方案</label><input id="settingPermission" class="field" value="${escapeHtml(project.settings.permissionScheme)}"></div><div class="form-field"><label>通知方案</label><input id="settingNotification" class="field" value="${escapeHtml(project.settings.notificationScheme)}"></div></div></div></section><section class="settings-panel"><h3>项目角色</h3>${Object.entries(roles).map(([role,members]) => `<div class="role-row"><strong>${escapeHtml(role)}</strong><input class="field" data-role="${escapeHtml(role)}" value="${escapeHtml((members || []).join(", "))}"></div>`).join("")}</section><section class="settings-panel"><div class="section-head"><h3>组件</h3><span class="section-count">${components.length} 个</span><div class="spacer"></div></div><div class="notice">组件属于当前项目。删除组件会从该项目问题中清除对应引用。</div><div class="table-wrap"><table><thead><tr><th>名称</th><th>描述</th><th>负责人</th><th>更新时间</th><th>操作</th></tr></thead><tbody>${componentRows}</tbody></table></div><div class="form-stack" style="margin-top:14px"><div class="field-grid"><div class="form-field"><label for="componentName">组件名称</label><input id="componentName" class="field" placeholder="例如 Safety Monitor"></div><div class="form-field"><label for="componentLead">负责人</label><input id="componentLead" class="field" placeholder="可选用户名"></div></div><div class="form-field"><label for="componentDescription">描述</label><textarea id="componentDescription" class="field" rows="3" placeholder="组件职责或边界"></textarea></div><div class="inline-actions"><button class="button primary" data-action="create-component">创建组件</button></div></div></section><section class="settings-panel"><div class="section-head"><h3>工作流配置</h3><div class="spacer"></div></div>${state.workflow.map(item => `<div class="workflow-row"><div class="row-main"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.from)} → ${escapeHtml(item.to)} · ${escapeHtml(item.validator)}</small></div><label class="section-count"><input type="checkbox" data-workflow-enabled="${item.id}" ${item.enabled ? "checked":""}> 启用</label><button class="button ghost" data-edit-workflow="${item.id}">编辑</button><button class="button danger" data-delete-workflow="${item.id}">删除</button></div>`).join("")}<div class="inline-actions"><input id="workflowName" class="field" placeholder="新转换名称"><select id="workflowFrom" class="select">${statusOptions}</select><select id="workflowTo" class="select">${statusOptions}</select><button class="button subtle" data-action="add-workflow">添加</button></div></section><section class="settings-panel"><div class="section-head"><h3>看板状态</h3><span class="section-count">${Object.keys(boardColumns).length} 列</span><div class="spacer"></div></div><div class="notice">新增状态会成为可用看板列；状态移动仍需要一条启用的工作流转换。</div>${Object.entries(boardColumns).map(([key,label]) => `<div class="role-row"><strong>${escapeHtml(label)}</strong><span class="section-count">${escapeHtml(key)}</span><span class="spacer"></span><span>WIP ${project.settings.wipLimits?.[key] || "无限制"}</span></div>`).join("")}<div class="inline-actions"><input id="statusKey" class="field" style="max-width:150px" placeholder="状态键，例如 QA"><input id="statusName" class="field" placeholder="状态名称，例如 审查中"><button class="button subtle" data-action="add-status">添加状态</button></div></section></div>`;
+    }
+    function renderNotifications() {
+      return shellHead("通知","JiraFlow / 通知",`<button class="button subtle" data-action="mark-all-read">全部标为已读</button>`) + `<div class="panel">${state.notifications.length ? state.notifications.map(item => `<div class="user-row"><span class="avatar">${initials(item.kind)}</span><div class="row-main"><strong>${escapeHtml(item.message)}</strong><small>${formatDate(item.createdAt)} · ${escapeHtml(item.issueKey || "项目事件")}</small></div><span class="status-chip ${item.read ? "":"progress"}">${item.read ? "已读":"未读"}</span><button class="button ghost" data-notification-id="${item.id}">${item.read ? "":"标为已读"}</button></div>`).join("") : `<div class="empty-line">暂无通知。</div>`}</div>`;
+    }
+    function renderUsers() {
+      return shellHead("用户管理","JiraFlow / 用户管理",`<button class="button primary" data-action="create-user">＋ 创建用户</button>`) + `<div class="notice">本地用户管理只用于 JiraFlow 的协作演示；生产环境应接入企业身份提供方并使用会话认证。</div><div class="table-wrap"><table><thead><tr><th>用户</th><th>邮箱</th><th>状态</th><th>全局角色</th><th>操作</th></tr></thead><tbody>${state.users.map(user => `<tr><td><strong>${escapeHtml(user.displayName)}</strong><br><span class="section-count">${escapeHtml(user.username)}</span></td><td>${escapeHtml(user.email)}</td><td><span class="status-chip ${user.active ? "done":" "}" >${user.active ? "启用":"停用"}</span></td><td>${escapeHtml((user.globalRoles || []).join(", ") || "无")}</td><td><button class="button ghost" data-toggle-user="${escapeHtml(user.username)}" data-user-active="${user.active}">${user.active ? "停用":"启用"}</button><button class="button ghost" data-edit-user="${escapeHtml(user.username)}">编辑</button></td></tr>`).join("")}</tbody></table></div>`;
+    }
+    function renderAudit() {
+      return shellHead("审计历史","JiraFlow / 审计历史",`<button class="button subtle" data-action="refresh">刷新</button>`) + `<div class="notice">管理操作和问题变更以追加事件形式记录。当前页面需要全局管理员权限。</div><div class="panel">${state.audit.length ? state.audit.map(item => `<div class="audit-row"><time>${formatDate(item.timestamp)}</time><span class="audit-actor">${escapeHtml(item.actor)}</span><span>${escapeHtml(item.action)}</span><span>${escapeHtml(item.entity)} / ${escapeHtml(item.entityKey)} · ${escapeHtml(item.detail)}</span></div>`).join("") : `<div class="empty-line">暂无审计记录。</div>`}</div>`;
+    }
+    function renderPlugins() {
+      return shellHead("插件","JiraFlow / 插件",`<button class="button subtle" data-action="refresh">刷新</button>`) + `<div class="panel"><div class="section-head"><h2>已发现的扩展</h2><span class="section-count">${state.plugins.length}</span></div>${state.plugins.length ? state.plugins.map(plugin => `<div class="user-row"><span class="avatar">◇</span><div class="row-main"><strong>${escapeHtml(plugin.name)} <span class="section-count">${escapeHtml(plugin.version)}</span></strong><small>${escapeHtml(plugin.id)} · ${escapeHtml(plugin.source)}</small></div><span class="status-chip ${plugin.enabled ? "done":" "}" >${plugin.enabled ? "启用":"停用"}</span></div>`).join("") : `<div class="empty-line">未发现插件。可通过 ServiceLoader 或数据目录 plugins/*.json 注册扩展。</div>`}</div>`;
+    }
+    function bindStaticViewLinks() {
+      document.querySelectorAll("[data-view]").forEach(node => {
+        if (node.dataset.bound === "true") return;
+        node.dataset.bound = "true";
+        node.addEventListener("click", () => {
+          if (node.closest("#projectModal")) closeModal("projectModal");
+          navigate(node.dataset.view, node.dataset.filterTarget, node.dataset.versionFilter);
+        });
+      });
+    }
+    function bindGlobalActions() {
+      document.querySelectorAll("[data-global-action]").forEach(node => {
+        if (node.dataset.bound === "true") return;
+        node.dataset.bound = "true";
+        node.addEventListener("click", () => {
+          const action = node.dataset.globalAction;
+          if (action === "projects") openProjectSwitcher();
+          if (action === "search") {
+            const input = $("globalSearch");
+            input?.focus();
+            input?.select();
+          }
+          if (action === "create") openCreate("", node);
+          if (action === "help") openModal("helpModal", node, $("closeHelp"));
+          if (action === "account") openAccountMenu(node);
+        });
+      });
+    }
+    function bindAccountMenu() {
+      document.querySelectorAll("[data-account-action]").forEach(node => {
+        if (node.dataset.bound === "true") return;
+        node.dataset.bound = "true";
+        node.addEventListener("click", () => {
+          const action = node.dataset.accountAction;
+          if (action === "profile") {
+            const actor = state.actor || "未绑定用户";
+            closeAccountMenu();
+            toast(`当前账户：${actor}`);
+          }
+          if (action === "close") closeAccountMenu();
+        });
+      });
+    }
+    function bindView() {
+      const root = $("main");
+      root.querySelectorAll("[data-action]").forEach(node => node.addEventListener("click", () => handleAction(node.dataset.action, node)));
+      root.querySelectorAll("[data-view]").forEach(node => node.addEventListener("click", () => navigate(node.dataset.view, node.dataset.filterTarget, node.dataset.versionFilter)));
+      root.querySelectorAll("[data-issue-key]").forEach(node => node.addEventListener("click", () => selectIssue(node.dataset.issueKey)));
+      root.querySelectorAll("[data-open-issue]").forEach(node => node.addEventListener("click", (event) => { event.preventDefault(); state.view="issues"; selectIssue(node.dataset.openIssue); }));
+      root.querySelectorAll("[data-tab]").forEach(node => node.addEventListener("click", async () => { state.issueTab=node.dataset.tab; if (state.issueTab==="history") state.history=(await api(`/api/issues/${state.selectedKey}/history`)).history || []; render(); }));
+      root.querySelectorAll("[data-release-version]").forEach(node => node.addEventListener("click", () => releaseVersion(node.dataset.releaseVersion).catch(showError)));
+      root.querySelectorAll("[data-archive-version]").forEach(node => node.addEventListener("click", () => archiveVersion(node.dataset.archiveVersion, node.dataset.archived !== "true").catch(showError)));
+      root.querySelectorAll("[data-edit-version]").forEach(node => node.addEventListener("click", () => editVersion(node.dataset.editVersion).catch(showError)));
+      root.querySelectorAll("[data-toggle-column]").forEach(node => node.addEventListener("click", () => { const key=node.dataset.toggleColumn; state.collapsedColumns.has(key) ? state.collapsedColumns.delete(key) : state.collapsedColumns.add(key); render(); }));
+      root.querySelectorAll("[data-card-status]").forEach(node => node.addEventListener("change", () => transitionCard(node.dataset.cardStatus, node.value).catch(showError)));
+      root.querySelectorAll("[data-comment-action]").forEach(node => node.addEventListener("click", () => commentAction(node.dataset.commentAction, node.dataset.commentId).catch(showError)));
+      root.querySelectorAll("[data-download-attachment]").forEach(node => node.addEventListener("click", () => downloadAttachment(node.dataset.downloadAttachment)));
+      root.querySelectorAll("[data-delete-attachment]").forEach(node => node.addEventListener("click", () => deleteAttachment(node.dataset.deleteAttachment).catch(showError)));
+      root.querySelectorAll("[data-delete-link]").forEach(node => node.addEventListener("click", () => deleteLink(node.dataset.deleteLink).catch(showError)));
+      root.querySelectorAll("[data-notification-id]").forEach(node => node.addEventListener("click", () => markNotification(node.dataset.notificationId).catch(showError)));
+      root.querySelectorAll("[data-toggle-user]").forEach(node => node.addEventListener("click", () => toggleUser(node.dataset.toggleUser, node.dataset.userActive === "true").catch(showError)));
+      root.querySelectorAll("[data-edit-user]").forEach(node => node.addEventListener("click", () => editUser(node.dataset.editUser).catch(showError)));
+      root.querySelectorAll("[data-edit-workflow]").forEach(node => node.addEventListener("click", () => editWorkflow(node.dataset.editWorkflow).catch(showError)));
+      root.querySelectorAll("[data-delete-workflow]").forEach(node => node.addEventListener("click", () => deleteWorkflow(node.dataset.deleteWorkflow).catch(showError)));
+      root.querySelectorAll("[data-edit-component]").forEach(node => node.addEventListener("click", () => editComponent(node.dataset.editComponent).catch(showError)));
+      root.querySelectorAll("[data-delete-component]").forEach(node => node.addEventListener("click", () => deleteComponent(node.dataset.deleteComponent).catch(showError)));
+      root.querySelectorAll("[data-filter-run]").forEach(node => node.addEventListener("click", () => runSavedFilter(node.dataset.filterRun).catch(showError)));
+      root.querySelectorAll("[data-filter-action]").forEach(node => node.addEventListener("click", () => filterAction(node.dataset.filterAction, node.dataset.filterId).catch(showError)));
+      root.querySelectorAll("[data-report-template-run]").forEach(node => node.addEventListener("click", () => runReportTemplate(node.dataset.reportTemplateRun).catch(showError)));
+      root.querySelectorAll("[data-report-template-edit]").forEach(node => node.addEventListener("click", () => editReportTemplate(node.dataset.reportTemplateEdit).catch(showError)));
+      root.querySelectorAll("[data-report-template-delete]").forEach(node => node.addEventListener("click", () => deleteReportTemplate(node.dataset.reportTemplateDelete).catch(showError)));
+      root.querySelectorAll("[data-admin-category]").forEach(node => node.addEventListener("click", () => { state.adminCategory=node.dataset.adminCategory; state.adminQuery=""; loadView(); }));
+      root.querySelectorAll("[data-admin-edit]").forEach(node => node.addEventListener("click", () => editAdminEntry(node.dataset.adminEdit).catch(showError)));
+      root.querySelectorAll("[data-admin-delete]").forEach(node => node.addEventListener("click", () => deleteAdminEntry(node.dataset.adminDelete).catch(showError)));
+      root.querySelectorAll("[data-admin-action]").forEach(node => node.addEventListener("click", () => adminAction(node.dataset.adminAction).catch(showError)));
+      const filter = $("filterSelect"); if (filter) filter.addEventListener("change", () => { state.filter=filter.value; state.jql=filterJql(state.filter); state.startAt=0; loadView(); });
+      const filterSearch = $("filterSearch"); if (filterSearch) filterSearch.addEventListener("keydown", event => { if (event.key==="Enter") { state.filterSearch=filterSearch.value.trim(); loadView(); } });
+      const reportType = $("reportType"); if (reportType) reportType.addEventListener("change", () => { state.reportType=reportType.value; state.reportTemplateId=0; state.reportFilterId=0; state.reportJql=""; loadView(); });
+      const reportTemplate = $("reportTemplate"); if (reportTemplate) reportTemplate.addEventListener("change", () => { state.reportTemplateId=Number(reportTemplate.value || 0); state.reportType=""; state.reportFilterId=0; state.reportJql=""; state.reportParametersText="{}"; loadView(); });
+      const reportFilter = $("reportFilterId"); if (reportFilter) reportFilter.addEventListener("change", () => { state.reportFilterId=Number(reportFilter.value || 0); });
+      const reportJql = $("reportJql"); if (reportJql) reportJql.addEventListener("input", () => { state.reportJql=reportJql.value; });
+      const reportParameters = $("reportParameters"); if (reportParameters) reportParameters.addEventListener("input", () => { state.reportParametersText=reportParameters.value; });
+      const adminQuery = $("adminQuery"); if (adminQuery) adminQuery.addEventListener("keydown", event => { if (event.key==="Enter") { state.adminQuery=adminQuery.value.trim(); loadView(); } });
+      const boardSearch = $("boardSearch"); if (boardSearch) boardSearch.addEventListener("keydown", event => { if (event.key==="Enter") { state.boardSearch=boardSearch.value.trim(); loadView(); } });
+      const boardGroup = $("boardGroup"); if (boardGroup) boardGroup.addEventListener("change", () => { state.boardGroup=boardGroup.value; render(); });
+    }
+    async function navigate(view, filterTarget = "", versionFilter = "") {
+      if (!state.projectKey) {
+        openProjectSwitcher();
+        return;
+      }
+      state.view = view;
+      if (versionFilter) {
+        state.filter = "all";
+        const escapedVersion = versionFilter.replace(/"/g, '\\"');
+        state.jql = `project = ${state.projectKey} AND fixVersion = "${escapedVersion}" ORDER BY priority DESC`;
+        state.startAt = 0;
+      } else if (filterTarget) {
+        state.filter=filterTarget;
+        state.jql=filterJql(filterTarget);
+        state.startAt=0;
+      }
+      state.dashboard = view === "dashboard" ? state.dashboard : null;
+      await loadView();
+    }
+    async function handleAction(action, node) {
+      try {
+        if (action==="choose-project") await openProjectSwitcher();
+        if (action==="retry-projects") await initializeProjectWorkspace();
+        if (action==="create") openCreate(node?.dataset.createStatus || "", node);
+        if (action==="refresh") await loadView();
+        if (action==="run-jql") { state.jql=$("jqlInput").value.trim() || filterJql("all"); state.startAt=0; await loadView(); }
+        if (action==="save-filter") await createFilter();
+        if (action==="run-report") await executeReport();
+        if (action==="new-template") await createReportTemplate();
+        if (action==="prev-page") { state.startAt=Math.max(0,state.startAt-state.maxResults); await loadView(); }
+        if (action==="next-page") { state.startAt += state.maxResults; await loadView(); }
+        if (action==="save-description") await saveDescription();
+        if (action==="save-fields") await saveFields();
+        if (action==="add-comment") await addComment();
+        if (action==="create-subtask") await createSubtask();
+        if (action==="upload-attachment") await uploadAttachment();
+        if (action==="add-link") await addLink();
+        if (action==="add-worklog") await addWorklog();
+        if (action==="toggle-watch") { state.issue=(await api(`/api/issues/${state.selectedKey}/watch`,{method:state.issue.watchers.includes(state.actor)?"DELETE":"POST"})).issue; render(); }
+        if (action==="toggle-vote") { state.issue=(await api(`/api/issues/${state.selectedKey}/vote`,{method:state.issue.voters.includes(state.actor)?"DELETE":"POST"})).issue; render(); }
+        if (action==="focus-fields") $("editFields")?.scrollIntoView({behavior:"smooth",block:"center"});
+        if (action==="focus-comment") $("commentSection")?.scrollIntoView({behavior:"smooth",block:"center"});
+        if (action==="create-version") await createVersion();
+        if (action==="save-settings") await saveSettings();
+        if (action==="add-workflow") await addWorkflow();
+        if (action==="add-status") await addStatus();
+        if (action==="create-component") await createComponent();
+        if (action==="mark-all-read") { await api(`/api/notifications/read-all`,{method:"POST"}); await loadView(); toast("通知已全部标为已读","success"); }
+        if (action==="create-user") await createUser();
+        if (action==="board-mine") { state.board=(await api(`/api/boards/${state.projectKey}?jql=${encodeURIComponent("assignee = currentUser()")}`)).board; render(); }
+        if (action==="board-recent") { state.board=(await api(`/api/boards/${state.projectKey}?jql=${encodeURIComponent("updated >= -1d")}`)).board; render(); }
+      } catch (error) {
+        if (error.status===409 && error.payload?.details?.issue) { state.issue=error.payload.details.issue; render(); toast("检测到并发修改，已加载服务器最新版本。","error"); } else showError(error);
+      }
+    }
+    function parseObjectInput(value, label) {
+      const source = String(value ?? "").trim();
+      if (!source) return {};
+      let parsed;
+      try { parsed = JSON.parse(source); } catch (_) { throw new Error(`${label}必须是有效的 JSON 对象`); }
+      if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") throw new Error(`${label}必须是 JSON 对象`);
+      return parsed;
+    }
+    function promptVisibility(current = "private") {
+      const value = window.prompt("可见性（private / shared / global）", current);
+      if (value === null) return null;
+      const normalized = value.trim().toLowerCase();
+      if (!["private", "shared", "global"].includes(normalized)) {
+        toast("可见性只能是 private、shared 或 global", "error");
+        return null;
+      }
+      return normalized;
+    }
+    function promptSharedWith(current = []) {
+      const value = window.prompt("共享用户（逗号分隔；仅 shared 可用）", (current || []).join(", "));
+      return value === null ? null : listValue(value);
+    }
+    async function createFilter() {
+      const name = window.prompt("筛选器名称", "ASPICE 待处理问题");
+      if (name === null || !name.trim()) return;
+      const jql = $("jqlInput")?.value.trim() || state.jql;
+      const description = window.prompt("筛选器描述", "") ?? "";
+      const visibility = promptVisibility("private");
+      if (visibility === null) return;
+      const sharedWith = visibility === "shared" ? promptSharedWith([]) : [];
+      if (sharedWith === null) return;
+      const result = await api("/api/filters", {
+        method: "POST",
+        body: { name: name.trim(), description, jql, projectKey: state.projectKey, visibility, sharedWith }
+      });
+      state.selectedFilterId = Number(result.filter?.id || 0);
+      await loadView();
+      toast("筛选器已保存", "success");
+    }
+    async function editFilter(id) {
+      const filter = state.filters.find(item => String(item.id) === String(id)) || (await api(`/api/filters/${id}`)).filter;
+      if (!filter) return;
+      const name = window.prompt("筛选器名称", filter.name);
+      if (name === null || !name.trim()) return;
+      const jql = window.prompt("JQL", filter.jql);
+      if (jql === null) return;
+      const description = window.prompt("筛选器描述", filter.description || "");
+      if (description === null) return;
+      const visibility = promptVisibility(filter.visibility || "private");
+      if (visibility === null) return;
+      const sharedWith = visibility === "shared" ? promptSharedWith(filter.sharedWith || []) : [];
+      if (sharedWith === null) return;
+      await api(`/api/filters/${id}`, {
+        method: "PATCH",
+        body: { name: name.trim(), jql: jql.trim(), description, visibility, sharedWith }
+      });
+      state.selectedFilterId = Number(id);
+      await loadView();
+      toast("筛选器已更新", "success");
+    }
+    async function deleteFilter(id) {
+      const filter = state.filters.find(item => String(item.id) === String(id));
+      if (!filter || !window.confirm(`删除筛选器“${filter.name}”？`)) return;
+      await api(`/api/filters/${id}`, { method: "DELETE" });
+      if (Number(state.selectedFilterId) === Number(id)) state.selectedFilterId = 0;
+      await loadView();
+      toast("筛选器已删除", "success");
+    }
+    async function toggleFilterFavourite(id) {
+      const filter = state.filters.find(item => String(item.id) === String(id)) || (await api(`/api/filters/${id}`)).filter;
+      if (!filter) return;
+      await api(`/api/filters/${id}`, { method: "PATCH", body: { favourite: !filter.favourite } });
+      state.selectedFilterId = Number(id);
+      await loadView();
+      toast(filter.favourite ? "已取消收藏" : "已收藏", "success");
+    }
+    async function shareFilter(id) {
+      const filter = state.filters.find(item => String(item.id) === String(id)) || (await api(`/api/filters/${id}`)).filter;
+      if (!filter) return;
+      const visibility = promptVisibility(filter.visibility || "private");
+      if (visibility === null) return;
+      const sharedWith = visibility === "shared" ? promptSharedWith(filter.sharedWith || []) : [];
+      if (sharedWith === null) return;
+      await api(`/api/filters/${id}/share`, { method: "PATCH", body: { visibility, sharedWith } });
+      state.selectedFilterId = Number(id);
+      await loadView();
+      toast("筛选器共享设置已更新", "success");
+    }
+    async function subscribeFilter(id) {
+      if (!state.actor) throw new Error("当前用户身份尚未加载");
+      const result = await api(`/api/filters/${id}/subscriptions`);
+      const subscriptions = result.subscriptions || [];
+      const existing = subscriptions.find(item => item.username === state.actor);
+      const frequency = window.prompt("订阅频率（hourly / daily / weekly / monthly）", existing?.frequency || "daily");
+      if (frequency === null) return;
+      const normalized = frequency.trim().toLowerCase();
+      if (!["hourly", "daily", "weekly", "monthly"].includes(normalized)) {
+        toast("订阅频率无效", "error");
+        return;
+      }
+      if (existing) {
+        await api(`/api/filters/${id}/subscriptions/${existing.id}`, {
+          method: "PATCH",
+          body: { frequency: normalized, enabled: !existing.enabled }
+        });
+        toast(existing.enabled ? "筛选器订阅已暂停" : "筛选器订阅已启用", "success");
+      } else {
+        await api(`/api/filters/${id}/subscriptions`, {
+          method: "POST",
+          body: { frequency: normalized, enabled: true }
+        });
+        toast("筛选器订阅已创建", "success");
+      }
+      state.selectedFilterId = Number(id);
+      await loadView();
+    }
+    async function runSavedFilter(id) {
+      let filter = state.filters.find(item => String(item.id) === String(id));
+      if (!filter) filter = (await api(`/api/filters/${id}`)).filter;
+      if (!filter) return;
+      state.selectedFilterId = Number(id);
+      state.jql = filter.jql || filterJql("all");
+      state.filter = "all";
+      state.startAt = 0;
+      await loadView();
+      toast(`已运行筛选器“${filter.name}”`, "success");
+    }
+    async function filterAction(action, id) {
+      if (action === "run") return runSavedFilter(id);
+      if (action === "edit") return editFilter(id);
+      if (action === "delete") return deleteFilter(id);
+      if (action === "favourite") return toggleFilterFavourite(id);
+      if (action === "share") return shareFilter(id);
+      if (action === "subscribe") return subscribeFilter(id);
+      throw new Error(`未知的筛选器操作：${action}`);
+    }
+    function reportParameters() {
+      const raw = $("reportParameters")?.value ?? state.reportParametersText ?? "{}";
+      return parseObjectInput(raw, "模板参数");
+    }
+    async function executeReport() {
+      const parameters = reportParameters();
+      const body = {
+        projectKey: state.projectKey,
+        type: state.reportTemplateId ? "" : state.reportType,
+        templateId: Number(state.reportTemplateId || 0),
+        filterId: Number(state.reportFilterId || 0),
+        jql: ($("reportJql")?.value ?? state.reportJql ?? "").trim(),
+        parameters
+      };
+      const result = await api("/api/reports/execute", { method: "POST", body });
+      state.report = result.report || null;
+      state.reportResult = state.report;
+      state.reportParametersText = JSON.stringify(parameters, null, 2);
+      render();
+      toast("报告已运行", "success");
+    }
+    async function createReportTemplate() {
+      const name = window.prompt("报告模板名称", "ASPICE 评估完整性");
+      if (name === null || !name.trim()) return;
+      const key = window.prompt("模板键（可选）", "") ?? "";
+      const description = window.prompt("模板描述", "") ?? "";
+      const category = window.prompt("模板类别", "custom") ?? "custom";
+      const jql = window.prompt("模板 JQL（可选）", state.reportJql || "") ?? "";
+      const visibility = promptVisibility("private");
+      if (visibility === null) return;
+      const sharedWith = visibility === "shared" ? promptSharedWith([]) : [];
+      if (sharedWith === null) return;
+      const parametersText = window.prompt("模板参数 schema JSON（可选）", "{}");
+      if (parametersText === null) return;
+      const parameters = parseObjectInput(parametersText, "模板参数 schema");
+      const body = { name: name.trim(), description, category, jql: jql.trim(), projectKey: state.projectKey, visibility, sharedWith, parameters };
+      if (key.trim()) body.key = key.trim().toLowerCase();
+      const result = await api("/api/reports/templates", { method: "POST", body });
+      state.reportTemplateId = Number(result.template?.id || 0);
+      state.reportType = "";
+      await loadView();
+      toast("报告模板已创建", "success");
+    }
+    async function editReportTemplate(id) {
+      const template = state.reportTemplates.find(item => String(item.id) === String(id));
+      if (!template || template.builtIn) return;
+      const name = window.prompt("报告模板名称", template.name);
+      if (name === null || !name.trim()) return;
+      const description = window.prompt("模板描述", template.description || "");
+      if (description === null) return;
+      const category = window.prompt("模板类别", template.category || "custom");
+      if (category === null) return;
+      const jql = window.prompt("模板 JQL（可选）", template.jql || "");
+      if (jql === null) return;
+      const visibility = promptVisibility(template.visibility || "private");
+      if (visibility === null) return;
+      const sharedWith = visibility === "shared" ? promptSharedWith(template.sharedWith || []) : [];
+      if (sharedWith === null) return;
+      const parametersText = window.prompt("模板参数 schema JSON", JSON.stringify(template.parameters || {}, null, 2));
+      if (parametersText === null) return;
+      const parameters = parseObjectInput(parametersText, "模板参数 schema");
+      await api(`/api/reports/templates/${id}`, {
+        method: "PATCH",
+        body: { name: name.trim(), description, category, jql: jql.trim(), visibility, sharedWith, parameters }
+      });
+      state.reportTemplateId = Number(id);
+      state.reportType = "";
+      await loadView();
+      toast("报告模板已更新", "success");
+    }
+    async function deleteReportTemplate(id) {
+      const template = state.reportTemplates.find(item => String(item.id) === String(id));
+      if (!template || template.builtIn || !window.confirm(`删除报告模板“${template.name}”？`)) return;
+      await api(`/api/reports/templates/${id}`, { method: "DELETE" });
+      if (Number(state.reportTemplateId) === Number(id)) state.reportTemplateId = 0;
+      await loadView();
+      toast("报告模板已删除", "success");
+    }
+    async function runReportTemplate(id) {
+      const template = state.reportTemplates.find(item => String(item.id) === String(id));
+      state.reportTemplateId = Number(id);
+      state.reportType = "";
+      state.reportFilterId = 0;
+      state.reportJql = "";
+      state.reportParametersText = JSON.stringify(template?.parameters || {}, null, 2);
+      await loadView();
+      toast(`已运行报告模板“${template?.name || id}”`, "success");
+    }
+    async function adminAction(action) {
+      if (action !== "create") throw new Error(`未知的管理操作：${action}`);
+      if (!state.adminCategory) throw new Error("请先选择管理分类");
+      const name = window.prompt("管理条目名称", "");
+      if (name === null || !name.trim()) return;
+      const key = window.prompt("管理条目键（可选）", "") ?? "";
+      const description = window.prompt("管理条目描述", "") ?? "";
+      const enabledText = window.prompt("是否启用（true / false）", "true");
+      if (enabledText === null) return;
+      const propertiesText = window.prompt("属性 JSON（可选）", "{}");
+      if (propertiesText === null) return;
+      const properties = parseObjectInput(propertiesText, "管理条目属性");
+      const body = { name: name.trim(), description, enabled: enabledText.trim().toLowerCase() !== "false", properties };
+      if (key.trim()) body.key = key.trim().toLowerCase();
+      await api(`/api/admin/${encodeURIComponent(state.adminCategory)}`, { method: "POST", body });
+      await loadView();
+      toast("管理条目已创建", "success");
+    }
+    async function editAdminEntry(id) {
+      const entry = state.adminEntries.find(item => String(item.id) === String(id));
+      if (!entry || (entry.system && !entry.editable)) return;
+      const key = window.prompt("管理条目键", entry.key);
+      if (key === null || !key.trim()) return;
+      const name = window.prompt("管理条目名称", entry.name);
+      if (name === null || !name.trim()) return;
+      const description = window.prompt("管理条目描述", entry.description || "");
+      if (description === null) return;
+      const enabledText = window.prompt("是否启用（true / false）", String(entry.enabled));
+      if (enabledText === null) return;
+      const propertiesText = window.prompt("属性 JSON", JSON.stringify(entry.properties || {}, null, 2));
+      if (propertiesText === null) return;
+      const properties = parseObjectInput(propertiesText, "管理条目属性");
+      await api(`/api/admin/${encodeURIComponent(state.adminCategory)}/${id}`, {
+        method: "PATCH",
+        body: { key: key.trim().toLowerCase(), name: name.trim(), description, enabled: enabledText.trim().toLowerCase() !== "false", properties }
+      });
+      await loadView();
+      toast("管理条目已更新", "success");
+    }
+    async function deleteAdminEntry(id) {
+      const entry = state.adminEntries.find(item => String(item.id) === String(id));
+      if (!entry || (entry.system && !entry.editable) || !window.confirm(`删除管理条目“${entry.name}”？`)) return;
+      await api(`/api/admin/${encodeURIComponent(state.adminCategory)}/${id}`, { method: "DELETE" });
+      await loadView();
+      toast("管理条目已删除", "success");
+    }
+    async function saveDescription() { state.issue=(await api(`/api/issues/${state.selectedKey}`,{method:"PATCH",body:{description:$("descriptionEditor").value,expectedRevision:state.issue.revision}})).issue; syncIssueInList(); render(); toast("描述已保存","success"); }
+    async function saveFields() {
+      const body = { summary:$("editSummary").value.trim(), type:$("editType").value, priority:$("editPriority").value, assignee:$("editAssignee").value, reporter:$("editReporter").value.trim(), resolution:$("editResolution").value, labels:listValue($("editLabels").value), components:selectedValues($("editComponents")), fixVersions:listValue($("editFixVersions").value), affectsVersions:listValue($("editAffectsVersions").value), dueDate:$("editDueDate").value, environment:$("editEnvironment").value, analysisDomain:$("editAnalysisDomain").value, processArea:$("editProcessArea").value.trim(), formalScope:$("editFormalScope").value.trim(), evidenceRole:$("editEvidenceRole").value, assessmentRating:$("editAssessmentRating").value.trim(), assessorDecision:$("editAssessorDecision").value, asil:$("editAsil").value.trim(), cybersecurityLevel:$("editCybersecurityLevel").value.trim(), reviewStatus:$("editReviewStatus").value, riskStatement:$("editRiskStatement").value, objectiveEvidence:$("editObjectiveEvidence").value, verificationMethod:$("editVerificationMethod").value, closureEvidence:$("editClosureEvidence").value, traceLinks:listValue($("editTraceLinks").value), expectedRevision:state.issue.revision };
+      state.issue=(await api(`/api/issues/${state.selectedKey}`,{method:"PATCH",body})).issue; syncIssueInList(); render(); toast("问题字段已保存","success");
+    }
+    async function transition(value) { state.issue=(await api(`/api/issues/${state.selectedKey}/transition`,{method:"POST",body:{status:value,expectedRevision:state.issue.revision}})).issue; syncIssueInList(); render(); toast("状态已更新","success"); }
+    async function transitionCard(key, value) { const issue=(await api(`/api/issues/${key}`)).issue; await api(`/api/issues/${key}/transition`,{method:"POST",body:{status:value,expectedRevision:issue.revision}}); await loadView(); toast(`${key} 已移动到 ${displayStatus(value)}`,"success"); }
+    async function addComment() { const value=$("commentEditor").value.trim(); if (!value) return; await api(`/api/issues/${state.selectedKey}/comments`,{method:"POST",body:{body:value}}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("评论已添加","success"); }
+    async function commentAction(action, id) {
+      const base=`/api/issues/${state.selectedKey}/comments/${id}`;
+      if (action==="edit") { const comment=state.issue.comments.find(item => String(item.id)===String(id)); const body=window.prompt("编辑评论",comment?.body || ""); if (body !== null && body.trim()) await api(base,{method:"PATCH",body:{body:body.trim()}}); }
+      if (action==="delete" && window.confirm("删除这条评论？")) await api(base,{method:"DELETE"});
+      if (action==="pin" || action==="unpin") await api(`${base}/pin`,{method:action==="pin"?"POST":"DELETE"});
+      state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render();
+    }
+    async function createSubtask() { const value=$("subtaskSummary").value.trim(); if (!value) return; await api(`/api/issues/${state.selectedKey}/subtasks`,{method:"POST",body:{summary:value}}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("子任务已创建","success"); }
+    async function uploadAttachment() { const file=$("attachmentFile").files[0]; if (!file) return; const contentBase64=await new Promise((resolve,reject) => { const reader=new FileReader(); reader.onload=() => resolve(String(reader.result).split(",")[1] || ""); reader.onerror=reject; reader.readAsDataURL(file); }); await api(`/api/issues/${state.selectedKey}/attachments`,{method:"POST",body:{filename:file.name,contentType:file.type || "application/octet-stream",contentBase64}}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("附件已添加","success"); }
+    async function deleteAttachment(id) { if (!window.confirm("删除附件？")) return; await api(`/api/issues/${state.selectedKey}/attachments/${id}`,{method:"DELETE"}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("附件已删除","success"); }
+    async function addLink() { const linkedIssueKey=$("linkIssueKey").value.trim(); if (!linkedIssueKey) return; await api(`/api/issues/${state.selectedKey}/links`,{method:"POST",body:{linkedIssueKey,type:$("linkType").value.trim() || "relates to"}}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("问题链接已添加","success"); }
+    async function deleteLink(encoded) { if (!window.confirm("删除问题链接？")) return; await api(`/api/issues/${state.selectedKey}/links`,{method:"DELETE",body:JSON.parse(encoded)}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("问题链接已删除","success"); }
+    async function addWorklog() { const minutes=Number($("worklogMinutes").value); if (!minutes) return; await api(`/api/issues/${state.selectedKey}/worklogs`,{method:"POST",body:{minutes,body:$("worklogBody").value}}); state.issue=(await api(`/api/issues/${state.selectedKey}`)).issue; render(); toast("工作日志已记录","success"); }
+    async function releaseVersion(id) { await api(`/api/projects/${state.projectKey}/versions/${id}?action=release`,{method:"POST"}); await loadView(); toast("版本已发布","success"); }
+    async function archiveVersion(id, archived) { await api(`/api/projects/${state.projectKey}/versions/${id}`,{method:"PATCH",body:{archived}}); await loadView(); toast(archived ? "版本已归档" : "版本已取消归档","success"); }
+    async function editVersion(id) { const version=state.versions.find(item => String(item.id)===String(id)); if (!version) return; const name=window.prompt("版本名称",version.name); if (!name) return; const description=window.prompt("版本描述",version.description || ""); await api(`/api/projects/${state.projectKey}/versions/${id}`,{method:"PATCH",body:{name,description}}); await loadView(); toast("版本已更新","success"); }
+    async function createVersion() { const name=window.prompt("版本名称","Next release"); if (!name) return; const description=window.prompt("版本描述",""); await api(`/api/projects/${state.projectKey}/versions`,{method:"POST",body:{name,description}}); await loadView(); toast("版本已创建","success"); }
+    async function saveSettings() { const roles={}; document.querySelectorAll("[data-role]").forEach(node => roles[node.dataset.role]=listValue(node.value)); await api(`/api/projects/${state.projectKey}/settings`,{method:"PATCH",body:{name:$("settingName").value.trim(),lead:$("settingLead").value.trim(),description:$("settingDescription").value,defaultAssignee:$("settingAssignee").value.trim(),permissionScheme:$("settingPermission").value.trim(),notificationScheme:$("settingNotification").value.trim(),roles}}); await loadView(); toast("项目设置已保存","success"); }
+    async function createComponent() {
+      const name = $("componentName")?.value.trim();
+      if (!name) { toast("组件名称不能为空", "error"); return; }
+      await api(`/api/projects/${state.projectKey}/components`, {
+        method:"POST",
+        body:{
+          name,
+          description:$("componentDescription")?.value || "",
+          lead:$("componentLead")?.value.trim() || ""
+        }
+      });
+      await loadView();
+      toast("组件已创建", "success");
+    }
+    async function editComponent(id) {
+      const component = state.components.find(item => String(item.id) === String(id));
+      if (!component) return;
+      const name = window.prompt("组件名称", component.name);
+      if (name === null) return;
+      const description = window.prompt("组件描述", component.description || "");
+      if (description === null) return;
+      const lead = window.prompt("负责人", component.lead || "");
+      if (lead === null) return;
+      await api(`/api/projects/${state.projectKey}/components/${encodeURIComponent(id)}`, {
+        method:"PATCH",
+        body:{name:name.trim(), description, lead:lead.trim()}
+      });
+      await loadView();
+      toast("组件已更新", "success");
+    }
+    async function deleteComponent(id) {
+      const component = state.components.find(item => String(item.id) === String(id));
+      if (!component || !window.confirm(`删除组件“${component.name}”？这会清理问题中的对应引用。`)) return;
+      await api(`/api/projects/${state.projectKey}/components/${encodeURIComponent(id)}`, {method:"DELETE"});
+      await loadView();
+      toast("组件已删除", "success");
+    }
+    async function addWorkflow() { const name=$("workflowName").value.trim(); if (!name) return; await api(`/api/projects/${state.projectKey}/workflow/transitions`,{method:"POST",body:{name,from:$("workflowFrom").value,to:$("workflowTo").value}}); await loadView(); toast("工作流转换已添加","success"); }
+    async function editWorkflow(id) { const item=state.workflow.find(entry => String(entry.id)===String(id)); if (!item) return; const name=window.prompt("转换名称",item.name); if (!name) return; const validator=window.prompt("验证器",item.validator || "permission:TRANSITION"); await api(`/api/projects/${state.projectKey}/workflow/transitions/${id}`,{method:"PATCH",body:{name,validator}}); await loadView(); toast("工作流转换已更新","success"); }
+    async function deleteWorkflow(id) { if (!window.confirm("删除工作流转换？")) return; await api(`/api/projects/${state.projectKey}/workflow/transitions/${id}`,{method:"DELETE"}); await loadView(); toast("工作流转换已删除","success"); }
+    async function createUser() { const username=window.prompt("用户名"); if (!username) return; const displayName=window.prompt("显示名称",username); const email=window.prompt("邮箱",`${username}@example.invalid`); await api(`/api/admin/users`,{method:"POST",body:{username,displayName,email}}); await loadView(); toast("用户已创建","success"); }
+    async function editUser(username) { const user=state.users.find(item => item.username===username); if (!user) return; const displayName=window.prompt("显示名称",user.displayName); if (displayName === null) return; const email=window.prompt("邮箱",user.email); await api(`/api/admin/users/${encodeURIComponent(username)}`,{method:"PATCH",body:{displayName,email}}); await loadView(); toast("用户已更新","success"); }
+    async function toggleUser(username, active) { await api(`/api/admin/users/${encodeURIComponent(username)}`,{method:"PATCH",body:{active:!active}}); await loadView(); toast(active ? "用户已停用":"用户已启用","success"); }
+    async function markNotification(id) { await api(`/api/notifications/${id}`,{method:"PATCH",body:{read:true}}); await loadView(); }
+    function syncIssueInList() { if (state.issue) state.issues=state.issues.map(item => item.key===state.issue.key ? state.issue : item); }
+    function openCreate(status = "", trigger = null) {
+      if (!state.projectKey) { openProjectSwitcher(); return; }
+      const opener = trigger || document.activeElement || $("createTop");
+      $("createModal").dataset.status = status;
+      openModal("createModal", opener, $("createSummary"));
+    }
+    async function addStatus() {
+      const name = $("statusName").value.trim();
+      const key = $("statusKey").value.trim();
+      if (!name) { toast("状态名称不能为空","error"); return; }
+      await api(`/api/projects/${state.projectKey}/statuses`, { method:"POST", body:{key, name} });
+      await loadView();
+      toast("看板状态已添加","success");
+    }
+    async function submitCreate() { const summary=$("createSummary").value.trim(); if (!summary) { toast("概要不能为空","error"); return; } const status=$("createModal").dataset.status || "BACKLOG"; const result=await api("/api/issues",{method:"POST",body:{projectKey:state.projectKey,summary,description:$("createDescription").value,type:$("createType").value,priority:$("createPriority").value,assignee:$("createAssignee").value,analysisDomain:$("createAnalysisDomain").value,processArea:$("createProcessArea").value.trim(),labels:listValue($("createLabels").value),status}}); closeModal("createModal"); $("createModal").dataset.status=""; $("createSummary").value=""; $("createDescription").value=""; $("createProcessArea").value=""; $("createLabels").value=""; state.view="issues"; state.selectedKey=result.issue.key; state.jql=filterJql("all"); state.filter="all"; await loadView(); toast(`${result.issue.key} 已创建`,"success"); }
+    function downloadAttachment(id) { api(`/api/issues/${state.selectedKey}/attachments/${id}`).then(item => { const bytes=Uint8Array.from(atob(item.contentBase64),character => character.charCodeAt(0)); const blob=new Blob([bytes],{type:item.contentType}); const url=URL.createObjectURL(blob); const link=document.createElement("a"); link.href=url; link.download=item.filename; link.click(); URL.revokeObjectURL(url); }).catch(showError); }
+    $("globalSearch").addEventListener("keydown", async event => {
+      if (event.key!=="Enter") return;
+      if (!state.projectKey) { openProjectSwitcher(); return; }
+      const term = event.target.value.trim().replace(/"/g, "");
+      state.view="issues";
+      state.filter="all";
+      state.jql = term ? `project = ${state.projectKey} AND text ~ "${term}" ORDER BY updated DESC` : filterJql("all");
+      state.startAt=0;
+      await loadView();
+    });
+    const languageControl = window.JiraFlowI18n.createController();
+    languageControl.start();
+    $("languageToggle").addEventListener("click", () => languageControl.toggle());
+    $("closeCreate").addEventListener("click", () => closeModal("createModal"));
+    $("cancelCreate").addEventListener("click", () => closeModal("createModal"));
+    $("submitCreate").addEventListener("click", () => submitCreate().catch(showError));
+    $("closeProjects").addEventListener("click", () => closeModal("projectModal"));
+    $("cancelProjects").addEventListener("click", () => closeModal("projectModal"));
+    $("closeHelp").addEventListener("click", () => closeModal("helpModal"));
+    $("closeHelpAction").addEventListener("click", () => closeModal("helpModal"));
+    $("sidebarToggle").addEventListener("click", () => applySidebarState(!state.sidebarCollapsed));
+    const initialTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = initialTheme;
+    document.body.dataset.theme = initialTheme;
+    $("themeToggle").addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      document.body.dataset.theme = nextTheme;
+      try { localStorage.setItem("jiraflow-theme", nextTheme); } catch (_) { /* Storage can be disabled by the host. */ }
+    });
+    document.addEventListener("change", event => { if (event.target.id==="statusSelect") transition(event.target.value).catch(showError); if (event.target.dataset.workflowEnabled) api(`/api/projects/${state.projectKey}/workflow/transitions/${event.target.dataset.workflowEnabled}`,{method:"PATCH",body:{enabled:event.target.checked}}).then(loadView).catch(showError); });
+    applySidebarState();
+    bindGlobalActions();
+    bindAccountMenu();
+    bindStaticViewLinks();
+    syncTooltipTitles();
+    async function initializeProjectWorkspace() {
+      state.projectError = "";
+      try {
+        const projects = await loadProjects();
+        if (!projects.length) {
+          state.projectKey = "";
+          state.projectName = "请选择项目";
+          state.view = "project-gate";
+          render();
+          return;
+        }
+        const requested = requestedProjectKey.trim().toUpperCase();
+        const initial = requested
+          ? projects.find(project => project.key.toUpperCase() === requested)
+          : projects.find(project => project.key === state.projectKey) || projects[0];
+        if (!initial) throw new Error("请求的 JiraFlow 项目不可访问。");
+        await selectProject(initial.key);
+      } catch (error) {
+        state.projectKey = "";
+        state.view = "project-gate";
+        showProjectError(error);
+        render();
+      }
+    }
+    initializeProjectWorkspace().catch(showError);
+  </script>
+</body>
+</html>

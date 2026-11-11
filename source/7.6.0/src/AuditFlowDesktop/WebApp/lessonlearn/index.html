@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>LessonLearn | JEAuditFlow</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="lesson-app" id="lesson-app" aria-label="LessonLearn">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">LL</span><div><h1>LessonLearn</h1><p data-i18n="subtitle">经验教训登记</p></div></div>
+      <label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索经验、项目、过程或证据" data-placeholder-en="Search lessons, projects, processes or evidence" autocomplete="off"></label>
+      <div class="top-actions">
+        <button class="tool-button" id="space-switcher" type="button" title="切换空间" aria-label="切换空间"><span aria-hidden="true">▤</span> <span data-i18n="spaceSwitcher">空间</span></button>
+        <button class="tool-button" id="activity-button" type="button" title="查看最近活动" aria-label="查看最近活动"><span aria-hidden="true">◷</span> <span data-i18n="activity">活动</span></button>
+        <span class="local-state"><i></i><span data-i18n="local">本地数据</span></span>
+        <button class="icon-button" id="language-toggle" type="button" title="切换语言" aria-label="切换语言">中 / EN</button>
+        <button class="icon-button" id="theme-toggle" type="button" title="切换明暗模式" aria-label="切换明暗模式">◐</button>
+        <button class="tool-button" id="import-button" type="button" data-i18n="import">导入</button>
+        <button class="tool-button" id="export-button" type="button" data-i18n="export">导出</button>
+        <button class="primary-button" id="new-lesson" type="button"><span aria-hidden="true">+</span> <span data-i18n="newLesson">新建经验</span></button>
+      </div>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+    </header>
+    <div class="workspace">
+      <aside class="tree-pane" aria-label="空间和页面">
+        <div class="pane-heading"><h2 data-i18n="spaces">空间</h2><div><button class="small-icon" id="new-space" type="button" title="新建空间" aria-label="新建空间">+</button><button class="small-icon" id="new-page" type="button" title="新建页面" aria-label="新建页面">▤</button></div></div>
+        <nav id="page-tree" class="page-tree" aria-label="页面树"></nav>
+        <div class="tree-footer" data-i18n="localOnly">存储在此设备</div>
+      </aside>
+      <section class="list-pane" aria-label="经验条目">
+        <div class="pane-heading list-heading"><div><h2 id="selected-page-title">General</h2><p id="lesson-count">0 条内容</p></div><div class="list-actions"><button class="small-icon" id="page-options" type="button" title="页面选项" aria-label="页面选项">⋯</button><button class="small-icon" id="new-page-compact" type="button" title="新建页面" aria-label="新建页面">▤</button><button class="small-icon" id="new-post-compact" type="button" title="新建博客" aria-label="新建博客">✎</button><button class="small-icon" id="new-lesson-compact" type="button" title="新建经验" aria-label="新建经验">+</button></div></div>
+        <div class="view-tabs" role="tablist" aria-label="内容视图"><button class="view-tab" data-view="pages" type="button" role="tab" aria-selected="false" data-i18n="pagesView">页面</button><button class="view-tab" data-view="posts" type="button" role="tab" aria-selected="false" data-i18n="postsView">博客</button><button class="view-tab active" data-view="lessons" type="button" role="tab" aria-selected="true" data-i18n="lessonsView">经验</button><button class="view-tab" data-view="activity" type="button" role="tab" aria-selected="false" data-i18n="activityView">活动</button></div>
+        <div id="lesson-list" class="lesson-list"></div>
+      </section>
+      <section class="detail-pane" id="detail-pane" aria-live="polite"></section>
+    </div>
+    <dialog id="name-dialog" class="name-dialog">
+      <form method="dialog" id="name-form">
+        <h2 id="name-dialog-title"></h2>
+        <label><span data-i18n="name">名称</span><input id="name-input" maxlength="240" required></label>
+        <label id="parent-page-field"><span data-i18n="parentPage">上级页面</span><select id="parent-page"></select></label>
+        <div class="dialog-actions"><button class="tool-button" value="cancel" data-i18n="cancel">取消</button><button class="primary-button" id="name-submit" value="confirm" data-i18n="create">创建</button></div>
+      </form>
+    </dialog>
+    <dialog id="space-dialog" class="name-dialog space-dialog">
+      <form method="dialog" id="space-form">
+        <h2 data-i18n="spaceSwitcher">空间</h2>
+        <label><span data-i18n="chooseSpace">选择空间</span><select id="space-select"></select></label>
+        <div class="dialog-actions"><button class="tool-button" value="cancel" data-i18n="cancel">取消</button><button class="primary-button" value="confirm" data-i18n="open">打开</button></div>
+      </form>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

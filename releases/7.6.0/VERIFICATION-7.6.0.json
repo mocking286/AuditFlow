@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "jeauditflow.release-verification/1",
+  "product": "JEAuditFlow",
+  "version": "7.6.0",
+  "verificationDate": "2026-11-11",
+  "timezone": "Asia/Shanghai",
+  "automatedTests": [
+    {
+      "scope": "Canonical WebApp regression suite",
+      "tests": 457,
+      "passed": 457,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "Focused synthetic tests in the public source snapshot",
+      "testFiles": 23,
+      "tests": 144,
+      "passed": 144,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "Release packaging regressions",
+      "tests": 37,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "The historical 7.5 launcher packaging test expects a 7.5 build; the installed build is 7.6. The 7.6 launcher archive and signature checks passed."
+    },
+    {
+      "scope": "Public-data sanitizer and neutral Office report templates",
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "coverage": [
+        "Canonical files and symlinks cannot be modified by the staging sanitizer",
+        "Customer data adapters are empty in public output",
+        "FileAnalyst workspace data directories are removed",
+        "Six Office templates have neutral content, valid XML and resolved internal relationships",
+        "Seven template report IDs generate structurally valid output",
+        "Repeated template sanitization is idempotent"
+      ]
+    },
+    {
+      "scope": "Local deployment shell regression",
+      "result": "passed",
+      "coverage": [
+        "7.6 version, database, volume and port isolation",
+        "Exact database target confirmation",
+        "Port ownership checks"
+      ]
+    }
+  ],
+  "publicSource": {
+    "archive": "JEAuditFlow-7.6.0-Source.zip",
+    "sha256": "8814c3d3183f85f26f77436d7771daef08a34246d13df20b54b822299f948d95",
+    "zipCrc": "passed",
+    "internalChecksumEntries": 347,
+    "internalChecksumsBeforeDependencyInstallation": "passed",
+    "freshExtractionDependencyInstall": "npm ci --ignore-scripts passed",
+    "freshExtractionSyntaxChecks": "6 passed",
+    "freshExtractionTests": "144 passed; 0 failed; 0 skipped",
+    "customerDatasets": "omitted",
+    "userDatabases": "omitted",
+    "credentials": "omitted",
+    "dependencyCache": "omitted"
+  },
+  "localInstallation": {
+    "version": "7.6.0",
+    "entryUrl": "http://127.0.0.1:47583/",
+    "defaultPage": "login",
+    "ports": {
+      "auditflow": 47583,
+      "fileanalyst": 47584,
+      "jiraflow": 47585,
+      "aiBridge": 47586,
+      "mysql": 43323
+    },
+    "database": "jeauditflow_760",
+    "volume": "jeauditflow_760_mysql_data",
+    "auditflowHealth": "ok",
+    "fileanalystHealth": "healthy",
+    "jiraflowHealth": "healthy",
+    "mysqlHealth": "healthy",
+    "aiBridgeSmoke": "passed",
+    "launcherSelectedVersion": "7.6.0",
+    "launcherSignature": "locally signed and verified",
+    "launcherAdministratorSession": "established",
+    "syntheticBrowserQaAccount": "disabled after validation",
+    "previousVersion": {
+      "version": "7.5.0",
+      "health": "ok",
+      "databaseAndVolume": "preserved and isolated"
+    }
+  },
+  "browserAndComputerChecks": {
+    "browser": "Microsoft Edge on macOS",
+    "installedRuntimeChecks": [
+      "Default login entry, Chinese language toggle, guide, feedback and product links",
+      "Successful account login",
+      "Feedback modal automatically creates current-page.png and exposes annotation controls",
+      "Chinese Process Reference, BP/GP nodes, edges and reference details",
+      "Tree evidence filter drawer with process, type, role, attribute, source and instance",
+      "TUV ASPICE Issue Ledger PPTX download through the browser Save dialog",
+      "Native launcher selected 7.6.0, displayed healthy services and authenticated"
+    ],
+    "downloadedReport": {
+      "template": "tuv-aspice-issue-ledger",
+      "format": "pptx",
+      "sizeBytes": 39264,
+      "zipCrc": "passed"
+    }
+  },
+  "aiHarness": {
+    "localSyntheticProviderTests": "passed",
+    "livePaidProviderInferenceExecuted": false,
+    "providerReady": false,
+    "missingProviderBehavior": "skipped; no model assessment generated",
+    "assessmentAuthority": "Evidence-linked AI candidates require human review; formal ratings and closure gates are preserved."
+  },
+  "atlassianBridge": {
+    "localJiraHttpProbe": 200,
+    "localConfluenceHttpProbe": 302,
+    "localUpstreams": [
+      "http://127.0.0.1:8080",
+      "http://127.0.0.1:8090"
+    ],
+    "syntheticRelayTests": "passed",
+    "coverage": [
+      "Account and connector authentication",
+      "HTTP request and response relay",
+      "Assets, forms, CSRF, cookies and redirects",
+      "Session expiry and revocation",
+      "Fixed upstream registry and bounded request sizes"
+    ],
+    "publicServerDeploymentPerformed": false,
+    "realAtlassianLoginOrSsoValidated": false,
+    "webSocketCollaborationValidated": false,
+    "largeAttachmentsValidated": false
+  },
+  "releaseBoundaries": {
+    "databasePackageContainsUserData": false,
+    "productionOrEcsDeploymentPerformed": false,
+    "dnsOrFirewallChangesPerformed": false,
+    "paidActionPerformed": false,
+    "appleNotarizationPerformed": false,
+    "cleanMacInstallationValidated": false,
+    "githubReleaseState": "See the published release tag and its asset checksums; this file records pre-publication validation."
+  }
+}

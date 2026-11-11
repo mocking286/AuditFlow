@@ -1,0 +1,180 @@
+/* AuditFlow v7.6: fixed project flow, embedded Audit Master and controlled review. */
+.topbar {
+  top: 56px;
+  z-index: 45;
+}
+
+.assessment-command-bar {
+  position: sticky;
+  top: 92px;
+  z-index: 42;
+  grid-template-columns: 134px 42px minmax(660px, 1fr) 166px;
+  margin-top: -18px;
+}
+
+.assessment-command-tools {
+  grid-template-columns: 29px;
+}
+
+.audit-master-trigger {
+  color: #fff;
+  border-color: #6653a6;
+  background: #6653a6;
+}
+
+.audit-master-trigger:hover {
+  color: #fff;
+  border-color: #53418e;
+  background: #53418e;
+}
+
+.audit-master-intro {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #c8d8e6;
+  background: #f5f9fc;
+}
+
+.audit-master-intro > span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: #6653a6;
+}
+
+.audit-master-intro h3,
+.audit-master-intro p { margin: 0; }
+.audit-master-intro h3 { font-size: 12px; }
+.audit-master-intro p { margin-top: 3px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+
+.audit-master-method {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.audit-master-method span {
+  padding: 4px 7px;
+  border: 1px solid #b9c9d7;
+  color: #334e62;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.audit-master-source-list {
+  max-height: min(48vh, 430px);
+  overflow: auto;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.audit-master-source-head,
+.audit-master-source-row {
+  min-width: 760px;
+  display: grid;
+  grid-template-columns: 34px minmax(250px, 1.4fr) minmax(190px, 1fr) 132px;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+}
+
+.audit-master-source-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid var(--line);
+  color: #526879;
+  background: #eef4f8;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.audit-master-source-row { border-bottom: 1px solid var(--line); }
+.audit-master-source-row:last-child { border-bottom: 0; }
+.audit-master-source-row:hover { background: #f7fbfe; }
+.audit-master-source-row input { width: 15px; height: 15px; }
+.audit-master-source-row strong,
+.audit-master-source-row small { display: block; }
+.audit-master-source-row strong { color: var(--ink); font-size: 9px; }
+.audit-master-source-row small { margin-top: 3px; color: var(--muted); font-size: 8px; line-height: 1.35; }
+.audit-master-source-row select { width: 100%; height: 28px; font-size: 8px; }
+.audit-master-source-row.helix-entry { padding-left: 20px; background: #fbfdff; }
+
+.audit-master-guard {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 9px;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 1px solid #e2c576;
+  color: #5e470e;
+  background: #fff8df;
+}
+
+.audit-master-guard > span { display: grid; place-items: center; }
+.audit-master-guard strong,
+.audit-master-guard p { margin: 0; }
+.audit-master-guard strong { font-size: 9px; }
+.audit-master-guard p { margin-top: 3px; font-size: 8px; line-height: 1.45; }
+
+.baseline-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.baseline-workbench > div,
+.baseline-workbench > aside {
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.baseline-list,
+.baseline-workbench > aside { display: grid; gap: 7px; }
+.baseline-list article,
+.role-review-item { padding: 9px; border: 1px solid var(--line); background: #fafbfc; }
+.baseline-list article > div { display: flex; justify-content: space-between; gap: 8px; }
+.baseline-list strong,
+.baseline-list p,
+.baseline-list small,
+.role-review-item strong,
+.role-review-item small,
+.role-review-item p { display: block; margin: 0; }
+.baseline-list p,
+.role-review-item p { margin-top: 5px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.baseline-list small,
+.role-review-item small { margin-top: 5px; color: var(--muted); font-size: 8px; }
+.baseline-list footer { display: flex; gap: 5px; margin-top: 8px; }
+.role-review-item .btn { margin-top: 7px; }
+
+@media (max-width: 1180px) {
+  .assessment-command-bar { grid-template-columns: 108px 38px minmax(590px, 1fr) 120px; }
+  .baseline-workbench { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .assessment-command-bar {
+    top: 86px;
+    margin-top: -14px;
+    grid-template-columns: 54px 38px minmax(600px, 1fr) 93px;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar { top: 52px; }
+  .trace-view-actions .audit-master-trigger { order: -1; }
+}
+
+@media print {
+  .assessment-command-bar { position: static; }
+}

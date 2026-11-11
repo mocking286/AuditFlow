@@ -1,0 +1,19 @@
+{
+  "name": "jeauditflow-7.6.0-api-server",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node --check server.mjs && node --check engine.mjs && node --check bridge-session.mjs && node --check app.js && node --check feedback-modal.js && node --check upload-routing.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "start": "node server.mjs serve"
+  },
+  "dependencies": {
+    "jose": "^5.10.0",
+    "mysql2": "^3.23.3",
+    "pg": "^8.16.3"
+  },
+  "version": "7.6.0"
+}

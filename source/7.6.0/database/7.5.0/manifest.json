@@ -1,0 +1,40 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.5.0",
+  "package": "database",
+  "database": "MySQL 8.4",
+  "defaultDatabase": "jeauditflow_750",
+  "defaultPort": 43322,
+  "persistentVolume": "jeauditflow_750_mysql_data",
+  "safety": {
+    "installConfirmation": "APPLY <target database>",
+    "migrationConfirmation": "APPLY <target database>",
+    "cepImportConfirmation": "IMPORT CEP INTO <target database>",
+    "autoImportAllowed": false,
+    "writesRequireActionTimeConfirmation": true
+  },
+  "cepIssueOwnership": {
+    "sourceKind": "jira-issue-import",
+    "ownedBy": "jiraflow",
+    "projectKey": "CEP"
+  },
+  "containsUserData": false,
+  "containsCredentials": false,
+  "schemaFiles": [
+    "schema/collaboration-schema.sql",
+    "schema/fileanalyst-schema.sql",
+    "schema/shared-service-schema.sql",
+    "schema/content-sync-schema.sql",
+    "schema/cep-issues-schema.sql"
+  ],
+  "importers": [
+    "import/cep-issues-importer.mjs",
+    "import/cep-issues-to-sql.mjs",
+    "import/import-cep-issues.sh"
+  ],
+  "generatedAt": "2026-11-10T01:37:11.786Z",
+  "localHarnessComposeProject": "jeauditflow750-local",
+  "sourceSchemaVersion": "7.4.0",
+  "schemaVersion": 28,
+  "ddlChanged": false
+}

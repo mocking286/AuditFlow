@@ -1,0 +1,429 @@
+/* JEAuditFlow 6.1 Issues workspace. Dense, operational and Jira-inspired. */
+.page-head:has(.issue-search) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.page-actions:has(.issue-search) {
+  min-width: 0;
+  width: 100%;
+}
+.page-actions:has(.issue-search) > .row-actions {
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.jira-issue-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(420px, 1fr) minmax(300px, 360px);
+  gap: 14px;
+  align-items: start;
+}
+.jira-issue-sidebar,
+.jira-issue-main,
+.jira-issue-detail-panel {
+  min-width: 0;
+}
+.jira-issue-sidebar {
+  border-right: 1px solid var(--line, #dfe1e6);
+  padding-right: 14px;
+}
+.issue-project-summary {
+  padding: 4px 0 14px;
+  border-bottom: 1px solid var(--line, #dfe1e6);
+}
+.issue-project-summary h2 {
+  margin: 4px 0 2px;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.issue-project-summary p {
+  margin: 0;
+  color: var(--muted, #5e6c84);
+  font: 11px ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.jira-issue-nav {
+  display: grid;
+  gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line, #dfe1e6);
+}
+.jira-issue-nav span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  padding: 0 7px;
+  color: var(--muted, #5e6c84);
+  font-size: 11px;
+}
+.jira-issue-nav span.active {
+  color: #0c66e4;
+  background: #e9f2ff;
+  border-left: 3px solid #0c66e4;
+}
+.jira-issue-nav span svg { width: 14px; height: 14px; }
+.jira-issue-nav b { margin-left: auto; font-size: 11px; }
+.issue-quality-panel {
+  display: grid;
+  gap: 7px;
+  padding: 14px 0;
+}
+.issue-quality-panel h3 {
+  margin: 0 0 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted, #5e6c84);
+}
+.issue-quality-panel div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted, #5e6c84);
+  font-size: 10.5px;
+}
+.issue-quality-panel strong { color: var(--ink, #172b4d); }
+.issue-quality-panel .danger-text { color: var(--red, #c84242); }
+.issue-boundary-note {
+  margin: 0;
+  padding: 10px;
+  border-left: 3px solid #579dff;
+  background: #e9f2ff;
+  color: var(--muted, #5e6c84);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.jira-issue-main {
+  overflow: hidden;
+}
+.jira-issue-summary-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.jira-issue-summary-row h2 {
+  margin: 2px 0 3px;
+  font-size: 17px;
+}
+.jira-issue-summary-row p {
+  margin: 0;
+  color: var(--muted, #5e6c84);
+  font-size: 11px;
+}
+.issue-summary-count {
+  flex: 0 0 auto;
+  min-width: 68px;
+  padding: 7px 9px;
+  border: 1px solid var(--line, #dfe1e6);
+  background: var(--panel, #fff);
+  text-align: right;
+}
+.issue-summary-count strong,
+.issue-summary-count span { display: block; }
+.issue-summary-count strong { color: #0c66e4; font-size: 20px; line-height: 1; }
+.issue-summary-count span { margin-top: 4px; color: var(--muted, #5e6c84); font-size: 10px; }
+.issue-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 210px;
+  padding: 5px 9px;
+  border: 1px solid var(--line, #dfe1e6);
+  background: var(--panel, #fff);
+}
+.issue-search svg { width: 14px; height: 14px; color: var(--muted, #5e6c84); flex: 0 0 auto; }
+.issue-search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: inherit; }
+.issue-type-chip { background: #e9f2ff; color: #0c66e4; }
+.issue-card-owner { max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.danger-text { color: var(--red, #c84242); }
+.jira-issue-board {
+  grid-template-columns: repeat(4, minmax(190px, 1fr));
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 8px;
+  scrollbar-gutter: stable;
+}
+.jira-issue-board .jira-board-col {
+  min-width: 190px;
+  padding: 8px;
+  border-radius: 4px;
+}
+.jira-issue-board .jira-board-cards { gap: 6px; }
+.jira-issue-board .jira-board-cards.collapsed,
+.jira-issue-board .issue-board-column-body.collapsed { display: none; }
+.jira-issue-board .issue-board-column-toggle {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.issue-board-column-toggle strong { min-width: 0; overflow-wrap: anywhere; }
+.issue-board-column-toggle small { color: var(--muted, #5e6c84); }
+.issue-board-column-toggle > span { color: var(--muted, #5e6c84); text-align: center; }
+.issue-board-controls { display: flex; align-items: center; gap: 8px; }
+.issue-board-controls label { display: flex; align-items: center; gap: 6px; color: var(--muted, #5e6c84); font-size: 10px; }
+.issue-board-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-height: 34px; padding: 4px 2px 0; border-top: 1px solid var(--line, #dfe1e6); }
+.issue-board-pagination > span { margin-right: auto; color: var(--muted, #5e6c84); font-size: 10px; font-variant-numeric: tabular-nums; }
+.issue-board-pagination .action-icon { flex: 0 0 28px; width: 28px; height: 28px; }
+.issue-board-pagination .action-icon:disabled { opacity: .4; cursor: default; }
+.issue-board-group { min-width: 0; }
+.issue-board-group-toggle {
+  width: 100%;
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 15px;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0;
+  padding: 4px 5px;
+  border: 0;
+  border-top: 1px solid var(--line, #dfe1e6);
+  background: transparent;
+  color: var(--ink, #172b4d);
+  text-align: left;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.issue-board-group-toggle span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.issue-board-group-toggle small { color: var(--muted, #5e6c84); }
+.issue-group-chevron { color: var(--muted, #5e6c84); text-align: center; }
+.issue-board-group-cards.drag-over,
+.jira-issue-board [data-issue-drop-status].drag-over { background: #eaf4f8; outline: 1px dashed #168b9b; outline-offset: -2px; }
+.jira-issue-board .jira-card {
+  border-radius: 4px;
+  padding: 9px;
+  box-shadow: none;
+}
+.jira-issue-board .jira-card:hover,
+.jira-issue-board .jira-card.selected {
+  border-color: #0c66e4;
+  box-shadow: inset 3px 0 #0c66e4;
+}
+.jira-issue-board .jira-card[draggable="true"] { cursor: grab; }
+.jira-issue-board .jira-card[draggable="true"]:active { cursor: grabbing; }
+.jira-issue-board .jira-card[aria-grabbed="true"] { opacity: .55; }
+.jira-issue-board .jira-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.issue-card-owner.missing { color: var(--red, #c84242); }
+.jira-issue-detail-panel {
+  border-left: 1px solid var(--line, #dfe1e6);
+  padding-left: 14px;
+}
+.jira-issue-detail-panel.empty {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+}
+.jira-issue-breadcrumb {
+  display: flex;
+  gap: 6px;
+  overflow: hidden;
+  color: var(--muted, #5e6c84);
+  font-size: 10px;
+}
+.jira-issue-breadcrumb span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.jira-issue-breadcrumb strong { color: var(--ink, #172b4d); }
+.jira-issue-title-row {
+  display: flex;
+  gap: 9px;
+  margin: 10px 0;
+}
+.issue-detail-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 27px;
+  width: 27px;
+  height: 27px;
+  color: #0c66e4;
+  background: #e9f2ff;
+}
+.issue-detail-icon svg { width: 16px; height: 16px; }
+.jira-issue-title-row h2 {
+  margin: 3px 0 0;
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.jira-issue-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 0;
+  border-block: 1px solid var(--line, #dfe1e6);
+}
+.issue-status-hint {
+  flex: 1 1 100%;
+  color: var(--muted, #5e6c84);
+  font-size: 10px;
+}
+.jira-issue-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px 0;
+}
+.jira-issue-detail-grid h3,
+.jira-issue-section h3 {
+  margin: 0 0 7px;
+  color: var(--muted, #5e6c84);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.jira-issue-facts {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.jira-issue-facts div {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  gap: 6px;
+  font-size: 10.5px;
+}
+.jira-issue-facts dt { color: var(--muted, #5e6c84); }
+.jira-issue-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink, #172b4d);
+}
+.jira-issue-section {
+  padding: 11px 0;
+  border-top: 1px solid var(--line, #dfe1e6);
+}
+.jira-issue-description {
+  margin: 0;
+  color: var(--ink, #172b4d);
+  font-size: 11px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.issue-closure-chain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 10px;
+}
+.issue-closure-chain i { color: var(--muted, #5e6c84); }
+.issue-quality-warning,
+.issue-quality-ok { margin-left: auto; font-size: 10px; }
+.issue-quality-warning { color: var(--amber, #b76a09); }
+.issue-quality-ok { color: var(--green, #188454); }
+.issue-evidence-list,
+.issue-history-list {
+  display: grid;
+  gap: 5px;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.issue-evidence-list li,
+.issue-history-list li {
+  display: grid;
+  gap: 2px;
+  padding: 7px;
+  border: 1px solid var(--line, #dfe1e6);
+  background: var(--bg, #f7f8f9);
+  font-size: 10px;
+}
+.issue-evidence-list li strong { color: #0c66e4; }
+.issue-evidence-list li small,
+.issue-history-list li small { color: var(--muted, #5e6c84); }
+.issue-history-list li {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+.issue-history-list li small { grid-column: 1 / -1; }
+.issue-qa-spotlight { margin-top: 14px; }
+
+@media (max-width: 1280px) {
+  .jira-issue-layout { grid-template-columns: 170px minmax(390px, 1fr); }
+  .jira-issue-detail-panel { grid-column: 1 / -1; border-top: 1px solid var(--line, #dfe1e6); border-left: 0; padding: 14px 0 0; }
+  .jira-issue-detail-panel.empty { min-height: 120px; }
+}
+@media (max-width: 900px) {
+  .jira-issue-layout { display: block; }
+  .jira-issue-sidebar { border-right: 0; border-bottom: 1px solid var(--line, #dfe1e6); padding: 0 0 12px; margin-bottom: 14px; }
+  .jira-issue-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 0; }
+  .jira-issue-nav span { min-width: 0; }
+  .jira-issue-nav span b { margin-left: 3px; }
+  .issue-quality-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .issue-quality-panel h3 { grid-column: 1 / -1; }
+  .jira-issue-board { grid-template-columns: repeat(4, minmax(190px, 1fr)); }
+  .jira-issue-detail-panel { margin-top: 14px; }
+}
+@media (max-width: 600px) {
+  .jira-issue-board { grid-template-columns: repeat(4, minmax(190px, 1fr)); }
+  .page-actions:has(.workbench-project-picker) {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .page-actions:has(.workbench-project-picker) > .row-actions {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .page-actions .workbench-project-picker,
+  .page-actions .issue-search {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+  .page-actions:has(.issue-search) .compact-select,
+  .page-actions:has(.issue-search) > .row-actions > .btn {
+    min-width: 0;
+    max-width: 100%;
+    flex: 1 1 120px;
+  }
+  .page-actions:has(.issue-search) > .row-actions > .btn {
+    white-space: normal;
+  }
+  .issue-board-controls {
+    min-width: 0;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .issue-board-controls label {
+    min-width: 0;
+  }
+  .jira-issue-detail-grid { grid-template-columns: 1fr; }
+  .issue-quality-panel { grid-template-columns: 1fr; }
+  .jira-issue-nav { grid-template-columns: 1fr; }
+  .jira-issue-summary-row { display: block; }
+  .issue-summary-count { width: max-content; margin-top: 8px; text-align: left; }
+}
+[data-theme="dark"] .jira-issue-nav span.active { background: rgba(102, 157, 241, .14); color: #8fb8f6; }
+[data-theme="dark"] .issue-boundary-note { background: rgba(87, 157, 255, .12); color: #a9abaf; }
+[data-theme="dark"] .issue-summary-count,
+[data-theme="dark"] .issue-evidence-list li,
+[data-theme="dark"] .issue-history-list li { background: #18191a; border-color: rgba(206, 206, 217, .14); }
+[data-theme="dark"] .jira-issue-facts dd,
+[data-theme="dark"] .jira-issue-description { color: #dee4ea; }

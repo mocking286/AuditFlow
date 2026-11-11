@@ -1,0 +1,685 @@
+/*
+ * JEAuditFlow 6.8 Jira-style chrome polish.
+ * This file is intentionally loaded last so the header geometry and tooltip
+ * layer remain stable while older feature styles continue to own behavior.
+ */
+.jira-header {
+  overflow: visible !important;
+  isolation: isolate;
+}
+
+.jira-header .brand,
+.jira-header .side-nav,
+.jira-header .top-actions {
+  align-items: center;
+}
+
+.jira-header .side-nav {
+  min-width: 0;
+  overflow: visible;
+}
+
+.jira-header .side-nav > a,
+.jira-header .side-nav > a > [data-icon],
+.jira-header .top-actions > .icon-btn,
+.jira-header .top-actions > .profile-link {
+  box-sizing: border-box;
+}
+
+.jira-header .side-nav > a {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 !important;
+  line-height: 1;
+}
+
+.jira-header .side-nav > a > [data-icon],
+.jira-header .side-nav > a > svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  margin: 0;
+  line-height: 0;
+}
+
+.jira-header .side-nav > a .header-label {
+  line-height: 1;
+}
+
+.jira-header .top-actions {
+  gap: 6px !important;
+  overflow: visible !important;
+}
+
+.jira-header .top-actions > .icon-btn,
+.jira-header .top-actions > .profile-link {
+  display: inline-grid;
+  place-items: center;
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  line-height: 0;
+}
+
+.jira-header .top-actions > .icon-btn > [data-icon],
+.jira-header .top-actions > .icon-btn > svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+}
+
+.jira-header .top-actions .profile-link .avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  line-height: 1;
+}
+
+.jira-header .top-actions .jira-flow-status-dot,
+.jira-header .top-actions .ai-status-dot {
+  pointer-events: none;
+}
+
+/*
+ * Keep the tooltip inside the viewport and above the fixed header. Older
+ * rules used a pseudo-element on the control itself, which was clipped by
+ * header overflow and could be cut off at either edge of the window.
+ */
+.jira-header [data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  bottom: auto;
+  left: 50%;
+  z-index: 1000;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 24px));
+  min-height: 24px;
+  box-sizing: border-box;
+  padding: 6px 9px;
+  border: 1px solid #42526e;
+  border-radius: 3px;
+  background: #172b4d;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -4px);
+  transition: opacity .12s ease, transform .12s ease, visibility .12s ease;
+}
+
+.jira-header [data-tooltip]:hover::after,
+.jira-header [data-tooltip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+/* JiraFlow uses a multicolor product mark; the status dot carries health. */
+.jira-header .jiraflow-link > [data-icon="jiraFlow"] {
+  color: #ffffff;
+  filter: drop-shadow(0 0 3px rgba(54, 179, 126, .34));
+}
+
+.jira-header .jiraflow-link[data-jira-flow-status="healthy"] > [data-icon="jiraFlow"] {
+  filter: drop-shadow(0 0 4px rgba(54, 179, 126, .5));
+}
+
+.jira-header .jiraflow-link[data-jira-flow-status="starting"] > [data-icon="jiraFlow"],
+.jira-header .jiraflow-link[data-jira-flow-status="degraded"] > [data-icon="jiraFlow"] {
+  filter: drop-shadow(0 0 4px rgba(255, 171, 0, .5));
+}
+
+.jira-header .jiraflow-link[data-jira-flow-status="failed"] > [data-icon="jiraFlow"] {
+  filter: drop-shadow(0 0 4px rgba(222, 53, 11, .5));
+}
+
+/* Edge controls stay readable when the header is narrower than the full menu. */
+.jira-header .top-actions > [data-tooltip]:first-child::after {
+  left: 0;
+  transform: translate(0, -4px);
+}
+
+.jira-header .top-actions > [data-tooltip]:first-child:hover::after,
+.jira-header .top-actions > [data-tooltip]:first-child:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+.jira-header .top-actions > [data-tooltip]:nth-last-child(-n + 2)::after {
+  left: auto;
+  right: 0;
+  transform: translate(0, -4px);
+}
+
+.jira-header .top-actions > [data-tooltip]:nth-last-child(-n + 2):hover::after,
+.jira-header .top-actions > [data-tooltip]:nth-last-child(-n + 2):focus-visible::after {
+  transform: translate(0, 0);
+}
+
+/* Keep the first and last navigation tooltips inside the viewport as well. */
+.jira-header .side-nav > [data-tooltip]:first-of-type::after {
+  left: 0;
+  transform: translate(0, -4px);
+}
+
+.jira-header .side-nav > [data-tooltip]:first-of-type:hover::after,
+.jira-header .side-nav > [data-tooltip]:first-of-type:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+.jira-header .side-nav > [data-tooltip]:last-of-type::after {
+  left: auto;
+  right: 0;
+  transform: translate(0, -4px);
+}
+
+.jira-header .side-nav > [data-tooltip]:last-of-type:hover::after,
+.jira-header .side-nav > [data-tooltip]:last-of-type:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+[data-theme="dark"] .jira-header [data-tooltip]::after {
+  border-color: #6e7681;
+  background: #0d1117;
+  color: #f0f6fc;
+}
+
+@media (max-width: 1100px) {
+  .jira-header .side-nav > a {
+    padding-inline: 0 !important;
+  }
+  .jira-header .side-nav > a .header-label {
+    display: none;
+  }
+  .jira-header .side-nav > a {
+    width: 36px;
+    min-width: 36px;
+  }
+}
+
+@media (max-width: 760px) {
+  .jira-header .top-actions > .icon-btn,
+  .jira-header .top-actions > .profile-link {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+  }
+}
+
+/* Jira-style grouped navigation with compact, accessible dropdown menus. */
+.jira-header {
+  background: #ffffff !important;
+  color: #172b4d;
+  border-bottom-color: #dfe1e6 !important;
+  box-shadow: 0 1px 2px rgba(9, 30, 66, .08);
+}
+
+.jira-header .side-nav {
+  display: flex;
+  gap: 2px;
+}
+
+.nav-menu-group {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.nav-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #344563;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nav-menu-trigger > [data-icon] {
+  display: none;
+}
+
+.nav-menu-trigger .nav-menu-chevron {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  transition: transform .14s ease;
+}
+
+.nav-menu-group.is-open .nav-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-menu-trigger:hover,
+.nav-menu-trigger:focus-visible,
+.nav-menu-group.is-open .nav-menu-trigger {
+  background: #f4f5f7;
+  color: #0c66e4;
+  outline-offset: 1px;
+}
+
+.nav-menu-trigger.active,
+.nav-menu-group.has-active .nav-menu-trigger {
+  color: #0c66e4;
+}
+
+.nav-menu-panel {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  z-index: 110;
+  display: grid;
+  min-width: 224px;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 6px 0;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(9, 30, 66, .18);
+}
+
+.nav-menu-panel[hidden] {
+  display: none !important;
+}
+
+.jira-header .nav-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  min-height: 38px;
+  justify-content: flex-start;
+  padding: 0 14px;
+  color: #344563;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.jira-header .nav-menu-item::after {
+  display: none !important;
+}
+
+.jira-header .nav-menu-item > [data-icon],
+.jira-header .nav-menu-item > svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  color: #6b778c;
+}
+
+.jira-header .nav-menu-item:hover,
+.jira-header .nav-menu-item:focus-visible {
+  background: #f4f5f7;
+  color: #0c66e4;
+  outline: none;
+}
+
+.jira-header .nav-menu-item.active {
+  background: #e9f2ff;
+  color: #0c66e4;
+  font-weight: 600;
+}
+
+.jira-header .nav-menu-item.active > [data-icon],
+.jira-header .nav-menu-item.active > svg,
+.jira-header .nav-menu-item:hover > [data-icon],
+.jira-header .nav-menu-item:focus-visible > [data-icon] {
+  color: #0c66e4;
+}
+
+.nav-menu-trigger:focus-visible,
+.nav-menu-item:focus-visible {
+  outline: 2px solid #0c66e4;
+  outline-offset: -2px;
+}
+
+/* JiraFlow uses the same 17px currentColor line icon as the other actions. */
+.jira-header .jiraflow-link > [data-icon="jiraFlow"] {
+  color: #42526e;
+  filter: none !important;
+  width: 17px;
+  height: 17px;
+}
+
+.jira-header .jiraflow-link > [data-icon="jiraFlow"] path {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+}
+
+.jira-header .jiraflow-link[data-jira-flow-status] > [data-icon="jiraFlow"] {
+  filter: none !important;
+}
+
+.jira-header .jiraflow-link .jira-flow-status-dot {
+  right: 2px;
+  bottom: 2px;
+  width: 5px;
+  height: 5px;
+}
+
+@media (max-width: 1000px) and (min-width: 761px) {
+  .nav-menu-trigger {
+    gap: 6px;
+    padding-inline: 7px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 760px) {
+  .jira-header .side-nav {
+    display: none;
+    align-items: stretch;
+    gap: 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 52px);
+  }
+
+  .jira-header.open .side-nav {
+    display: grid;
+  }
+
+  .nav-menu-group {
+    width: 100%;
+    border-bottom: 1px solid #ebecf0;
+  }
+
+  .nav-menu-trigger {
+    justify-content: flex-start;
+    width: 100%;
+    height: 42px;
+    padding-inline: 12px;
+  }
+
+  .nav-menu-trigger > [data-icon] {
+    display: block;
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
+  }
+
+  .nav-menu-trigger .nav-menu-chevron {
+    margin-left: auto;
+  }
+
+  .nav-menu-panel {
+    position: static;
+    min-width: 0;
+    max-width: none;
+    padding: 2px 0 7px 10px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .jira-header .nav-menu-item {
+    width: auto;
+    height: auto;
+    min-height: 40px;
+    padding-inline: 14px;
+  }
+}
+
+/*
+ * Project settings is denser than the assessment workspace and contains
+ * several grids/tables. Keep the page itself shrinkable at narrow widths;
+ * only intrinsically wide tabular content is allowed to scroll.
+ */
+.project-settings-page,
+.project-settings-page .project-main,
+.project-settings-page .project-settings-layout,
+.project-settings-page .project-settings-sidebar,
+.project-settings-page .project-settings-content,
+.project-settings-page .project-settings-summary,
+.project-settings-page .project-settings-section,
+.project-settings-page .project-settings-section > header,
+.project-settings-page .project-settings-actions,
+.project-settings-page .form-grid,
+.project-settings-page .settings-nav,
+.project-settings-page .settings-grid,
+.project-settings-page .settings-panel {
+  min-width: 0;
+}
+
+.project-settings-page .project-settings-content,
+.project-settings-page .project-settings-section,
+.project-settings-page .project-settings-summary,
+.project-settings-page .settings-panel {
+  max-width: 100%;
+}
+
+.project-settings-page .project-settings-summary-meta,
+.project-settings-page .project-settings-member,
+.project-settings-page .project-settings-actions,
+.project-settings-page .switch-line,
+.project-settings-page .workflow-row,
+.project-settings-page .workflow-item {
+  min-width: 0;
+}
+
+.project-settings-page .project-settings-summary-meta > *,
+.project-settings-page .project-settings-member > *,
+.project-settings-page .project-settings-actions > *,
+.project-settings-page .switch-line > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.project-settings-page .project-settings-summary-meta span,
+.project-settings-page .project-settings-member small,
+.project-settings-page .project-settings-actions > span {
+  overflow-wrap: anywhere;
+}
+
+.project-settings-page .form-field,
+.project-settings-page .form-field input,
+.project-settings-page .form-field select,
+.project-settings-page .form-field textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.project-settings-page .live-table-wrap,
+.project-settings-page .data-table-wrap,
+.project-settings-page .workflow-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+@media (max-width: 720px) {
+  .project-settings-page,
+  .project-settings-page .project-main,
+  .project-settings-page .project-settings-layout,
+  .project-settings-page .project-settings-sidebar,
+  .project-settings-page .project-settings-content,
+  .project-settings-page .project-settings-summary,
+  .project-settings-page .project-settings-section,
+  .project-settings-page .project-settings-section > header,
+  .project-settings-page .project-settings-actions,
+  .project-settings-page .form-grid,
+  .project-settings-page .settings-nav,
+  .project-settings-page .settings-grid,
+  .project-settings-page .settings-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .project-settings-page .project-settings-layout,
+  .project-settings-page .form-grid,
+  .project-settings-page .settings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-settings-page .project-settings-sidebar {
+    position: static;
+  }
+
+  .project-settings-page .project-settings-sidebar nav,
+  .project-settings-page .settings-nav {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  .project-settings-page .project-settings-sidebar nav {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .project-settings-page .project-settings-sidebar nav a,
+  .project-settings-page .settings-nav > *,
+  .project-settings-page .settings-nav button {
+    min-width: max-content;
+    flex: 0 0 auto;
+  }
+
+  .project-settings-page .project-settings-sidebar nav a {
+    max-width: none;
+  }
+
+  .project-settings-page .project-settings-section,
+  .project-settings-page .project-settings-summary,
+  .project-settings-page .settings-panel {
+    overflow: hidden;
+  }
+
+  .project-settings-page .project-settings-summary-meta,
+  .project-settings-page .project-settings-actions {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .project-settings-page .project-settings-summary-meta {
+    gap: 6px 10px;
+  }
+
+  .project-settings-page .project-settings-member {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .project-settings-page .project-settings-member-role {
+    margin-left: 42px;
+  }
+
+  .project-settings-page .live-table-wrap > table,
+  .project-settings-page .data-table-wrap > table,
+  .project-settings-page .workflow-table-wrap > table,
+  .project-settings-page .workflow-row,
+  .project-settings-page .workflow-board {
+    min-width: 640px;
+  }
+}
+
+.jira-header .top-actions > [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    padding-top: 90px !important;
+  }
+
+  .jira-header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 52px 38px;
+    height: 90px !important;
+    min-height: 90px;
+    gap: 0 !important;
+    padding: 0 8px !important;
+  }
+
+  .jira-header .brand {
+    grid-column: 1;
+    grid-row: 1;
+    width: max-content;
+    max-width: 100%;
+    padding-right: 0;
+  }
+
+  .jira-header .top-actions {
+    display: grid !important;
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: 2px !important;
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    overflow: visible !important;
+  }
+
+  .jira-header .top-actions > .icon-btn,
+  .jira-header .top-actions > .profile-link {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100%;
+    margin: 0;
+    height: 32px !important;
+    min-height: 32px !important;
+  }
+
+  .jira-header .top-actions > .auth-account-button {
+    grid-column: span 2;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 32px;
+    padding: 0 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+
+  .jira-header .side-nav {
+    top: 90px;
+    max-height: calc(100vh - 90px);
+  }
+}

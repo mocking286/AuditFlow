@@ -1,0 +1,36 @@
+:root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172b4d; background: #f4f7fb; }
+* { box-sizing: border-box; }
+body { width: 360px; margin: 0; }
+.popup-shell { overflow: hidden; background: #f4f7fb; }
+.popup-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 16px 13px; background: #dcecff; border-bottom: 1px solid #c5d9ef; }
+.brand-lockup { display: flex; align-items: center; gap: 10px; }
+.brand-lockup img { width: 38px; height: 38px; border-radius: 10px; }
+.brand-lockup strong, .brand-lockup small { display: block; }
+.brand-lockup strong { font-size: 17px; }
+.brand-lockup small { margin-top: 2px; color: #61728b; font-size: 9px; letter-spacing: .8px; }
+.icon-button { width: 34px; height: 30px; border: 1px solid #b8cde5; border-radius: 6px; color: #27405d; background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 12px 6px; }
+.service-card { display: flex; align-items: center; gap: 8px; min-height: 62px; padding: 10px; border: 1px solid #d6e0ec; border-radius: 8px; background: #fff; }
+.status-dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: #1ea96b; box-shadow: 0 0 0 3px #e2f5eb; }
+.service-card small, .service-card strong { display: block; }
+.service-card small { color: #738199; font-size: 10px; }
+.service-card strong { margin-top: 5px; font-size: 13px; }
+.projects-section { padding: 9px 12px 12px; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; margin: 2px 3px 8px; }
+.overline { color: #4584cf; font-size: 9px; font-weight: 800; letter-spacing: 1px; }
+.section-heading h2 { margin: 4px 0 0; font-size: 14px; }
+.refresh-button { width: 34px; height: 29px; border: 1px solid #cfdae8; border-radius: 6px; color: #60758d; background: #fff; font-size: 18px; cursor: pointer; }
+.project-list { display: grid; gap: 7px; max-height: 195px; overflow: auto; padding-right: 2px; }
+.project-row { display: grid; grid-template-columns: 8px 1fr 14px; align-items: center; gap: 9px; width: 100%; padding: 10px; border: 1px solid #d6e0ec; border-radius: 8px; color: #203955; text-align: left; background: #fff; cursor: pointer; }
+.project-row:hover, .project-row:focus-visible { border-color: #6fa8e8; box-shadow: 0 0 0 2px #dbeafe; outline: none; }
+.project-dot { width: 7px; height: 7px; border-radius: 50%; background: #3c83e6; }
+.project-copy strong, .project-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project-copy strong { font-size: 12px; }
+.project-copy small { margin-top: 3px; color: #77879b; font-size: 10px; }
+.project-arrow { color: #8a9cb0; font-size: 18px; text-align: right; }
+.empty-projects { margin: 0; padding: 14px; border: 1px dashed #cbd7e5; border-radius: 8px; color: #718199; font-size: 11px; text-align: center; background: #fff; }
+.popup-footer { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px; border-top: 1px solid #d8e1ed; background: #fff; }
+.popup-footer button { min-height: 34px; border-radius: 6px; padding: 8px 12px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.primary-button { border: 1px solid #2b7de9; color: #fff; background: #2d7de0; }
+.settings-button { border: 1px solid #ccd7e5; color: #53657c; background: #fff; }
+.popup-meta { margin: 0; padding: 0 13px 12px; color: #8290a2; font-size: 9px; text-align: right; }

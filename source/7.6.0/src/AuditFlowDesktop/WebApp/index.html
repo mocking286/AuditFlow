@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#dcecff">
+  <meta name="description" content="AuditFlow evidence, assessment, collaboration, review and reporting workspace for ASPICE, functional safety and cybersecurity audits">
+  <title>JEAuditFlow 7.6.0 · ASPICE Audit Workbench</title>
+  <script src="./workbench-routing.js?v=760"></script>
+  <link rel="icon" href="./icons/icon-32.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css?v=560">
+  <link rel="stylesheet" href="./styles-v2.css?v=560" id="darkThemeStyles" disabled>
+  <link rel="stylesheet" href="./v6-enhancements.css?v=560">
+  <link rel="stylesheet" href="./trace-v73.css?v=520">
+  <link rel="stylesheet" href="./trace-v75.css?v=520">
+  <link rel="stylesheet" href="./trace-v76.css?v=520">
+  <link rel="stylesheet" href="./trace-v77.css?v=520">
+  <link rel="stylesheet" href="./trace-v78.css?v=520">
+  <link rel="stylesheet" href="./trace-v79.css?v=520">
+  <link rel="stylesheet" href="./trace-v80.css?v=520">
+  <link rel="stylesheet" href="./trace-v81.css?v=520">
+  <link rel="stylesheet" href="./trace-v82.css?v=520">
+  <link rel="stylesheet" href="./trace-v83.css?v=520">
+  <link rel="stylesheet" href="./trace-v84.css?v=520">
+  <link rel="stylesheet" href="./trace-v85.css?v=520">
+  <link rel="stylesheet" href="./trace-v86.css?v=520">
+  <link rel="stylesheet" href="./workbench-v10.css?v=520">
+  <link rel="stylesheet" href="./report-templates.css?v=520">
+  <link rel="stylesheet" href="./codex-assistant.css?v=520">
+  <link rel="stylesheet" href="./ai-harness.css?v=701">
+  <link rel="stylesheet" href="./bridge-workbench.css?v=760">
+  <link rel="stylesheet" href="./qa-checklist-v6.css?v=600">
+  <link rel="stylesheet" href="./auth-gate.css?v=760">
+  <link rel="stylesheet" href="./feedback-modal.css?v=760">
+  <script src="./workbench-bootstrap.js?v=640"></script>
+  <script src="./theme-init.js?v=520"></script>
+  <script src="./fileanalyst-config.js?v=520"></script>
+  <script defer src="./workbench-fileanalyst-link.js?v=640"></script>
+  <script defer src="./workbench-jiraflow-link.js?v=6804"></script>
+  <script defer src="./workbench-lessonlearn-link.js?v=6602"></script>
+  <link rel="stylesheet" href="./process-canvases.css?v=760">
+  <link rel="stylesheet" href="./record-consolidation-v48.css?v=520">
+  <link rel="stylesheet" href="./issues-v61.css?v=610">
+  <link rel="stylesheet" href="./jira-v68.css?v=682">
+  <link rel="stylesheet" href="./workbench-release-v75.css?v=750">
+</head>
+<body>
+  <div id="authGate" class="auth-gate" hidden></div>
+  <div class="app-shell">
+    <header class="jira-header" id="sidebar">
+      <a class="brand" href="#/dashboard" data-aria-zh="AuditFlow 首页" data-aria-en="AuditFlow home" data-tooltip-zh="AuditFlow 首页" data-tooltip-en="AuditFlow home" aria-label="AuditFlow 首页" title="AuditFlow 首页">
+        <span class="brand-mark" aria-hidden="true"><img src="./icons/icon-32.png" alt=""></span>
+        <span class="brand-label"><strong>AuditFlow</strong><small>ASPICE</small></span>
+      </a>
+      <nav class="side-nav" aria-label="主导航">
+        <div class="nav-menu-group" data-nav-menu>
+          <button class="nav-menu-trigger" type="button" data-nav-menu-trigger data-label-zh="评估" data-label-en="Audit" data-aria-zh="评估菜单" data-aria-en="Audit menu" aria-haspopup="true" aria-expanded="false" aria-controls="navAuditMenu" title="评估">
+            <span data-icon="grid"></span><span class="header-label">评估</span><span class="nav-menu-chevron" data-icon="chevron"></span>
+          </button>
+          <div class="nav-menu-panel" data-nav-menu-panel id="navAuditMenu" role="menu" aria-label="评估" hidden>
+            <a class="nav-menu-item" role="menuitem" href="#/dashboard" data-nav="dashboard" data-label-zh="评估总览" data-label-en="Audit overview"><span data-icon="grid"></span><span class="header-label">评估总览</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/standard" data-nav="standard" data-label-zh="ASPICE" data-label-en="ASPICE"><span data-icon="shield"></span><span class="header-label">ASPICE</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/custom" data-nav="custom" data-label-zh="自定义审核" data-label-en="Custom audits"><span data-icon="layers"></span><span class="header-label">自定义审核</span></a>
+          </div>
+        </div>
+        <div class="nav-menu-group" data-nav-menu>
+          <button class="nav-menu-trigger" type="button" data-nav-menu-trigger data-label-zh="工作区" data-label-en="Workspace" data-aria-zh="工作区菜单" data-aria-en="Workspace menu" aria-haspopup="true" aria-expanded="false" aria-controls="navWorkspaceMenu" title="工作区">
+            <span data-icon="package"></span><span class="header-label">工作区</span><span class="nav-menu-chevron" data-icon="chevron"></span>
+          </button>
+          <div class="nav-menu-panel" data-nav-menu-panel id="navWorkspaceMenu" role="menu" aria-label="工作区" hidden>
+            <a class="nav-menu-item" role="menuitem" href="#/recent" data-nav="recent" data-label-zh="最近" data-label-en="Recent"><span data-icon="clock"></span><span class="header-label">最近</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/apps" data-nav="apps" data-label-zh="应用" data-label-en="Apps"><span data-icon="package"></span><span class="header-label">应用</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/plans" data-nav="plans" data-label-zh="计划" data-label-en="Plans"><span data-icon="chart"></span><span class="header-label">计划</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/spaces" data-nav="spaces" data-label-zh="空间" data-label-en="Spaces"><span data-icon="book"></span><span class="header-label">空间</span></a>
+          </div>
+        </div>
+        <div class="nav-menu-group" data-nav-menu>
+          <button class="nav-menu-trigger" type="button" data-nav-menu-trigger data-label-zh="专业工作台" data-label-en="Tools" data-aria-zh="专业工作台菜单" data-aria-en="Specialist workbench menu" aria-haspopup="true" aria-expanded="false" aria-controls="navToolsMenu" title="专业工作台">
+            <span data-icon="target"></span><span class="header-label">专业工作台</span><span class="nav-menu-chevron" data-icon="chevron"></span>
+          </button>
+          <div class="nav-menu-panel" data-nav-menu-panel id="navToolsMenu" role="menu" aria-label="专业工作台" hidden>
+            <a class="nav-menu-item" role="menuitem" href="#/tracking" data-nav="tracking" data-label-zh="项目追踪" data-label-en="Project tracking"><span data-icon="target"></span><span class="header-label">项目追踪</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/review" data-nav="review" data-label-zh="技术审查" data-label-en="Technical review"><span data-icon="eye"></span><span class="header-label">技术审查</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/defects" data-nav="defects" data-label-zh="问题管理" data-label-en="Issues"><span data-icon="alert"></span><span class="header-label">问题管理</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/practices" data-nav="practices" data-label-zh="实践报告" data-label-en="Practice reports"><span data-icon="file"></span><span class="header-label">实践报告</span></a>
+            <a class="nav-menu-item" role="menuitem" href="#/changes" data-nav="changes" data-label-zh="变更请求" data-label-en="Change requests"><span data-icon="rotate"></span><span class="header-label">变更请求</span></a>
+          </div>
+        </div>
+        <div class="nav-menu-group" data-nav-menu>
+          <button class="nav-menu-trigger" type="button" data-nav-menu-trigger data-label-zh="更多" data-label-en="More" data-aria-zh="更多菜单" data-aria-en="More menu" aria-haspopup="true" aria-expanded="false" aria-controls="navMoreMenu" title="更多">
+            <span data-icon="more"></span><span class="header-label">更多</span><span class="nav-menu-chevron" data-icon="chevron"></span>
+          </button>
+          <div class="nav-menu-panel" data-nav-menu-panel id="navMoreMenu" role="menu" aria-label="更多" hidden>
+            <a class="nav-menu-item" role="menuitem" href="#/more" data-nav="more" data-label-zh="更多工具" data-label-en="More tools"><span data-icon="more"></span><span class="header-label">更多工具</span></a>
+          </div>
+        </div>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-btn" id="bridgeWorkbenchButton" type="button" aria-haspopup="dialog" aria-expanded="false" data-aria-zh="本机 Jira 与 Confluence 桥接" data-aria-en="Mac Jira and Confluence bridge" data-tooltip-zh="本机服务桥接" data-tooltip-en="Mac service bridge" aria-label="本机 Jira 与 Confluence 桥接" title="本机服务桥接"><span data-icon="link"></span></button>
+        <a class="icon-btn fileanalyst-link" href="/fileanalyst/" target="_blank" rel="noopener" data-aria-zh="打开 FileAnalyst" data-aria-en="Open FileAnalyst" data-tooltip-zh="FileAnalyst" data-tooltip-en="FileAnalyst" aria-label="打开 FileAnalyst" title="FileAnalyst"><span data-icon="file"></span></a>
+        <a class="icon-btn jiraflow-link" id="jiraFlowLink" href="#" target="_blank" rel="noopener" data-aria-zh="打开 JiraFlow" data-aria-en="Open JiraFlow" data-tooltip-zh="JiraFlow" data-tooltip-en="JiraFlow" aria-label="打开 JiraFlow" title="JiraFlow" aria-disabled="true"><span data-icon="jiraFlow"></span><i class="jira-flow-status-dot" aria-hidden="true"></i></a>
+        <a class="icon-btn lessonlearn-link" id="lessonLearnLink" href="./lessonlearn/index.html" target="_blank" rel="noopener" data-aria-zh="打开 LessonLearn 经验教训库" data-aria-en="Open LessonLearn" data-tooltip-zh="LessonLearn" data-tooltip-en="LessonLearn" aria-label="打开 LessonLearn 经验教训库" title="LessonLearn"><span data-icon="book"></span></a>
+        <button class="icon-btn" id="helixConfigBtn" data-action="open-helix-config" data-aria-zh="Helix 配置" data-aria-en="Helix configuration" data-tooltip-zh="Helix 配置" data-tooltip-en="Helix configuration" aria-label="Helix 配置" title="Helix 配置"><span data-icon="layout"></span></button>
+        <button class="icon-btn" id="globalSearchBtn" data-action="open-global-search" data-aria-zh="搜索" data-aria-en="Search" data-tooltip-zh="搜索 (Ctrl K)" data-tooltip-en="Search (Ctrl K)" aria-label="搜索" title="搜索 (Ctrl K)"><span data-icon="search"></span></button>
+        <button class="icon-btn ai-status" id="aiStatus" data-tooltip-zh="Codex 状态" data-tooltip-en="Codex status" aria-label="Codex 状态" title="Codex 状态"><span data-icon="sparkles"></span><i class="ai-status-dot"></i></button>
+        <button class="icon-btn codex-assistant-trigger" id="codexAssistantTrigger" type="button" data-action="global-codex-toggle" data-aria-zh="打开 Codex 评估助手" data-aria-en="Open Codex Assessment Assistant" data-tooltip-zh="询问 Codex" data-tooltip-en="Ask Codex" aria-label="打开 Codex 评估助手" aria-haspopup="dialog" aria-expanded="false" aria-controls="codexAssistantDrawer" title="询问 Codex"><span data-icon="message"></span></button>
+        <button class="icon-btn mcp-status-indicator" id="mcpStatusIndicator" type="button" data-state="amber" data-tooltip-zh="远程 MCP：尚无近期授权读取" data-tooltip-en="Remote MCP: no recent authorized read" aria-label="远程 MCP 状态：待验证" title="远程 MCP 状态：待验证"><span data-icon="shield"></span><i aria-hidden="true"></i></button>
+        <div class="translation-progress" id="translationProgress" hidden role="status" aria-live="polite" aria-label="Translation progress"><span class="translation-progress-label">EN</span><i><b></b></i><small>0%</small></div>
+        <button class="icon-btn" id="notificationsBtn" data-aria-zh="通知" data-aria-en="Notifications" data-tooltip-zh="通知" data-tooltip-en="Notifications" aria-label="通知" title="通知"><span data-icon="bell"></span><b></b></button>
+        <a class="icon-btn help-manual-link" href="./help-manual.html" target="_blank" rel="noopener" data-aria-zh="打开 AuditFlow 操作手册" data-aria-en="Open the AuditFlow user manual" data-tooltip-zh="操作手册" data-tooltip-en="User manual" aria-label="打开 AuditFlow 操作手册" title="操作手册"><span data-icon="help"></span></a>
+        <button class="icon-btn" id="themeToggle" data-action="toggle-theme" data-tooltip-zh="切换深色模式" data-tooltip-en="Toggle dark mode" aria-label="切换深色模式" aria-pressed="false" title="切换深色模式"><span data-icon="moon"></span></button>
+        <button class="icon-btn language-toggle" id="languageToggle" data-action="toggle-language" data-tooltip-zh="切换语言" data-tooltip-en="Switch language" aria-label="切换语言" aria-pressed="false" title="切换语言"><span data-icon="globe"></span></button>
+        <button class="icon-btn desktop-update-button" id="desktopUpdateButton" type="button" data-action="check-desktop-update" data-tooltip-zh="检查 Windows 更新" data-tooltip-en="Check Windows updates" aria-label="检查 Windows 更新" title="检查 Windows 更新" hidden><span data-icon="download"></span></button>
+        <a class="admin-console-button" id="adminConsoleButton" href="#/settings" data-nav="settings" hidden>Admin</a>
+        <button class="auth-account-button" id="authAccountButton" type="button" data-action="open-account-menu" aria-label="登录或切换账号" title="登录或切换账号" hidden>登录</button>
+        <a href="#/settings" class="profile-link" data-nav="settings" data-aria-zh="设置" data-aria-en="Settings" data-tooltip-zh="设置" data-tooltip-en="Settings" aria-label="设置" title="设置"><span class="avatar">MM</span></a>
+        <button class="icon-btn menu-toggle" id="menuToggle" data-aria-zh="展开导航" data-aria-en="Expand navigation" data-tooltip-zh="展开导航" data-tooltip-en="Expand navigation" aria-label="展开导航" title="展开导航"><span data-icon="menu"></span></button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="breadcrumbs" id="breadcrumbs"></div>
+      </header>
+      <main id="app" tabindex="-1"></main>
+    </section>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="feedbackModalRoot"></div>
+  <button class="feedback-bubble" type="button" data-action="open-feedback" data-aria-zh="反馈建议" data-aria-en="Feedback" data-tooltip-zh="反馈建议" data-tooltip-en="Feedback" aria-label="Feedback" title="Feedback" aria-haspopup="dialog" aria-controls="feedbackModalRoot"><span data-icon="message"></span></button>
+  <div id="drawerRoot"></div>
+  <div id="codexAssistantRoot"></div>
+  <div id="aiHarnessHistoryRoot"></div>
+  <div id="projectBrowserRoot"></div>
+  <div class="toast-stack" id="toastRoot" aria-live="polite"></div>
+  <input type="file" id="evidencePicker" hidden multiple accept=".pdf,.doc,.docx,.pptx,.xlsx,.xlsm,.txt,.md,.csv,.json,.html">
+  <input type="file" id="aiReviewImportPicker" hidden accept=".json,.afreview,.jeauditflow-review">
+  <input type="file" id="avatarPicker" hidden accept="image/png,image/jpeg,image/webp,image/gif">
+  <script src="./vendor/jszip.min.js"></script>
+  <script defer src="./i18n.js?v=520"></script>
+  <script defer src="./backend-client.js?v=520"></script>
+  <script defer src="./bridge-workbench.js?v=760"></script>
+  <script defer src="./tmm-assessment-data.js?v=520"></script>
+<script defer src="./external-assessment-data.js?v=550"></script>
+  <script defer src="./mbeal-targeted-issues.js?v=550"></script>
+  <script defer src="./sup-qa-checklist-catalog.js?v=600"></script>
+  <script defer src="./qa-checklist-workflow.js?v=600"></script>
+  <script defer src="./sqe-ppap-reference.js?v=580"></script>
+  <script defer src="./codex-assistant.js?v=520"></script>
+  <script defer src="./ai-harness-ui.js?v=700"></script>
+  <script defer src="./report-templates.js?v=520"></script>
+  <script defer src="./web-auth.js?v=520"></script>
+  <script defer src="./auth-gate.js?v=760"></script>
+  <script defer src="./vendor/html2canvas.min.js?v=1.4.1"></script>
+  <script defer src="./feedback-modal.js?v=760"></script>
+  <script defer src="./local-extension-mode.js?v=520"></script>
+  <script defer src="./cep-xp-assessment-data.js?v=520"></script>
+  <script defer src="./tuv-aspice-issue-reference.js?v=520"></script>
+  <script defer src="./aspice-training-reference.js?v=520"></script>
+  <script defer src="./aspice-v40-model.js?v=520"></script>
+  <script defer src="./process-canvases.js?v=760"></script>
+  <script defer src="./issues-module.js?v=610"></script>
+  <script defer src="./tuv-issue-ledger-guard.js?v=660"></script>
+  <script defer src="./evidence-catalog.js?v=750"></script>
+  <script defer src="./nc-jiraflow-model.js?v=750"></script>
+  <script defer src="./app.js?v=760"></script>
+  <script defer src="./workbench-nav-menu.js?v=750"></script>
+  <script defer src="./ux-enhance.js?v=520"></script>
+    <script defer src="./v6-enhancements.js?v=520"></script>
+</body>
+</html>

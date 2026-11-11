@@ -1,0 +1,21 @@
+.bridge-workbench { width: min(720px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 0; border: 1px solid var(--border, #d6d9df); border-radius: 8px; background: var(--surface, #fff); color: var(--text, #20252c); }
+.bridge-workbench::backdrop { background: rgb(20 25 30 / 45%); }
+.bridge-workbench > header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border, #d6d9df); }
+.bridge-workbench h2 { font-size: 20px; margin: 0; }
+.bridge-content { padding: 20px; overflow: auto; }
+.bridge-content section + section { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border, #d6d9df); }
+.bridge-content h3 { margin: 0 0 12px; font-size: 15px; }
+.bridge-section-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bridge-section-title > div, .bridge-form-actions, .bridge-content li nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bridge-content ul { list-style: none; margin: 8px 0 16px; padding: 0; }
+.bridge-content li { padding: 12px 0; border-bottom: 1px solid var(--border, #d6d9df); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.bridge-content li strong { display: block; font-size: 12px; overflow-wrap: anywhere; font-family: ui-monospace, monospace; }
+.bridge-content li span, .bridge-content li small { display: inline-block; margin-right: 12px; font-size: 12px; }
+.bridge-content label { display: grid; gap: 6px; margin: 12px 0; font-size: 13px; font-weight: 600; }
+.bridge-content input, .bridge-content textarea { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid var(--border, #bdc4cf); border-radius: 4px; padding: 9px 10px; background: var(--surface, #fff); color: inherit; font: 13px ui-monospace, monospace; }
+.bridge-content textarea { resize: vertical; overflow-wrap: anywhere; }
+.bridge-boundary, .bridge-empty { font-size: 12px; color: var(--muted, #586274); line-height: 1.6; }
+.bridge-content [data-bridge-message] { min-height: 20px; font-size: 13px; overflow-wrap: anywhere; }
+.bridge-content [data-error=true] { color: #bd2538; }
+#bridgeWorkbenchButton[data-connected=true] { color: #168049; }
+@media (max-width: 600px) { .bridge-content { padding: 14px; } .bridge-workbench > header { padding: 14px; } .bridge-content li { display: block; } .bridge-content li nav { margin-top: 10px; } }

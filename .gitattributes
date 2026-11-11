@@ -1,0 +1,3 @@
+# Frozen release snapshots retain the exact bytes covered by their checksums.
+# Formatting rules apply in the development tree, before snapshot assembly.
+source/7.6.0/** -text -whitespace
