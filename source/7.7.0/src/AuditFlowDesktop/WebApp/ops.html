@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#20282d">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>JEAuditFlow 7.7.0 · 运营后台</title>
+  <link rel="icon" href="./icons/icon-32.png">
+  <link rel="stylesheet" href="./ops-ui.css?v=6.9.0">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand-lockup" href="./portal.html">
+      <img src="./icons/auditflow-mascot.png" alt="">
+      <span><strong>AuditFlow 运营后台</strong><small>本地使用与意见监控</small></span>
+    </a>
+    <nav class="header-nav" aria-label="运营后台导航">
+      <a href="./portal.html">版本下载</a>
+      <a href="./desktop.html">进入工作台</a>
+      <a href="./ops.html" aria-current="page">运营后台</a>
+    </nav>
+    <span class="service-pill" id="opsStatus">连接中</span>
+  </header>
+
+  <main class="page-width">
+    <section class="page-title-row">
+      <div>
+        <h1>用户使用与意见</h1>
+        <p>数据仅来自本机 AuditFlow，会自动刷新；审核正文、附件内容和外部系统凭据不进入统计。</p>
+      </div>
+      <span class="version-stamp" id="lastRefresh">等待刷新</span>
+    </section>
+
+    <div class="dashboard-layout" id="dashboard" hidden>
+      <div>
+        <section class="metric-grid" id="metrics"></section>
+        <section class="panel">
+          <header class="panel-head"><h2>近 7 日主要事件</h2><span>按事件次数</span></header>
+          <div class="event-bars" id="eventBars"></div>
+        </section>
+        <section class="panel">
+          <header class="panel-head"><h2>用户意见</h2><span id="feedbackCount">0 条</span></header>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>时间</th><th>邮箱</th><th>类型</th><th>评分</th><th>意见</th></tr></thead>
+              <tbody id="feedbackBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <aside>
+        <section class="panel">
+          <header class="panel-head"><h2>最近活动</h2><span>最多 200 条</span></header>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>时间</th><th>事件</th><th>页面</th></tr></thead>
+              <tbody id="activityBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="panel">
+          <header class="panel-head"><h2>数据位置</h2><span>当前用户</span></header>
+          <div class="event-bars" id="dataPaths"></div>
+        </section>
+      </aside>
+    </div>
+    <section class="auth-panel" id="accessMessage" hidden>
+      <h1>需要管理员登录</h1>
+      <p id="accessText">请先在 JEAuditFlow 中登录管理员账户。</p>
+      <a class="btn" href="./desktop.html">返回登录</a>
+    </section>
+  </main>
+  <script defer src="./ops-dashboard.js?v=6.9.0"></script>
+</body>
+</html>
+

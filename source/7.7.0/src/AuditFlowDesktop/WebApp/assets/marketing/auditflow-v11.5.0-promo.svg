@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">AuditFlow ASPICE Web Workspace promotional architecture</title>
+  <desc id="desc">An English technical promotional infographic showing the AuditFlow web assessment workflow from evidence to closure.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#17396b" flood-opacity="0.12"/>
+    </filter>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#17396b" flood-opacity="0.09"/>
+    </filter>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0c3474"/>
+      <stop offset="1" stop-color="#1854a3"/>
+    </linearGradient>
+    <linearGradient id="blueCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#edf5ff"/>
+    </linearGradient>
+    <linearGradient id="lavCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbf9ff"/>
+      <stop offset="1" stop-color="#f2edff"/>
+    </linearGradient>
+    <clipPath id="screenClip"><rect x="1310" y="640" width="540" height="246" rx="10"/></clipPath>
+    <style>
+      .sans { font-family: Inter, "Avenir Next", Arial, sans-serif; }
+      .title { font: 800 47px Inter, "Avenir Next", Arial, sans-serif; letter-spacing: 1.5px; fill: #12376f; }
+      .subtitle { font: 500 21px Inter, "Avenir Next", Arial, sans-serif; letter-spacing: .25px; fill: #52657c; }
+      .cardTitle { font: 800 17px Inter, "Avenir Next", Arial, sans-serif; letter-spacing: .2px; fill: #143d77; }
+      .cardText { font: 500 14px Inter, "Avenir Next", Arial, sans-serif; fill: #314a69; }
+      .small { font: 600 12px Inter, "Avenir Next", Arial, sans-serif; fill: #5f728b; }
+      .tiny { font: 600 11px Inter, "Avenir Next", Arial, sans-serif; fill: #5c6e83; }
+      .railLabel { font: 800 13px Inter, "Avenir Next", Arial, sans-serif; letter-spacing: .8px; fill: white; }
+      .white { fill: white; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#f8fbff"/>
+  <rect x="34" y="26" width="1852" height="1028" rx="18" fill="white" stroke="#d8e1ed" stroke-width="2" filter="url(#softShadow)"/>
+
+  <image href="auditflow-icon-128.png" x="70" y="52" width="62" height="62" preserveAspectRatio="xMidYMid meet"/>
+  <text x="150" y="74" class="sans" font-size="17" font-weight="800" fill="#12376f" letter-spacing="1.8">AUDITFLOW ASPICE</text>
+  <text x="150" y="99" class="sans" font-size="13" font-weight="600" fill="#6a7e96" letter-spacing=".5">WEB WORKSPACE · v11.7.0</text>
+
+  <text x="960" y="78" text-anchor="middle" class="title">FROM EVIDENCE TO CLOSURE</text>
+  <text x="960" y="112" text-anchor="middle" class="subtitle">AI-assisted assessment control for traceable, reviewable automotive SPICE decisions</text>
+  <line x1="72" y1="136" x2="1848" y2="136" stroke="#1a5db7" stroke-width="3"/>
+  <circle cx="72" cy="136" r="4" fill="#1a5db7"/><circle cx="1848" cy="136" r="4" fill="#1a5db7"/>
+
+  <!-- process rail -->
+  <g class="sans">
+    <line x1="128" y1="180" x2="1794" y2="180" stroke="#c8d8eb" stroke-width="4"/>
+    <g><circle cx="128" cy="180" r="19" fill="#12498f"/><text x="128" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">1</text></g>
+    <g><circle cx="367" cy="180" r="19" fill="#12498f"/><text x="367" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">2</text></g>
+    <g><circle cx="606" cy="180" r="19" fill="#5a2d98"/><text x="606" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">3</text></g>
+    <g><circle cx="845" cy="180" r="19" fill="#3f7b35"/><text x="845" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">4</text></g>
+    <g><circle cx="1084" cy="180" r="19" fill="#ca6a08"/><text x="1084" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">5</text></g>
+    <g><circle cx="1323" cy="180" r="19" fill="#008d96"/><text x="1323" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">6</text></g>
+    <g><circle cx="1562" cy="180" r="19" fill="#12498f"/><text x="1562" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">7</text></g>
+    <g><circle cx="1794" cy="180" r="19" fill="#256e76"/><text x="1794" y="186" text-anchor="middle" class="white" font-size="16" font-weight="800">8</text></g>
+  </g>
+
+  <!-- step cards -->
+  <g class="sans" filter="url(#softShadow)">
+    <rect x="72" y="214" width="205" height="348" rx="10" fill="url(#blueCard)" stroke="#9fc3ee" stroke-width="2"/>
+    <rect x="296" y="214" width="205" height="348" rx="10" fill="url(#blueCard)" stroke="#9fc3ee" stroke-width="2"/>
+    <rect x="520" y="214" width="205" height="348" rx="10" fill="url(#lavCard)" stroke="#c4aff1" stroke-width="2"/>
+    <rect x="744" y="214" width="205" height="348" rx="10" fill="#f2fbf0" stroke="#abd3a3" stroke-width="2"/>
+    <rect x="968" y="214" width="205" height="348" rx="10" fill="#fff9f1" stroke="#f0c58c" stroke-width="2"/>
+    <rect x="1192" y="214" width="205" height="348" rx="10" fill="#effbfb" stroke="#a4dddd" stroke-width="2"/>
+    <rect x="1416" y="214" width="205" height="348" rx="10" fill="url(#blueCard)" stroke="#9fc3ee" stroke-width="2"/>
+    <rect x="1640" y="214" width="208" height="348" rx="10" fill="#f2fbfb" stroke="#a6d8d9" stroke-width="2"/>
+  </g>
+
+  <!-- icons -->
+  <g class="sans" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#1b63b5"><path d="M142 254h49l15 15v36h-64z"/><path d="M191 254v16h15"/><path d="M151 321h42"/><path d="M151 337h53"/></g>
+    <g stroke="#2468ca"><path d="M349 260l37 27-37 27 18-27z"/><path d="M371 287h35"/></g>
+    <g stroke="#6e41b4"><circle cx="621" cy="287" r="25"/><path d="M621 248v-10M621 326v10M582 287h-10M660 287h10M594 260l-8-8M648 314l8 8M648 260l8-8M594 314l-8 8"/><path d="M608 288c7-12 19-12 26 0M608 299c7 12 19 12 26 0"/></g>
+    <g stroke="#368536"><path d="M829 248c-22 0-39 16-39 35 0 10 4 18 11 24-2 8 1 18 10 22h37c9-4 12-14 10-22 7-6 11-14 11-24 0-19-17-35-40-35z"/><path d="M812 309h33M816 321h25"/></g>
+    <g stroke="#e07513"><path d="M1071 246l42 15v29c0 27-18 45-42 57-24-12-42-30-42-57v-29z"/><path d="M1054 289l13 13 25-28"/></g>
+    <g stroke="#00939a"><path d="M1318 247v81M1288 292h70M1298 271l20 20 20-20M1298 313l20-20 20 20"/><path d="M1305 343h36"/><circle cx="1318" cy="287" r="37" opacity=".28"/></g>
+    <g stroke="#1b63b5"><rect x="1473" y="251" width="62" height="77" rx="7"/><path d="M1486 272h36M1486 290h36M1486 308h21"/><path d="M1550 277l8 8 14-16"/></g>
+    <g stroke="#287779"><rect x="1691" y="253" width="39" height="52" rx="4"/><rect x="1739" y="253" width="39" height="52" rx="4"/><path d="M1700 320h70"/><path d="M1700 336h70"/></g>
+  </g>
+
+  <g class="sans">
+    <text x="174" y="372" text-anchor="middle" class="cardTitle">WORKSPACE</text>
+    <text x="174" y="395" text-anchor="middle" class="small">Sign in &amp; choose a project</text>
+    <text x="94" y="438" class="cardText">• Shared web workspace</text><text x="94" y="462" class="cardText">• Role-aware access</text><text x="94" y="486" class="cardText">• Project-scoped activity</text><text x="94" y="510" class="cardText">• Local preview fallback</text>
+
+    <text x="398" y="372" text-anchor="middle" class="cardTitle">IMPORT EVIDENCE</text>
+    <text x="398" y="395" text-anchor="middle" class="small">Bring evidence into one index</text>
+    <text x="318" y="438" class="cardText">• PDF, Office &amp; tables</text><text x="318" y="462" class="cardText">• Helix bridge sources</text><text x="318" y="486" class="cardText">• File class &amp; item type</text><text x="318" y="510" class="cardText">• Locatable excerpts</text>
+
+    <text x="622" y="372" text-anchor="middle" class="cardTitle">SCOPE &amp; PLAN</text>
+    <text x="622" y="395" text-anchor="middle" class="small">Set the formal assessment frame</text>
+    <text x="542" y="438" class="cardText">• Process &amp; PA selection</text><text x="542" y="462" class="cardText">• Lifecycle and roles</text><text x="542" y="486" class="cardText">• Assessment gates</text><text x="542" y="510" class="cardText">• Versioned baseline</text>
+
+    <text x="846" y="372" text-anchor="middle" class="cardTitle">TRACEABILITY</text>
+    <text x="846" y="395" text-anchor="middle" class="small">Connect process to proof</text>
+    <text x="766" y="438" class="cardText">• Process → PA → BP/GP</text><text x="766" y="462" class="cardText">• Direct / corroborating roles</text><text x="766" y="486" class="cardText">• Bidirectional links</text><text x="766" y="510" class="cardText">• Coverage &amp; gap signals</text>
+
+    <text x="1070" y="372" text-anchor="middle" class="cardTitle">AI REVIEW</text>
+    <text x="1070" y="395" text-anchor="middle" class="small">Surface candidates for review</text>
+    <text x="990" y="438" class="cardText">• Evidence-chain analysis</text><text x="990" y="462" class="cardText">• BP/GP candidate findings</text><text x="990" y="486" class="cardText">• Confidence &amp; gaps</text><text x="990" y="510" class="cardText">• Explainable excerpts</text>
+
+    <text x="1294" y="372" text-anchor="middle" class="cardTitle">ASSESSOR DECISION</text>
+    <text x="1294" y="395" text-anchor="middle" class="small">Keep human authority in control</text>
+    <text x="1214" y="438" class="cardText">• Confirm or reject claims</text><text x="1214" y="462" class="cardText">• Rate practice evidence</text><text x="1214" y="486" class="cardText">• Record rationale</text><text x="1214" y="510" class="cardText">• Preserve approvals</text>
+
+    <text x="1518" y="372" text-anchor="middle" class="cardTitle">REPORT &amp; CLOSE</text>
+    <text x="1518" y="395" text-anchor="middle" class="small">Turn reviewed evidence into outputs</text>
+    <text x="1438" y="438" class="cardText">• Findings &amp; action plans</text><text x="1438" y="462" class="cardText">• Traceability reports</text><text x="1438" y="486" class="cardText">• Controlled templates</text><text x="1438" y="510" class="cardText">• Closure-gate checks</text>
+
+    <text x="1744" y="372" text-anchor="middle" class="cardTitle">COLLABORATE</text>
+    <text x="1744" y="395" text-anchor="middle" class="small">Work together with guardrails</text>
+    <text x="1662" y="438" class="cardText">• Shared project state</text><text x="1662" y="462" class="cardText">• Lock &amp; presence signals</text><text x="1662" y="486" class="cardText">• Audit activity log</text><text x="1662" y="510" class="cardText">• Privacy-aware storage</text>
+  </g>
+
+  <!-- connecting arrows -->
+  <g fill="none" stroke="#9ab4d4" stroke-width="2" stroke-dasharray="5 6"><path d="M277 389h19"/><path d="M501 389h19"/><path d="M725 389h19"/><path d="M949 389h19"/><path d="M1173 389h19"/><path d="M1397 389h19"/><path d="M1621 389h19"/></g>
+
+  <!-- live workspace proof panel -->
+  <rect x="72" y="606" width="1220" height="280" rx="12" fill="#f7faff" stroke="#c8d8eb" stroke-width="2"/>
+  <rect x="72" y="606" width="1220" height="42" rx="12" fill="url(#hero)"/>
+  <text x="98" y="633" class="railLabel">LIVE WEB WORKSPACE · REVIEWABLE EVIDENCE CONTROL</text>
+  <text x="98" y="685" class="sans" font-size="23" font-weight="800" fill="#163f79">AI proposes; the assessor decides.</text>
+  <text x="98" y="716" class="sans" font-size="15" fill="#4d6380">Every candidate stays connected to evidence, process scope, rationale and closure state.</text>
+  <g class="sans">
+    <rect x="98" y="750" width="265" height="86" rx="9" fill="white" stroke="#d4e1ef"/><circle cx="127" cy="779" r="14" fill="#ecf5ff"/><path d="M121 779h12M127 773v12" stroke="#1b63b5" stroke-width="2"/><text x="154" y="778" font-size="14" font-weight="800" fill="#1b477f">Evidence roles</text><text x="154" y="800" class="tiny">Direct · Corroborating · Index-only</text>
+    <rect x="382" y="750" width="265" height="86" rx="9" fill="white" stroke="#d4e1ef"/><circle cx="411" cy="779" r="14" fill="#f0eaff"/><path d="M405 780l5 5 9-11" stroke="#6e41b4" stroke-width="2" fill="none"/><text x="438" y="778" font-size="14" font-weight="800" fill="#1b477f">Traceability</text><text x="438" y="800" class="tiny">Bidirectional links &amp; gap signals</text>
+    <rect x="666" y="750" width="265" height="86" rx="9" fill="white" stroke="#d4e1ef"/><circle cx="695" cy="779" r="14" fill="#e8f7eb"/><path d="M689 780l5 5 9-12" stroke="#3f7b35" stroke-width="2" fill="none"/><text x="722" y="778" font-size="14" font-weight="800" fill="#1b477f">Human control</text><text x="722" y="800" class="tiny">Ratings, approvals &amp; closure remain human</text>
+    <rect x="950" y="750" width="265" height="86" rx="9" fill="white" stroke="#d4e1ef"/><circle cx="979" cy="779" r="14" fill="#fff1df"/><path d="M973 779h12M979 773v12" stroke="#e07513" stroke-width="2"/><text x="1006" y="778" font-size="14" font-weight="800" fill="#1b477f">Audit integrity</text><text x="1006" y="800" class="tiny">Versioning, logs &amp; closure gates</text>
+  </g>
+
+  <!-- screenshot card -->
+  <rect x="1310" y="606" width="540" height="280" rx="12" fill="white" stroke="#c8d8eb" stroke-width="2" filter="url(#softShadow)"/>
+  <rect x="1310" y="606" width="540" height="34" rx="12" fill="#102e62"/>
+  <text x="1332" y="629" class="sans" font-size="13" font-weight="800" fill="white" letter-spacing=".7px">AUDITFLOW · REVIEW PROGRESS</text>
+  <image href="auditflow-workspace-v108.jpg" x="1310" y="640" width="540" height="246" preserveAspectRatio="xMidYMid slice" clip-path="url(#screenClip)"/>
+  <rect x="1310" y="640" width="540" height="246" rx="10" fill="none" stroke="#c8d8eb"/>
+
+  <!-- bottom rails -->
+  <g class="sans">
+    <rect x="72" y="920" width="1020" height="46" rx="6" fill="#123e7f"/><text x="582" y="949" text-anchor="middle" class="railLabel">KEY CAPABILITIES</text>
+    <rect x="1110" y="920" width="740" height="46" rx="6" fill="#542d91"/><text x="1480" y="949" text-anchor="middle" class="railLabel">ASSURANCE &amp; GOVERNANCE</text>
+    <g fill="#fff" stroke="#d8e2ef" stroke-width="1.5">
+      <rect x="72" y="978" width="235" height="52" rx="6"/><rect x="324" y="978" width="235" height="52" rx="6"/><rect x="576" y="978" width="235" height="52" rx="6"/><rect x="828" y="978" width="264" height="52" rx="6"/>
+      <rect x="1110" y="978" width="170" height="52" rx="6"/><rect x="1294" y="978" width="170" height="52" rx="6"/><rect x="1478" y="978" width="170" height="52" rx="6"/><rect x="1662" y="978" width="188" height="52" rx="6"/>
+    </g>
+    <text x="189" y="1010" text-anchor="middle" class="tiny">Evidence inventory</text><text x="441" y="1010" text-anchor="middle" class="tiny">Bidirectional traceability</text><text x="693" y="1010" text-anchor="middle" class="tiny">Assessor review</text><text x="960" y="1010" text-anchor="middle" class="tiny">Reports &amp; action plans</text>
+    <text x="1195" y="1010" text-anchor="middle" class="tiny">Formal scope</text><text x="1379" y="1010" text-anchor="middle" class="tiny">Access control</text><text x="1563" y="1010" text-anchor="middle" class="tiny">Version history</text><text x="1756" y="1010" text-anchor="middle" class="tiny">Audit log</text>
+  </g>
+</svg>

@@ -1,0 +1,38 @@
+-- JiraFlow-owned CEP issue records. These records are deliberately isolated
+-- from JEAuditFlow ASPICE evidence findings and must be assessed in JiraFlow.
+
+create table if not exists auditflow_jira_issues (
+  id bigint unsigned not null auto_increment primary key,
+  project_key varchar(40) not null,
+  issue_key varchar(191) not null,
+  issue_id varchar(191) not null,
+  process_area varchar(40) not null default '',
+  severity varchar(80) not null default '',
+  category varchar(160) not null default '',
+  title varchar(500) not null,
+  description text not null,
+  internal_comment text not null,
+  root_cause text not null,
+  improvement_measures text not null,
+  owner varchar(255) not null default '',
+  audit_date date null,
+  due_date date null,
+  status varchar(80) not null default '',
+  helix_description text not null,
+  reference_example text not null,
+  source_kind varchar(80) not null default 'jira-issue-import',
+  owned_by varchar(40) not null default 'jiraflow',
+  source_file varchar(1024) not null default '',
+  source_sheet varchar(160) not null default '',
+  source_row int unsigned null,
+  source_cells_json text not null,
+  payload_json longtext not null,
+  revision bigint not null default 1,
+  created_at datetime(3) not null default current_timestamp(3),
+  updated_at datetime(3) not null default current_timestamp(3) on update current_timestamp(3),
+  unique key auditflow_jira_issue_project_key (project_key, issue_key),
+  key auditflow_jira_issue_project_status (project_key, status),
+  key auditflow_jira_issue_process (project_key, process_area),
+  key auditflow_jira_issue_due (project_key, due_date),
+  key auditflow_jira_issue_owner (project_key, owner)
+) engine=InnoDB default charset=utf8mb4;

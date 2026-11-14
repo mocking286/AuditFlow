@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "JEAuditFlow",
+  "short_name": "JEAuditFlow",
+  "version": "7.7.0",
+  "description": "JEAuditFlow 7.7.0 browser workspace synchronized with AuditFlow capability 12.3.0.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm4NQABCOgd43D00dm0GObrdptlBOsWkE1jEI2bcw3R9d1L6yJOtpLhVZnVr3hCN25LYEQr0VoBI9jYVhLDTqEmGogxKY+cUa73LyT7TiUu1R+x9F07HsPkYnturpir+HiQyUhUz0u6RSzlMzAiR01GGzTeD5WVYRlL2wSI+sjA3bDfIR3R29kkWxKHyF14lXcf33MzhQj4TUQetIq8PcqgxUI71ikzPVZwPBNbhy8XVlJCs7OHw2ADuUqhnsBQMUYMQAL1MTkiEVTKhKErvAuZez20nALhwkNmtQ/9oqDdJDtsY9k6ryCDysoWwnClY5SzaIDAYt3YlnQ7Rpob2lGwIDAQAB",
+  "action": {
+    "default_title": "Open JEAuditFlow 7.7.0",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "identity"
+  ],
+  "host_permissions": [
+    "https://login.microsoftonline.com/*",
+    "http://120.25.197.24/*",
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts allow-forms allow-modals allow-popups allow-downloads; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob:; child-src 'self' blob:;"
+  },
+  "sandbox": {
+    "pages": [
+      "landing-promo.html",
+      "aspice-audit-master-2.3.1.html",
+      "aspice-audit-master-2.3.1-en.html"
+    ]
+  }
+}

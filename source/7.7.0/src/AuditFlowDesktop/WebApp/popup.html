@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JEAuditFlow 6.9.0</title>
+  <link rel="stylesheet" href="./popup.css">
+</head>
+<body>
+  <main class="popup-shell">
+    <header class="popup-header">
+      <div class="brand-lockup"><img src="./icons/icon-48.png" alt=""><div><strong>AuditFlow</strong><small>ASPICE WORKSPACE</small></div></div>
+      <button class="icon-button" type="button" data-action="toggle-language" aria-label="Switch language">ZH</button>
+    </header>
+    <section class="service-grid" aria-label="Service status">
+      <article class="service-card"><span class="status-dot"></span><div><small data-i18n="ai">AI service</small><strong data-i18n="ready">Ready</strong></div></article>
+      <article class="service-card"><span class="status-dot"></span><div><small data-i18n="helix">Helix Bridge</small><strong data-i18n="ready">Ready</strong></div></article>
+    </section>
+    <section class="projects-section">
+      <div class="section-heading"><div><span class="overline" data-i18n="workspace">WORKSPACE</span><h2 data-i18n="activeProjects">Active projects</h2></div><button type="button" class="refresh-button" data-action="refresh" aria-label="Refresh active projects" title="Refresh">↻</button></div>
+      <div class="project-list" id="projectList" aria-live="polite"></div>
+      <p class="empty-projects" id="emptyProjects" hidden data-i18n="noProjects">No active projects</p>
+    </section>
+    <footer class="popup-footer"><button type="button" class="primary-button" data-open="landing.html" data-i18n="openHome">Open home</button><button type="button" class="settings-button" data-open="index.html?fromLanding=1#/settings" data-i18n="settings">Settings</button></footer>
+    <p class="popup-meta" id="lastRefresh">Local collaboration status · JEAuditFlow 6.9.0</p>
+  </main>
+  <script src="./popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+/* AuditFlow v9.4: Trace-aligned interaction and evidence layout refinements. */
+:root {
+  --af-focus: #174e73;
+  --af-hover: #e7f2fa;
+  --af-tooltip: #203244;
+}
+
+/* Keep the selected top-level view unmistakable against the pale blue header. */
+.jira-header .side-nav > a.active {
+  background: #2f6f9f !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 -3px #174e73, 0 1px 0 rgba(23, 78, 115, .18) !important;
+}
+.jira-header .side-nav > a.active svg,
+.jira-header .side-nav > a.active [data-icon] { color: #ffffff !important; stroke: currentColor; }
+.jira-header .side-nav > a:hover,
+.jira-header .side-nav > a:focus-visible { background: var(--af-hover) !important; color: var(--af-focus) !important; }
+.jira-header .side-nav > a.active:hover,
+.jira-header .side-nav > a.active:focus-visible { background: #245f89 !important; color: #ffffff !important; }
+
+/* Prevent icon-only controls from inheriting the black hover treatment in the old theme. */
+.project-top-nav button:hover,
+.project-top-nav button:focus-visible,
+.project-sidebar-nav button:hover,
+.project-sidebar-nav button:focus-visible,
+.action-icon:hover,
+.action-icon:focus-visible,
+.trace-link-action:hover,
+.trace-link-action:focus-visible {
+  color: var(--af-accent) !important;
+  border-color: #8fb3cd !important;
+  background: var(--af-hover) !important;
+  outline: none;
+}
+.action-icon.danger:hover,
+.action-icon.danger:focus-visible { color: #b42318 !important; border-color: #e3a5a0 !important; background: #fdecec !important; }
+.project-top-nav button.active,
+.project-sidebar-nav button.active { color: #174e73 !important; }
+.project-top-nav button.active svg,
+.project-sidebar-nav button.active svg { color: #174e73 !important; }
+
+/* Lightweight bilingual tooltips are rendered for every interactive control by app.js. */
+[data-tooltip] { position: relative; overflow: visible; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 120;
+  width: max-content;
+  max-width: 240px;
+  padding: 5px 8px;
+  border: 1px solid #9eb4c5;
+  border-radius: 4px;
+  background: var(--af-tooltip);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.project-top-nav [data-tooltip]::after,
+.project-sidebar [data-tooltip]::after,
+.trace-mark-btn[data-tooltip]::after,
+.trace-link-action[data-tooltip]::after,
+.action-icon[data-tooltip]::after { bottom: auto; top: calc(100% + 8px); transform: translate(-50%, -4px); }
+.project-top-nav [data-tooltip]:hover::after,
+.project-top-nav [data-tooltip]:focus-visible::after,
+.project-sidebar [data-tooltip]:hover::after,
+.project-sidebar [data-tooltip]:focus-visible::after,
+.trace-mark-btn[data-tooltip]:hover::after,
+.trace-mark-btn[data-tooltip]:focus-visible::after,
+.trace-link-action[data-tooltip]:hover::after,
+.trace-link-action[data-tooltip]:focus-visible::after,
+.action-icon[data-tooltip]:hover::after,
+.action-icon[data-tooltip]:focus-visible::after { transform: translate(-50%, 0); }
+
+/* The utility trio belongs below Back to project list and collapses vertically. */
+.project-sidebar-foot { display: grid; gap: 8px; }
+.project-sidebar-foot > .btn { min-width: 0; }
+.project-sidebar-utilities {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 0;
+}
+.project-sidebar-utility {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--line, #cfd8e1);
+  border-radius: 4px;
+  background: var(--panel, #ffffff);
+  color: var(--muted, #66788a);
+  cursor: pointer;
+}
+.project-sidebar-utility svg { width: 16px; height: 16px; }
+.project-sidebar-utility:hover,
+.project-sidebar-utility:focus-visible { color: var(--af-accent); border-color: #8fb3cd; background: var(--af-hover); outline: none; }
+.project-sidebar.collapsed .project-sidebar-utilities { grid-template-columns: 1fr; }
+.project-sidebar.collapsed .project-sidebar-utility { width: 32px; margin-inline: auto; }
+.project-browser-item { appearance: none; width: 100%; text-align: left; cursor: pointer; color: var(--af-ink); }
+.project-browser-item:hover,
+.project-browser-item:focus-visible { border-left-color: var(--af-accent); background: var(--af-hover); outline: none; }
+
+/* File jumps are owned by the right Evidence Inventory pane. */
+.trace-file-tabs-evidence {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--af-line);
+  background: var(--af-surface-muted);
+  scrollbar-width: thin;
+}
+.trace-file-tabs-evidence .trace-file-tab { flex: 0 0 auto; max-width: 220px; }
+.trace-evidence-pane-v81 .trace-file-tabs-evidence { order: 1; }
+.trace-evidence-pane-v81 .trace-evidence-filters { order: 2; }
+.trace-evidence-pane-v81 .trace-evidence-table-wrap { order: 3; }
+
+/* Trace's center column shows one finding per row at every viewport width. */
+.trace-link-list-v81 { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; align-content: start; }
+.trace-link-card { min-width: 0; overflow: hidden; }
+.trace-link-card .row-actions { min-width: 0; flex-wrap: wrap; }
+.trace-mark-toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.trace-mark-btn { min-width: 0; overflow: visible; }
+
+/* Assessment Scope hierarchy mirrors Trace: arrow, node icon, label, count. */
+.trace-tree-process > summary { grid-template-columns: auto auto auto minmax(0, 1fr) auto !important; }
+.trace-tree-pa summary { grid-template-columns: auto auto minmax(0, 1fr) auto !important; }
+.trace-tree-toggle {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--af-muted);
+}
+.trace-tree-toggle svg { width: 13px; height: 13px; transition: transform .12s ease; }
+details[open] > summary .trace-tree-toggle svg { transform: rotate(90deg); }
+.trace-tree-node-icon { display: grid; place-items: center; width: 18px; height: 18px; color: var(--af-accent); }
+.trace-tree-node-icon svg { width: 15px; height: 15px; }
+.trace-tree-indicator { grid-template-columns: auto minmax(0, 1fr) auto !important; }
+.trace-tree-indicator > span:nth-child(2) { min-width: 0; }
+
+[data-theme="dark"] .project-sidebar-utility { border-color: var(--af-line); background: #20262e; color: var(--af-muted); }
+[data-theme="dark"] .project-sidebar-utility:hover,
+[data-theme="dark"] .project-sidebar-utility:focus-visible { background: #24394d; color: #85b8ff; }
+[data-theme="dark"] .trace-file-tabs-evidence { background: #1b222b; }
+[data-theme="dark"] [data-tooltip]::after { border-color: #49657c; background: #0f1720; }
+
+@media (max-width: 760px) {
+  .project-sidebar-utilities { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .trace-mark-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .trace-file-tabs-evidence .trace-file-tab { max-width: 180px; }
+}

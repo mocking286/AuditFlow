@@ -1,0 +1,65 @@
+/* AuditFlow v7.7 — professional assessment report styling.
+ * Palette and layout follow the SWA 502089 professional ASPICE report:
+ * teal brand #008C82, rating scale green #2A9C2A / yellow #FCE514 /
+ * orange #FF9203 / red #DD0028, grey finding boxes #EDEDED, striped
+ * evidence tables #F2F2F2. Loaded after styles.css so these overrides win. */
+
+.report-running-head { border-bottom: 2px solid #008C82; }
+.report-running-foot { border-top: 1px solid #008C82; }
+.report-blue-label { color: #008C82; }
+.report-title { color: #005f58; }
+.report-section-title { color: #006b63; }
+.report-sheet h3 { color: #006b63; }
+.report-sheet h4 { color: #006b63; }
+
+/* Teal table headers with white text (professional-report header bars). */
+.report-sheet .official-table th,
+.report-sheet .rating-matrix th,
+.report-sheet .bp-rating-table th {
+  color: #ffffff;
+  background: #008C82;
+  border-color: #008C82;
+  font-weight: 750;
+}
+.report-sheet .official-table tbody tr:nth-child(even) td { background: #F2F2F2; }
+.report-sheet .toc-table th { color: #ffffff; background: #008C82; border-color: #008C82; }
+
+/* Rating chip scale: N red, P orange, L yellow, F green. */
+.report-rating { border: 1px solid #9aa6b0; border-radius: 4px; color: #455566; background: #f4f6f8; font-weight: 750; }
+.report-rating.rating-f { border-color: #2A9C2A; color: #1c7a1c; background: #E9F7EA; }
+.report-rating.rating-l { border-color: #FCE514; color: #8a7a00; background: #FFFBDB; }
+.report-rating.rating-p { border-color: #FF9203; color: #9a5a00; background: #FFF1DE; }
+.report-rating.rating-n { border-color: #DD0028; color: #b30020; background: #FFE9EC; }
+
+/* Brand accents (replacing the previous blue look). */
+.capability-bar i { background: #008C82; }
+.owr-line b { color: #008C82; }
+.evidence-basis { border-left-color: #008C82; }
+.code-tag { background: #e6f4f2; border-color: #bfe0dc; }
+.report-disclaimer { border-left-color: #008C82; }
+
+/* Docx-style BP overview list under "BPs - Base Practices". */
+.report-bp-list { list-style: none; padding: 0; margin: 8px 0 12px; }
+.report-bp-list li { display: flex; gap: 8px; align-items: baseline; color: #435363; font-size: 9px; padding: 4px 0; border-bottom: 1px dashed #d4dde2; }
+.report-bp-list li .report-rating { flex: 0 0 auto; }
+.report-pa-line { color: #005f58; font-size: 9.5px; font-weight: 750; margin: 10px 0 12px; }
+
+/* General Strengths / Weaknesses / Recommendations blocks (grey boxes). */
+.report-gswr-block { margin: 10px 0; padding: 10px 14px; background: #EDEDED; border-left: 4px solid #008C82; break-inside: avoid; }
+.report-gswr-block.strength { border-left-color: #2A9C2A; }
+.report-gswr-block.weakness { border-left-color: #DD0028; }
+.report-gswr-block.recommendation { border-left-color: #FF9203; }
+.report-gswr-block > strong { display: block; margin-bottom: 4px; color: #26343f; font-size: 9.5px; }
+.report-gswr-block ul { margin: 0; padding-left: 16px; }
+.report-gswr-block li { color: #455566; font-size: 8.5px; line-height: 1.6; margin: 2px 0; }
+.report-gswr-intro { color: #526071; font-size: 8.5px; margin: 6px 0 10px; }
+
+/* Analysis-process box: how the conclusion was derived from real data. */
+.report-analysis-box { margin-top: 12px; padding: 12px 14px; background: #EAF6F5; border: 1px solid #BFE3E0; border-left: 4px solid #008C82; break-inside: avoid; }
+.report-analysis-box h4 { margin: 0 0 6px; color: #006b63; font-size: 9.5px; }
+.report-analysis-box ol { margin: 0; padding-left: 18px; }
+.report-analysis-box li { color: #3c5753; font-size: 8.5px; line-height: 1.7; }
+.report-analysis-box p { margin: 8px 0 0; color: #526b66; font-size: 8px; line-height: 1.6; }
+
+.report-process-gswr { margin-top: 22px; padding-top: 16px; border-top: 2px solid #008C82; }
+.report-process-gswr > h3 { margin: 0 0 2px; color: #005f58; font-size: 12.5px; }

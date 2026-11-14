@@ -1,0 +1,156 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.7.0",
+  "candidate": false,
+  "productRuntimeDeployed": true,
+  "databaseWritesPerformed": false,
+  "generatedAt": "2026-11-14T16:44:16.780Z",
+  "notes": [
+    "INSTALL-7.7-ZH.md",
+    "RELEASE-NOTES-7.7-ZH.md"
+  ],
+  "clientCompatibility": {
+    "apiContractVersion": "1.0.0",
+    "backendRange": "7.7.x"
+  },
+  "database": {
+    "name": "jeauditflow_770",
+    "volume": "jeauditflow_770_mysql_data",
+    "port": 43324,
+    "sourceSchemaVersion": "7.6.0",
+    "schemaVersion": 29,
+    "ddlChanged": true,
+    "deploymentMode": "native"
+  },
+  "artifacts": [
+    {
+      "file": "JEAuditFlow-7.7.0-Backend.zip",
+      "sizeBytes": 3363568,
+      "sha256": "3aedbd7d68d85156424e1ccf33af0a87f9468347425f760fc657288da96b0842",
+      "kind": "backend-api"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Web-Client.zip",
+      "sizeBytes": 76342394,
+      "sha256": "9dc20b629d0d6ab2bcf4006a21dc501c5491af7b717e5cc9e3e5f0b80842655f",
+      "kind": "web-client"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Browser-Extension.zip",
+      "sizeBytes": 69747206,
+      "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6",
+      "kind": "browser-extension"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Browser-Extension.manifest.json",
+      "sizeBytes": 1655,
+      "sha256": "3a351ee50feeafa30ccdfe9825cf1f4c45adc0fb18b838a9918ede5438b3dac5",
+      "kind": "release-support"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Database.zip",
+      "sizeBytes": 16327,
+      "sha256": "747b6e5b4bfe9cebd6e26c052723f453456964530645a0728d25f49f601d0438",
+      "kind": "database-zip"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Database.tar.gz",
+      "sizeBytes": 12441,
+      "sha256": "5c033ff817a6f243dddc5243540a89cfdcf1d596836450fd413ab3af558a7a13",
+      "kind": "database-tar-gz"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
+      "sizeBytes": 151700,
+      "sha256": "9047f8a8ea34874d76525bb117d379c69fa484082bc79a7b5a862e5ef498a9c0",
+      "kind": "release-support"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Deployment-Support.manifest.json",
+      "sizeBytes": 4992,
+      "sha256": "feec33747cf198c33668883f17698f1801f8e3f5fbe3949e11266de7b970fcf6",
+      "kind": "release-support"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-macOS-Launcher.app.zip",
+      "sizeBytes": 1462962,
+      "sha256": "d5ee7494ffd41225916f02265a37573409043630dee44e23e6452a15953d142b",
+      "kind": "release-support"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-macOS-Launcher.manifest.json",
+      "sizeBytes": 1543,
+      "sha256": "040a1cb4aa16ee469cab0c74f1463786736a9a6493a66ab1bd004a97b4022134",
+      "kind": "release-support"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Source.zip",
+      "sizeBytes": 142623800,
+      "sha256": "b410a8e3416fe14a2948d4466bd6cd50bcd5ca9fadd909598520c412e789785b",
+      "kind": "public-source"
+    },
+    {
+      "file": "INSTALL-7.7-ZH.md",
+      "sizeBytes": 2922,
+      "sha256": "58ab44acc303f2857173072cf8a3766d3566ac2b35189fd8b97514c942769656",
+      "kind": "release-support"
+    },
+    {
+      "file": "RELEASE-NOTES-7.7-ZH.md",
+      "sizeBytes": 7445,
+      "sha256": "dc1981f2a1f4b6166aa8efdb2fc420f9879654d5a7f92d6671e9822487e82d49",
+      "kind": "release-support"
+    },
+    {
+      "file": "VERIFICATION-7.7.0.md",
+      "sizeBytes": 17931,
+      "sha256": "22af820729acba2667a5baf16f20ec776f2fea71fe517898ceffdc3c2a472110",
+      "kind": "release-support"
+    },
+    {
+      "file": "REPORT-FIELD-MAPPING-7.7.md",
+      "sizeBytes": 5848,
+      "sha256": "3deeeb877f551107cb24234f49512f16be7669860e29fde6353f8b8328f3e6dd",
+      "kind": "release-support"
+    },
+    {
+      "file": "SSO-MAIL-SETUP-7.7.md",
+      "sizeBytes": 5681,
+      "sha256": "7b1cbb902204f08d9a748249536bf9374082fac0fb675137e4c546ac420a0a34",
+      "kind": "release-support"
+    },
+    {
+      "file": "JIRA-FINDING-CHANNEL-7.7.md",
+      "sizeBytes": 5527,
+      "sha256": "72f2591a9ef9b7e3069ce5eaa491886dbd3164c7440d2958120d72ab7808742b",
+      "kind": "release-support"
+    },
+    {
+      "file": "LOCAL-ACCEPTANCE-7.7.json",
+      "sizeBytes": 6206,
+      "sha256": "e8c40df59f69ced4411b77f73e87d03e2e5b9f04cedfbda263ffbda56307fadd",
+      "kind": "release-support"
+    }
+  ],
+  "publicServerDeployed": false,
+  "deploymentBoundary": "verified local installation only",
+  "localInstallation": {
+    "verifiedAt": "2026-11-14T07:56:48.768Z",
+    "evidence": "LOCAL-ACCEPTANCE-7.7.json",
+    "sourceHashesUnchanged": true,
+    "installedLauncherMatchesPackage": true
+  },
+  "buildBoundary": {
+    "databaseWritesPerformed": false,
+    "credentialsIncluded": false,
+    "controlledCustomerDatasetsIncluded": false
+  },
+  "verification": "VERIFICATION-7.7.0.md",
+  "source": {
+    "file": "JEAuditFlow-7.7.0-Source.zip",
+    "layout": "src/AuditFlowDesktop/WebApp; src/JiraFlow; local-deploy; database; tools/AtlassianServiceLauncher",
+    "controlledDatasets": "omitted",
+    "tests": "focused synthetic suites",
+    "privateWindowsScreenshots": "omitted"
+  }
+}

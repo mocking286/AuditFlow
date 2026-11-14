@@ -1,0 +1,34 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.7.0",
+  "runtimeVersion": "7.7.0",
+  "runtimeCompatibility": "7.7.x",
+  "apiContractVersion": "1.0.0",
+  "supportedClientRange": "7.7.x",
+  "capabilityVersion": "12.3.0",
+  "packageType": "browser-extension",
+  "archive": "JEAuditFlow-7.7.0-Browser-Extension.zip",
+  "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6",
+  "fileCount": 220,
+  "checklistCatalog": {
+    "release": "7.7.0",
+    "entryCount": 496,
+    "sourceManifestCount": 13,
+    "sourcePaths": [
+      "01_Document review checklist templates/Project_plan_document_review_checklist.xlsx",
+      "01_Document review checklist templates/QualityPlan_Review_Checklist.xlsx",
+      "01_Document review checklist templates/SRS_Review_Checklist.xlsx",
+      "01_Document review checklist templates/Software Integration Test Case Review Checklist.xlsx",
+      "01_Document review checklist templates/SysTestPlan_Review_Checklist.xlsx",
+      "01_Document review checklist templates/SysTestReport_Review_Checklist.xlsx",
+      "02_Document Checklist/Document_Review_Strategy_CEP.xlsx",
+      "02_Document Checklist/System_TestReport_Review_Checklist.xlsx",
+      "03_Requirement Checklist/Software Architectural Design Review Checklist.xlsx",
+      "03_Requirement Checklist/Software_ Detailed_Design_Review_Checklist_ADC.xlsx",
+      "03_Requirement Checklist/Software_Requirement_Specification_Review_Checklist.xlsx",
+      "03_Requirement Checklist/System_Architecture_Review_Checklist.xlsx",
+      "03_Requirement Checklist/System_Requirement_Review_Checklist.xlsx"
+    ]
+  },
+  "generatedAt": "2026-11-14T16:36:45.896Z"
+}

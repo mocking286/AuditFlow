@@ -1,0 +1,13 @@
+{
+  "port": 47683,
+  "outputDir": "output",
+  "ai": {
+    "enabled": false,
+    "mode": "provider",
+    "provider": "deepseek",
+    "protocol": "chat-completions",
+    "baseUrl": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "apiKey": ""
+  }
+}

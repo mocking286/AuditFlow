@@ -1,0 +1,139 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.7.0",
+  "packageType": "deployment-support",
+  "generatedAt": "2026-11-14T16:37:28.804Z",
+  "sourceBuild": "7.7.0-candidate",
+  "sourceReleaseGeneratedAt": "2026-11-14T16:37:00.479Z",
+  "deploymentTargets": [
+    "macos-native-with-native-mysql"
+  ],
+  "includesApplicationArchives": false,
+  "containsRuntimeCredentials": false,
+  "usesExplicitAllowlist": true,
+  "applicationArchives": [
+    {
+      "file": "JEAuditFlow-7.7.0-Web-Client.zip",
+      "sizeBytes": 76342394,
+      "sha256": "9dc20b629d0d6ab2bcf4006a21dc501c5491af7b717e5cc9e3e5f0b80842655f"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Backend.zip",
+      "sizeBytes": 3363568,
+      "sha256": "3aedbd7d68d85156424e1ccf33af0a87f9468347425f760fc657288da96b0842"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Browser-Extension.zip",
+      "sizeBytes": 69747206,
+      "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Database.zip",
+      "sizeBytes": 16327,
+      "sha256": "747b6e5b4bfe9cebd6e26c052723f453456964530645a0728d25f49f601d0438"
+    },
+    {
+      "file": "JEAuditFlow-7.7.0-Database.tar.gz",
+      "sizeBytes": 12441,
+      "sha256": "5c033ff817a6f243dddc5243540a89cfdcf1d596836450fd413ab3af558a7a13"
+    }
+  ],
+  "files": [
+    {
+      "source": "local-deploy/DEPLOYMENT-SUPPORT-7.7.md",
+      "file": "README.md",
+      "sizeBytes": 5516,
+      "sha256": "2c78659e7655e43409d41be9d8e4acb712d87f424fd7ba4e71a7618c51835e4f",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/jeauditflow-local.sh",
+      "file": "local-deploy/scripts/jeauditflow-local.sh",
+      "sizeBytes": 59993,
+      "sha256": "427bea0cea926c76f84cba4574b8f924d7df6380aa95aa71cd10e6dc86e7412e",
+      "executable": true
+    },
+    {
+      "source": "local-deploy/docker/compose.yaml",
+      "file": "local-deploy/docker/compose.yaml",
+      "sizeBytes": 874,
+      "sha256": "2bd64856e1ca35dca1c26605beb4adb9696439e2c58b6591f6d67403b3357080",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/templates/7.7.local-settings.env.example",
+      "file": "local-deploy/templates/7.7.local-settings.env.example",
+      "sizeBytes": 1423,
+      "sha256": "4c60345f2393fbdae95044432e1e1e02f431a26c2fc0f8cde148e35a2fe6b298",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Package.swift",
+      "file": "local-deploy/launcher/Package.swift",
+      "sizeBytes": 402,
+      "sha256": "64a9550118a31a1c9351383213bb406664460a03eb1cb7072ecdf996032d5255",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
+      "file": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
+      "sizeBytes": 64778,
+      "sha256": "6e64dc6e7d9d38944ffb34d4dc45d6900113c2c33b837488bc05eda8f86c5d3a",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/script/build_and_run.sh",
+      "file": "local-deploy/launcher/script/build_and_run.sh",
+      "sizeBytes": 4661,
+      "sha256": "26987a70d8bb506e51ba620b477af1a4b6633f9029ac057c1694448dc6ec7cc5",
+      "executable": true
+    },
+    {
+      "source": "local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png",
+      "file": "local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png",
+      "sizeBytes": 102001,
+      "sha256": "df90352d97bd99fa2716914bdfe52d14f46df7bf03ab289f98f2941c7a7b77eb",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/native-mysql.sh",
+      "file": "local-deploy/scripts/native-mysql.sh",
+      "sizeBytes": 5035,
+      "sha256": "0c37bd07a505ff32cab990006ef0588f85dcc62946726cc013c40d0d08f4215c",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/migrate-7.6-to-native-7.7.mjs",
+      "file": "local-deploy/scripts/migrate-7.6-to-native-7.7.mjs",
+      "sizeBytes": 7796,
+      "sha256": "b528636626d8dbeaa54ff12a57fbfc1b2155a3d984e3bd3e940dfcf3ff39384e",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/native-migration-files.mjs",
+      "file": "local-deploy/scripts/native-migration-files.mjs",
+      "sizeBytes": 1625,
+      "sha256": "0f124dfce4892216999f8cd485cd02923a4af81e5eb0406dba7a24f8ca3aba30",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/prepare-7.7-runtimes.mjs",
+      "file": "local-deploy/scripts/prepare-7.7-runtimes.mjs",
+      "sizeBytes": 3364,
+      "sha256": "0fc5e122026356a2d3793d27c5b0e962b8518cdcb79d00685481b68b98c9285d",
+      "executable": false
+    }
+  ],
+  "artifact": {
+    "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
+    "sizeBytes": 151700,
+    "sha256": "9047f8a8ea34874d76525bb117d379c69fa484082bc79a7b5a862e5ef498a9c0",
+    "integrity": "passed",
+    "extractedAllowlist": "passed",
+    "syntax": {
+      "bash": "passed",
+      "node": "passed",
+      "swift": "not-run-by-support-packager"
+    }
+  }
+}

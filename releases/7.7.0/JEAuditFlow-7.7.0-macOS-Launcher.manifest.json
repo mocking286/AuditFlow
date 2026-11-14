@@ -1,0 +1,46 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.7.0",
+  "packageType": "macos-launcher",
+  "generatedAt": "2026-11-14T16:37:35.195Z",
+  "sourceReleaseGeneratedAt": "2026-11-14T16:37:00.479Z",
+  "bundleIdentifier": "local.maplemock.jeauditflowlauncher",
+  "architectures": [
+    "arm64"
+  ],
+  "minimumSystemVersion": "14.0",
+  "signature": "local-ad-hoc",
+  "signatureVerification": "passed-before-and-after-extraction",
+  "notarization": "not-performed",
+  "containsRuntimeCredentials": false,
+  "applicationServicesStarted": false,
+  "databaseWritesPerformed": false,
+  "files": [
+    {
+      "file": "Contents/Info.plist",
+      "sha256": "29826ec395d07b90e0c2016de076ac0723a4b4fc010a3114a43329c57ce71c7a"
+    },
+    {
+      "file": "Contents/MacOS/JEAuditFlowLauncher",
+      "sha256": "c25436f057c93e74e33291345833132d668a91530350d53d676930a79cc9d5d8"
+    },
+    {
+      "file": "Contents/Resources/JEAuditFlowLauncher.icns",
+      "sha256": "a3edbcd7bbbfb4f895b99ec00b6a931264ffaef0e90520f89240351096901375"
+    },
+    {
+      "file": "Contents/Resources/default-project-root.txt",
+      "sha256": "451acbfe1bf165c162c418e948e68313baad5c523d0dc3a230ec000ade1f8dd0"
+    },
+    {
+      "file": "Contents/_CodeSignature/CodeResources",
+      "sha256": "6ddb160311d234abd3bb15433cc85d1ae801930c357f132625cd5e54ae19092d"
+    }
+  ],
+  "artifact": {
+    "file": "JEAuditFlow-7.7.0-macOS-Launcher.app.zip",
+    "sizeBytes": 1462962,
+    "sha256": "d5ee7494ffd41225916f02265a37573409043630dee44e23e6452a15953d142b",
+    "integrity": "passed"
+  }
+}

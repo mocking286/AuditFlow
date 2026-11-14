@@ -1,0 +1,237 @@
+{
+  "checkedAt": "2026-11-14T07:56:48.768Z",
+  "version": "7.7.0",
+  "sourceDatabase": "jeauditflow_760",
+  "targetDatabase": "jeauditflow_770",
+  "migration": {
+    "status": "verified",
+    "tables": 22,
+    "rows": 927,
+    "fileCopy": {
+      "count": 16,
+      "bytes": 2295535,
+      "sha256": "45007e790495f9a1387f42d1915b7cc911057832a8859b165d92fe14d1be0d67"
+    },
+    "sourceModified": false,
+    "dockerVolumesRemoved": false
+  },
+  "sourceHashesUnchanged": true,
+  "targetCounts": [
+    {
+      "name": "auditflow_accounts",
+      "sourceRows": 6,
+      "currentTargetRows": 6
+    },
+    {
+      "name": "auditflow_assessor_records",
+      "sourceRows": 744,
+      "currentTargetRows": 744
+    },
+    {
+      "name": "auditflow_evidence_items",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_feedback",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_fileanalyst_attachments",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_jira_issues",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_project_events",
+      "sourceRows": 146,
+      "currentTargetRows": 146
+    },
+    {
+      "name": "auditflow_project_locks",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_project_members",
+      "sourceRows": 14,
+      "currentTargetRows": 14
+    },
+    {
+      "name": "auditflow_project_presence",
+      "sourceRows": 1,
+      "currentTargetRows": 1
+    },
+    {
+      "name": "auditflow_projects",
+      "sourceRows": 8,
+      "currentTargetRows": 8
+    },
+    {
+      "name": "auditflow_sessions",
+      "sourceRows": 2,
+      "currentTargetRows": 2
+    },
+    {
+      "name": "auditflow_shared_finding_links",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_shared_findings",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_shared_glossary",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_shared_translations",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "auditflow_users",
+      "sourceRows": 6,
+      "currentTargetRows": 6
+    },
+    {
+      "name": "content_objects",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "content_revisions",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "release_content",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "sync_conflicts",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    },
+    {
+      "name": "sync_outbox",
+      "sourceRows": 0,
+      "currentTargetRows": 0
+    }
+  ],
+  "nativeDatabase": {
+    "mysqlVersion": "26.10.0",
+    "storageEngine": "InnoDB"
+  },
+  "jiraFlowAfterRestart": {
+    "revision": "2",
+    "projects": 9,
+    "issues": 16,
+    "users": 4,
+    "events": 8
+  },
+  "health": {
+    "auditflow": {
+      "httpStatus": 200,
+      "status": "ok",
+      "version": "7.7.0"
+    },
+    "fileAnalyst": {
+      "httpStatus": 200,
+      "status": "ok",
+      "version": "6.5.0",
+      "storage": "mysql"
+    },
+    "jiraFlow": {
+      "httpStatus": 200,
+      "status": "ok",
+      "version": "2.1.0",
+      "storage": {
+        "engine": "InnoDB",
+        "provider": "mysql",
+        "healthy": true,
+        "issues": 16,
+        "revision": 2,
+        "projects": 9,
+        "events": 8,
+        "users": 4
+      }
+    },
+    "aiBridge": {
+      "httpStatus": 200,
+      "status": "ok",
+      "version": "7.7.0"
+    }
+  },
+  "installedLauncher": {
+    "version": "7.7.0",
+    "matchesPackagedBundle": true
+  },
+  "bridgeRepair": {
+    "checkedAt": "2026-11-14T16:42:05.009Z",
+    "status": "verified-preview-final-login-pending",
+    "sourceArchiveSha256": "b410a8e3416fe14a2948d4466bd6cd50bcd5ca9fadd909598520c412e789785b",
+    "sourceArchiveBytes": 142623800,
+    "backendArchiveSha256": "3aedbd7d68d85156424e1ccf33af0a87f9468347425f760fc657288da96b0842",
+    "runtimeMatchesSource": true,
+    "runtimeFileSha256": {
+      "bridge-session.mjs": "5fae91145362323c57457b55f97fa67c21fe1c0ca38cae7adf32640d710a1680",
+      "server.mjs": "3014750871d021a2561f52d8ab8c3a89d29c3223e5dfb950d10272cb8bb81443"
+    },
+    "focusedBridgeTests": { "passed": 44, "failed": 0 },
+    "publicSourceChecks": {
+      "dependenciesInstalled": true,
+      "syntaxCheckPassed": true,
+      "testsPassed": 227,
+      "testsFailed": 0,
+      "internalChecksumEntriesPassed": 384,
+      "changedArchiveEntriesMatchSource": true
+    },
+    "atlassianLauncher": {
+      "testsPassed": 12,
+      "testsFailed": 0,
+      "strictSignatureVerified": true,
+      "installedMatchesBuilt": true,
+      "binarySha256": "fbd09a01f7c26a5e4295184abe028c52b4d7f242c2185ff2cb7a64d748b82f0e"
+    },
+    "freshHealth": {
+      "auditflow": { "httpStatus": 200, "status": "ok", "version": "7.7.0" },
+      "fileAnalyst": { "httpStatus": 200, "status": "ok", "version": "6.5.0" },
+      "jiraFlow": { "httpStatus": 200, "status": "ok", "version": "2.1.0" },
+      "aiBridge": { "httpStatus": 200, "status": "ok", "version": "7.7.0" }
+    },
+    "polarion": {
+      "priorAuthenticatedDocumentNavigationVerified": true,
+      "visibleBrokenImages": 0,
+      "knownDetachedPreload404s": true,
+      "publicDeploymentVerified": false
+    },
+    "jira": {
+      "priorOperatorAuthenticationVerified": true,
+      "nativeContextReadbackVerified": true,
+      "normalPortPostLoginRedirectVerified": true,
+      "finalNormalPortScriptAndStylesheetAdaptersVerified": true,
+      "authenticatedPreviewBoardAndSidebarVerified": true,
+      "previewBoardCards": 20,
+      "previewCardDetailVerified": true,
+      "previewScriptAndStylesheetFailures": 0,
+      "temporaryPreviewStopped": true,
+      "finalSessionAuthenticatedBoardVerified": false
+    },
+    "githubSourceReplaced": true,
+    "githubReleaseTag": "JEAuditFlow-v7.6.0",
+    "githubSourceVerifiedAt": "2026-11-14T16:41:54.054Z",
+    "githubOtherAssetsUnchanged": 17,
+    "githubReleaseMetadataUnchanged": true,
+    "migrationRechecked": false
+  }
+}

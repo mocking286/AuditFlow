@@ -1,0 +1,70 @@
+/* v9.3 Trace-inspired neutral shell and utility rail. */
+:root {
+  --af-surface: #ffffff;
+  --af-surface-muted: #eef1f4;
+  --af-surface-raised: #f8fafc;
+  --af-ink: #203244;
+  --af-muted: #66788a;
+  --af-line: #cfd8e1;
+  --af-accent: #2f6f9f;
+  --af-header: #dcecff;
+  --af-header-line: #a9c5df;
+}
+
+html, body { background: var(--af-surface-muted); color: var(--af-ink); }
+body { color-scheme: light; }
+.jira-header { background: var(--af-header) !important; color: var(--af-ink) !important; border-bottom: 1px solid var(--af-header-line) !important; }
+.jira-header .brand-label strong { color: #18334c; }
+.jira-header .brand-label small { color: #52718b; }
+.jira-header .side-nav > a { color: #36566e; }
+.jira-header .side-nav > a:hover, .jira-header .side-nav > a:focus-visible { background: #c7e1f7; color: #123d5f; }
+.jira-header .side-nav > a.active { background: #c5def3; color: #1e5c8b; box-shadow: inset 0 -3px #2f6f9f; }
+.jira-header .top-actions .icon-btn, .jira-header .top-actions .profile-link { border-color: #adc5d9; background: #edf6fd; color: #244962; }
+.jira-header .top-actions .icon-btn:hover { background: #ffffff; border-color: #7ea8c8; }
+.topbar { background: #f3f5f7 !important; border-bottom-color: var(--af-line) !important; }
+.workspace, .panel, .card, .setting-section, .modal-card, .drawer-card, .jira-project-sidebar, .assessment-command-bar { background: var(--af-surface-raised); }
+.stat-card, .assessment-group, .evidence-file-group, .trace-studio-v81, .grid-assessment-wrap, .data-table { box-shadow: none !important; }
+.jira-header .brand-mark { width: 32px !important; height: 32px !important; border: 0 !important; border-radius: 7px !important; background: transparent !important; }
+.brand-mark img { display: block; width: 32px; height: 32px; border-radius: 7px; }
+
+.trace-utility-rail { position: fixed; left: 16px; bottom: 16px; z-index: 90; display: flex; align-items: center; gap: 7px; padding: 6px; border: 1px solid #c8d4df; border-radius: 8px; background: rgba(248, 250, 252, .96); box-shadow: 0 8px 20px rgba(39, 61, 78, .12); }
+.trace-utility-button { position: relative; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1px solid transparent; border-radius: 5px; background: transparent; color: #253d52; cursor: pointer; }
+.trace-utility-button:hover, .trace-utility-button:focus-visible { border-color: #9cb9cf; background: #e2f0fb; color: #17587f; outline: none; }
+.trace-utility-button svg { width: 18px; height: 18px; }
+.trace-utility-button b { position: absolute; left: 0; bottom: calc(100% + 7px); width: max-content; max-width: 180px; padding: 5px 7px; border: 1px solid #c8d4df; border-radius: 4px; background: #ffffff; color: #29445a; font-size: 10px; font-weight: 650; opacity: 0; pointer-events: none; transform: translateY(3px); transition: opacity .14s ease, transform .14s ease; }
+.trace-utility-button:hover b, .trace-utility-button:focus-visible b { opacity: 1; transform: translateY(0); }
+.trace-utility-button[data-action="toggle-chat"] { color: #1b638f; }
+
+.model-browser-backdrop { position: fixed; inset: 0; z-index: 88; background: rgba(31, 48, 64, .14); }
+.model-browser-panel { position: fixed; left: 16px; bottom: 68px; z-index: 89; width: min(340px, calc(100vw - 32px)); max-height: min(580px, calc(100vh - 100px)); overflow: auto; border: 1px solid #c5d3df; border-radius: 7px; background: #f8fafc; box-shadow: 0 18px 45px rgba(29, 52, 70, .2); }
+.model-browser-panel > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 13px 14px; border-bottom: 1px solid #d2dce5; background: #e9f4fc; }
+.model-browser-panel > header strong { display: block; color: #1e4f70; font-size: 13px; }
+.model-browser-panel > header small { display: block; margin-top: 3px; color: #60798e; font-size: 10px; }
+.model-browser-close { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 1px solid #abc1d3; border-radius: 4px; background: #ffffff; color: #36556b; cursor: pointer; }
+.model-browser-list { display: grid; gap: 7px; padding: 11px; }
+.model-browser-item { padding: 10px; border: 1px solid #d5dee6; border-left: 3px solid #6f9fbe; border-radius: 5px; background: #ffffff; }
+.model-browser-item strong { display: block; font-size: 11px; }
+.model-browser-item small { display: block; margin-top: 4px; color: #6d7f8e; font-size: 10px; line-height: 1.4; }
+.model-browser-item span { display: inline-flex; margin-top: 7px; padding: 2px 5px; border: 1px solid #c6d6e2; border-radius: 3px; color: #35617c; background: #eff7fc; font-size: 9px; }
+.model-browser-footer { padding: 10px 11px 12px; border-top: 1px solid #d2dce5; }
+.latest-change-list { display: grid; gap: 0; }
+.latest-change-list article { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--af-line); }
+.latest-change-list article:last-child { border-bottom: 0; }
+.latest-change-list .activity-icon { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 5px; color: #2f6f9f; background: #e3f0fa; }
+.latest-change-list strong { display: block; font-size: 12px; }
+.latest-change-list p { margin: 3px 0; color: var(--af-muted); font-size: 11px; line-height: 1.4; }
+.latest-change-list small { color: #74889a; font-size: 10px; }
+
+[data-theme="dark"] { --af-surface-muted: #161b22; --af-surface-raised: #20262e; --af-ink: #e6edf3; --af-muted: #aab7c4; --af-line: #384552; --af-accent: #579dff; --af-header: #1b2a3a; --af-header-line: #38556f; }
+[data-theme="dark"] .jira-header { background: var(--af-header) !important; }
+[data-theme="dark"] .topbar { background: #1b222b !important; }
+[data-theme="dark"] .trace-utility-rail, [data-theme="dark"] .model-browser-panel { border-color: var(--af-line); background: #1b222b; }
+[data-theme="dark"] .model-browser-panel > header { background: #223447; border-color: var(--af-line); }
+[data-theme="dark"] .model-browser-item { border-color: var(--af-line); background: #20262e; }
+[data-theme="dark"] .trace-utility-button:hover, [data-theme="dark"] .trace-utility-button:focus-visible { background: #24394d; }
+
+@media (max-width: 760px) {
+  .trace-utility-rail { left: 10px; bottom: 10px; }
+  .trace-utility-button b { display: none; }
+  .model-browser-panel { left: 10px; bottom: 62px; width: min(320px, calc(100vw - 20px)); }
+}

@@ -1,0 +1,55 @@
+{
+  "version": "3.4.0",
+  "templates": [
+    {
+      "id": "tuv-aspice-issue-ledger",
+      "file": "TUV-ASPICE-Audit-Issue-Ledger-2026.pptx",
+      "source": "Public neutral template",
+      "sha256": "7a92eb086035788ecacfbdc2b04cd7153667862fc4e2d5850b4f203ba003e826",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "km-presentation",
+      "file": "km-presentation.pptx",
+      "source": "Public neutral template",
+      "sha256": "e438fa451d7adb312ffec15d3157cb31135a6324307e4c1c010b47607cceac04",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "mbeal-assessment-findings",
+      "file": "mbeal-assessment-findings.xlsx",
+      "source": "Public neutral template",
+      "sha256": "c3577780eafed363c2389bad4228e4774d54c31b4fa1b18bebaf60424f047647",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "tuv-audit-issue-record",
+      "file": "mbeal-assessment-findings.xlsx",
+      "source": "Public neutral template",
+      "sha256": "c3577780eafed363c2389bad4228e4774d54c31b4fa1b18bebaf60424f047647",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "trace-excel",
+      "file": "trace-excel.xlsx",
+      "source": "Public neutral template",
+      "sha256": "b193564e823f3ac921005cd6c722611e55414f205b9668a394bdaa0722ee33a3",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "trace-presentation",
+      "file": "trace-presentation.pptx",
+      "source": "Public neutral template",
+      "sha256": "62a536600a709ffe558d382849d2b5e8cebec2b9fdc1b01745c5b89e58345de5",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    },
+    {
+      "id": "trace-word",
+      "file": "trace-word.docx",
+      "source": "Public neutral template",
+      "sha256": "91f3ba77bf44df6216dafaa5fc24a91615290f275a73c1354493193ec20af79f",
+      "strategy": "No source assessment data; neutral text and media preserve the report generation structure."
+    }
+  ],
+  "publicNeutralTemplates": true
+}
