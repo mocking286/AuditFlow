@@ -262,6 +262,57 @@ output text view has a nonzero initial size and tracks the available width.
 - This is a launcher-only follow-up. The earlier installation/migration receipt
   and Jira/Polarion acceptance retain their original timestamps and scope.
 
+### Access and Compatibility Follow-up
+
+The follow-up client refresh was checked at `2026-11-15T16:31:20Z`.
+It replaced the installed Web Client only. It did not restart application
+services, apply SQL schema, repeat account recovery, or perform a cross-version
+data migration. The previous client directory was retained privately.
+
+- Before and after this refresh, all 20 persistent tables in `jeauditflow_770`
+  had identical canonical row content and structure. Counts remained 6 accounts,
+  6 user profiles, 8 projects, 14 members, 744 assessor records and 187 events.
+- Isolated Microsoft Edge validation at `2026-11-15T16:33:45Z` passed the root
+  promotional entry, workbench CTA, rejected wrong password, configured
+  administrator sign-in, administrator identity readback, session reload,
+  same-origin deep link, logout-to-promotion and anonymous-after-logout checks.
+  It recorded zero page errors, console errors and failed requests. Business
+  writes were guarded during this check; no request hit that guard and all 20
+  persistent tables remained identical. This is not a business-editing or
+  normal-profile stored-cache acceptance claim.
+- The promotional language control previously inherited a 35-pixel workspace
+  icon width. Its width is now scoped correctly. Chinese/English controls fit
+  without overlap or horizontal page overflow at 320, 390, 768, 1024 and 1440
+  pixels. Edge page checks used 1440x1000 and 390x844 viewports.
+- Hosted loopback pages now use session-bearing same-origin JiraFlow discovery,
+  not legacy companion-port scanning. Extension/file/controlled desktop
+  discovery remains available. The new discovery cases failed before the fix.
+- The complete development WebApp suite passed 564/564 tests. Recovery and
+  read-only upgrade/diagnostic suites passed 46/46; the exact-package acceptance
+  gate passed 29/29. Packaging/sanitization regression passed 13 tests with 2
+  historical launcher-archive checks skipped. The current 7.7 launcher was
+  separately rebuilt and verified before and after archive extraction.
+- Launcher catalog, responsiveness and real window suites passed. The installed
+  7.7 launcher matched the freshly built bundle byte-for-byte. Native
+  accessibility inspection showed the selected version, visible controls and
+  healthy AuditFlow, FileAnalyst, JiraFlow and MySQL indicators.
+
+General data unification remains blocked pending identity/content conflict
+review and a migration writer. Only read-only inventory, diagnostics, future
+format protection and migration/rollback guidance are delivered here.
+The earlier stop/install/start verification recorded a different global
+persistent-data fingerprint, but retained no row/table-level baseline.
+The exact historical changed rows cannot be reconstructed. Current 20-table
+stability and this client-only preservation check do not close that historical
+evidence gap. JiraFlow has a known startup save/revision-increment path, which
+is a possible contributor, not proof of the sole historical cause.
+
+The release assembler now rejects stale/unbound local acceptance before
+modifying release files. Exact artifact sizes, hashes and candidate generation
+must match. General data-upgrade status is separate from historical native-copy
+evidence. A packages-only assembly does not claim a fresh complete installation,
+production deployment, data migration, clean-Mac acceptance or Apple notarization.
+
 ### Remaining External Checks
 
 - Entra tenant/client registration and credentials were absent. Actual SSO

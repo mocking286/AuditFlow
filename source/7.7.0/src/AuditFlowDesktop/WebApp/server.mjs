@@ -2602,7 +2602,7 @@ function resolveRequestPath(requestUrl) {
   const pathname = decodeURIComponent(new URL(requestUrl, `http://127.0.0.1:${port}`).pathname);
   if (pathname.split("/").some(part => part.startsWith(".")) || /^\/(?:server|output)(?:\/|$)/.test(pathname) || /\.(?:env|sql|map)$/i.test(pathname)) return null;
   if (pathname === "/") {
-    return path.join(applicationRoot, "index.html");
+    return path.join(applicationRoot, "landing.html");
   }
   if (pathname === "/aspice-audit-master/" || pathname === "/aspice-audit-master/index.html") {
     return path.join(applicationRoot, "aspice-audit-master-2.3.1-en.html");

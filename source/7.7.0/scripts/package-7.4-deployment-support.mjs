@@ -30,6 +30,13 @@ const payload = [
     ["local-deploy/scripts/native-mysql.sh"],
     ["local-deploy/scripts/migrate-7.6-to-native-7.7.mjs"],
     ["local-deploy/scripts/native-migration-files.mjs"],
+    ["local-deploy/scripts/account-recovery.mjs"],
+    ["local-deploy/scripts/recover-configured-admin.mjs"],
+    ["local-deploy/scripts/data-upgrade-inventory.mjs"],
+    ["local-deploy/scripts/data-upgrade-plan.mjs"],
+    ["local-deploy/scripts/data-upgrade-diagnostics.mjs"],
+    ["docs/JEAuditFlow-7.7.0-Data-Upgrade-ZH.md"],
+    ["docs/JEAuditFlow-7.7.0-Access-Recovery-ZH.md"],
     ["local-deploy/scripts/prepare-7.7-runtimes.mjs"]
   ] : []),
   ...(version === "7.4.0" ? [

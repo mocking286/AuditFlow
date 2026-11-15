@@ -2,9 +2,9 @@
   "product": "JEAuditFlow",
   "version": "7.7.0",
   "packageType": "deployment-support",
-  "generatedAt": "2026-11-15T09:27:16.300Z",
+  "generatedAt": "2026-11-15T16:33:39.982Z",
   "sourceBuild": "7.7.0-candidate",
-  "sourceReleaseGeneratedAt": "2026-11-14T16:37:00.479Z",
+  "sourceReleaseGeneratedAt": "2026-11-15T16:27:44.207Z",
   "deploymentTargets": [
     "macos-native-with-native-mysql"
   ],
@@ -14,28 +14,28 @@
   "applicationArchives": [
     {
       "file": "JEAuditFlow-7.7.0-Web-Client.zip",
-      "sizeBytes": 76342394,
-      "sha256": "9dc20b629d0d6ab2bcf4006a21dc501c5491af7b717e5cc9e3e5f0b80842655f"
+      "sizeBytes": 76344149,
+      "sha256": "72f327a551fc9b9f23c56001d1b33ab9ff55961d339c40c28e942d352af62222"
     },
     {
       "file": "JEAuditFlow-7.7.0-Backend.zip",
-      "sizeBytes": 3363568,
-      "sha256": "3aedbd7d68d85156424e1ccf33af0a87f9468347425f760fc657288da96b0842"
+      "sizeBytes": 3363668,
+      "sha256": "feeb86b131c25871381267ffd7056f0ab931fc0448bb183241642806a6201af8"
     },
     {
       "file": "JEAuditFlow-7.7.0-Browser-Extension.zip",
-      "sizeBytes": 69747206,
-      "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6"
+      "sizeBytes": 69748954,
+      "sha256": "c2575def2c4951f57da6b0af52b9620756303cb9754db19de7fa269468dc5e23"
     },
     {
       "file": "JEAuditFlow-7.7.0-Database.zip",
-      "sizeBytes": 16327,
-      "sha256": "747b6e5b4bfe9cebd6e26c052723f453456964530645a0728d25f49f601d0438"
+      "sizeBytes": 16326,
+      "sha256": "d03bff0260667799025496ed542e81d5d1d21ec587c0a7b9870f736ce8b75318"
     },
     {
       "file": "JEAuditFlow-7.7.0-Database.tar.gz",
-      "sizeBytes": 12441,
-      "sha256": "5c033ff817a6f243dddc5243540a89cfdcf1d596836450fd413ab3af558a7a13"
+      "sizeBytes": 12452,
+      "sha256": "790551eabaf8e04ac6a31bde409a4b38163bc8153089dc4e9ee0efeb1555f8d2"
     }
   ],
   "files": [
@@ -49,8 +49,8 @@
     {
       "source": "local-deploy/scripts/jeauditflow-local.sh",
       "file": "local-deploy/scripts/jeauditflow-local.sh",
-      "sizeBytes": 59993,
-      "sha256": "427bea0cea926c76f84cba4574b8f924d7df6380aa95aa71cd10e6dc86e7412e",
+      "sizeBytes": 58963,
+      "sha256": "9194d29356dbc53b29a1736335eac47ac6a5a50c063f22136837fe5167d6e80c",
       "executable": true
     },
     {
@@ -77,8 +77,8 @@
     {
       "source": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
       "file": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
-      "sizeBytes": 65628,
-      "sha256": "e01fe74ffdbef3d5b12b30c85fd304b7b4fd28b3aa906b653e5e0b46f20ddf37",
+      "sizeBytes": 64513,
+      "sha256": "f5f922120fc3c646585af9c189fb74572b0b293ecee79cc1d7e2e25880d1e347",
       "executable": false
     },
     {
@@ -98,8 +98,8 @@
     {
       "source": "local-deploy/launcher/Tests/RuntimeCatalogTests.swift",
       "file": "local-deploy/launcher/Tests/RuntimeCatalogTests.swift",
-      "sizeBytes": 8932,
-      "sha256": "2b34dfa9ac789a5010c82914d23c71b299d7a24eb0e842017029c201da623cdb",
+      "sizeBytes": 9201,
+      "sha256": "ae7830d8c8fd1ce555965f4082008f1e6586c67847540d10b8dfcb4c155c6b46",
       "executable": false
     },
     {
@@ -145,6 +145,55 @@
       "executable": false
     },
     {
+      "source": "local-deploy/scripts/account-recovery.mjs",
+      "file": "local-deploy/scripts/account-recovery.mjs",
+      "sizeBytes": 7421,
+      "sha256": "ab8e2234d53db93c7a7394853e7ad079d4cca79f47979aadffbe4095d98ff626",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/recover-configured-admin.mjs",
+      "file": "local-deploy/scripts/recover-configured-admin.mjs",
+      "sizeBytes": 3091,
+      "sha256": "4d16d610841f73041a675a65a92009d9eef4286dd2d6d6dce4a1384cbbe9a444",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/data-upgrade-inventory.mjs",
+      "file": "local-deploy/scripts/data-upgrade-inventory.mjs",
+      "sizeBytes": 13222,
+      "sha256": "06bb0b4719e573892665e7cc52d51210d1d16dc8940d026e6c13007cbd89abd4",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/data-upgrade-plan.mjs",
+      "file": "local-deploy/scripts/data-upgrade-plan.mjs",
+      "sizeBytes": 17349,
+      "sha256": "89fa824e0907f1c081b64627d9911906524bf9573ee90634e0f40d3ae2e3c553",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/scripts/data-upgrade-diagnostics.mjs",
+      "file": "local-deploy/scripts/data-upgrade-diagnostics.mjs",
+      "sizeBytes": 15290,
+      "sha256": "1255cb8ef94fd00cadd83f8663ef95b40c25e00067dfd30a7bad5507a9835cfe",
+      "executable": false
+    },
+    {
+      "source": "docs/JEAuditFlow-7.7.0-Data-Upgrade-ZH.md",
+      "file": "docs/JEAuditFlow-7.7.0-Data-Upgrade-ZH.md",
+      "sizeBytes": 17791,
+      "sha256": "97734227a4d53a0cd90c439daea7142b5e9177a1b83b515a806efcb3a4714143",
+      "executable": false
+    },
+    {
+      "source": "docs/JEAuditFlow-7.7.0-Access-Recovery-ZH.md",
+      "file": "docs/JEAuditFlow-7.7.0-Access-Recovery-ZH.md",
+      "sizeBytes": 4541,
+      "sha256": "c03d181c5fe7633b89ae7b2f2d25f42c636149296ed6a1954b4bf2faeade7669",
+      "executable": false
+    },
+    {
       "source": "local-deploy/scripts/prepare-7.7-runtimes.mjs",
       "file": "local-deploy/scripts/prepare-7.7-runtimes.mjs",
       "sizeBytes": 3364,
@@ -154,8 +203,8 @@
   ],
   "artifact": {
     "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
-    "sizeBytes": 157965,
-    "sha256": "9572a490105d01b7be8bb6ec94be389232e69c4b60d36a321931e691e1ba057f",
+    "sizeBytes": 189565,
+    "sha256": "3bdf80c1d67c51db5e0afa70fd2df43ddf545390ec54eca2c0612e5c21f965b1",
     "integrity": "passed",
     "extractedAllowlist": "passed",
     "syntax": {

@@ -966,6 +966,30 @@
     { content: 0, itemText: 180, description: 180, itemLimit: 160, traceItemLimit: 600, locatorLimit: 30, locatorText: 120, tableLimit: 2, tableRows: 6, tableColumns: 8, cellText: 80, recordText: 1200, assessmentText: 700, runLimit: 2, logLimit: 60 }
   ];
   let workspaceRestoreStarted = false;
+  let workspaceCompatibilityError = null;
+
+  function workspaceFormatError(version, maximum = DB_VERSION, format = "workspace") {
+    return Object.assign(new Error(`Unsupported ${format} format ${String(version)}; this client supports 0-${maximum}. Original data has been preserved. Use a compatible newer client or restore a backup into a separate workspace.`), {
+      code: "unsupported-workspace-version", format, storedVersion: version, supportedVersion: maximum
+    });
+  }
+  function assertWorkspaceFormat(workspace) {
+    const version = workspace?.version;
+    if (version !== undefined && (!Number.isInteger(version) || version < 0 || version > DB_VERSION)) throw workspaceFormatError(version);
+    for (const project of [...(workspace?.standardProjects || []), ...(workspace?.customAudits || [])]) assertProjectSnapshotFormat(project);
+    return workspace;
+  }
+  function assertProjectSnapshotFormat(project) {
+    // snapshotVersion belongs to the established metadata-only envelope.
+    // Other project version/revision fields can be assessment ordinals.
+    const fields = [["workspaceFormatVersion", DB_VERSION]];
+    if (project?.snapshotPolicy === "metadata-only") fields.push(["snapshotVersion", 2]);
+    for (const [field, maximum] of fields) {
+      const version = project?.[field];
+      if (version !== undefined && (!Number.isInteger(version) || version < 0 || version > maximum)) throw workspaceFormatError(version, maximum, field);
+    }
+    return project;
+  }
 
   function storageText(value, maximum) {
     const text = String(value ?? "");
@@ -982,7 +1006,7 @@
     const headers = (table?.headers || []).slice(0, policy.tableColumns).map(value => storageText(value, policy.cellText));
     const rows = (table?.rows || []).slice(0, policy.tableRows).map(row => (row || []).slice(0, policy.tableColumns).map(value => storageText(value, policy.cellText)));
     return {
-      name: storageText(table?.name, 180), source: storageText(table?.source, 180), headers, rows,
+      ...table, name: storageText(table?.name, 180), source: storageText(table?.source, 180), headers, rows,
       rowCount: Number(table?.rowCount || rows.length),
       helix: table?.helix ? compactPlainValue(table.helix, policy) : undefined
     };
@@ -991,7 +1015,7 @@
     const text = storageText(item?.text || item?.description, policy.itemText);
     const description = storageText(item?.description, policy.description);
     const compact = {
-      id: storageText(item?.id, 180), externalId: storageText(item?.externalId, 180), catalogCode: storageText(item?.catalogCode, 80), title: storageText(item?.title, 320), text,
+      ...item, id: storageText(item?.id, 180), externalId: storageText(item?.externalId, 180), catalogCode: storageText(item?.catalogCode, 80), title: storageText(item?.title, 320), text,
       locator: storageText(item?.locator, 280), chapter: storageText(item?.chapter, 220),
       metadata: compactPlainValue(item?.metadata || {}, policy), primaryProcess: storageText(item?.primaryProcess, 40),
       relatedProcesses: (item?.relatedProcesses || []).slice(0, 10).map(value => storageText(value, 40)),
@@ -1022,6 +1046,7 @@
     if (assessment?.sourceAssessment) {
       const source = assessment.sourceAssessment;
       compact.sourceAssessment = {
+        ...source,
         importId: source.importId,
         sourceFile: storageText(source.sourceFile, 320),
         sourceSheet: storageText(source.sourceSheet || source.sheet, 160),
@@ -1063,7 +1088,7 @@
       tables: (tables || []).slice(0, policy.tableLimit).map(table => compactEvidenceTable(table, policy)),
       atomicItems: (atomicItems || []).slice(0, itemLimit).map(item => compactAtomicItem(item, policy)),
       locators: (locators || []).slice(0, policy.locatorLimit).map(locator => ({ ...compactPlainValue(locator, policy), locator: storageText(locator?.locator, 280), excerpt: storageText(locator?.excerpt, policy.locatorText), excerptEn: storageText(locator?.excerptEn, policy.locatorText) })),
-      visualAssets: (visualAssets || []).slice(0, 240).map(asset => ({ id: storageText(asset?.id, 180), name: storageText(asset?.name, 260), path: storageText(asset?.path, 320), mime: storageText(asset?.mime || asset?.type, 120), size: Number(asset?.size || 0) })),
+      visualAssets: (visualAssets || []).slice(0, 240).map(asset => ({ ...asset, id: storageText(asset?.id, 180), name: storageText(asset?.name, 260), path: storageText(asset?.path, 320), mime: storageText(asset?.mime || asset?.type, 120), size: Number(asset?.size || 0) })),
       sheetRows: [],
       workbookAssessment: workbookAssessment ? compactPlainValue(workbookAssessment, policy) : undefined,
       storageIndex: { contentChars: String(content || "").length, tableCount: (tables || []).length, atomicItemCount: (atomicItems || []).length, cachedItemCount: Math.min((atomicItems || []).length, itemLimit) }
@@ -1071,14 +1096,15 @@
   }
   function compactRecord(record, policy) {
     const { attachments, ...metadata } = record || {};
-    return { ...metadata, text: storageText(record?.text, policy.recordText), attachments: (attachments || []).slice(0, 24).map(item => ({ id: storageText(item?.id, 180), name: storageText(item?.name, 260), type: storageText(item?.type, 120), size: Number(item?.size || 0), lastModified: item?.lastModified || 0 })) };
+    return { ...metadata, text: storageText(record?.text, policy.recordText), attachments: (attachments || []).slice(0, 24).map(item => ({ ...item, id: storageText(item?.id, 180), name: storageText(item?.name, 260), type: storageText(item?.type, 120), size: Number(item?.size || 0), lastModified: item?.lastModified || 0 })) };
   }
   function compactProject(project, policy) {
+    if (project?.assessmentState === "Closed" || project?.status === "complete" || project?.status === "archived") return { ...project };
     const compact = { ...project };
     compact.evidence = (project?.evidence || []).map(evidence => compactEvidence(evidence, policy));
     compact.assessments = (project?.assessments || []).map(assessment => compactAssessment(assessment, policy));
     compact.records = (project?.records || []).slice(0, 600).map(record => compactRecord(record, policy));
-    compact.runs = (project?.runs || []).slice(0, policy.runLimit).map(run => ({ ...run, assessments: (run?.assessments || []).slice(0, 300).map(assessment => compactAssessment(assessment, policy)), changeHistory: (run?.changeHistory || []).slice(0, 60).map(item => compactPlainValue(item, policy) ) }));
+    compact.runs = project?.runs || [];
     compact.operationLog = (project?.operationLog || []).slice(0, 120).map(item => compactPlainValue(item, policy));
     compact.logs = (project?.logs || []).slice(0, policy.logLimit).map(item => ({ ...compactPlainValue(item, policy), comment: storageText(item?.comment, 700) }));
     compact.aiReviews = (project?.aiReviews || []).slice(0, 8).map(review => ({ ...compactPlainValue(review, policy), rawOutput: "" }));
@@ -1089,15 +1115,12 @@
     compact.supportIssues = (project?.supportIssues || []).slice(0, 300).map(item => compactPlainValue(item, policy));
     compact.sourceIssues = (project?.sourceIssues || []).slice(0, 300).map(item => compactPlainValue(item, policy));
     compact.aiReviewImports = (project?.aiReviewImports || []).slice(0, 24).map(item => compactPlainValue(item, policy));
-    compact.baselines = (project?.baselines || []).slice(0, 40).map(item => compactPlainValue(item, policy));
+    compact.baselines = project?.baselines || [];
     return compact;
   }
   function serializedWorkspace(workspace, cacheLevel = 0) {
     const policy = WORKSPACE_CACHE_POLICIES[Math.min(Math.max(Number(cacheLevel) || 0, 0), WORKSPACE_CACHE_POLICIES.length - 1)];
     const copy = { ...workspace, settings: { ...(workspace?.settings || {}) } };
-    for (const project of [...(copy.standardProjects || []), ...(copy.customAudits || [])]) {
-      project.records = (project.records || []).map(record => ({ ...record, evidenceReferences: String(record.evidenceReferences || "") }));
-    }
     copy.standardProjects = (workspace?.standardProjects || []).map(project => compactProject(project, policy));
     copy.customAudits = (workspace?.customAudits || []).map(project => compactProject(project, policy));
     copy.deletedProjects = (workspace?.deletedProjects || []).slice(0, 12).map(item => ({ ...item, project: item?.project ? compactProject(item.project, policy) : null }));
@@ -1109,21 +1132,59 @@
   }
   function isQuotaExceeded(error) { return error?.name === "QuotaExceededError" || error?.code === 22 || error?.code === 1014; }
   function writeWorkspaceCache(workspace) {
+    if (workspaceCompatibilityError) return false;
+    try {
+      assertWorkspaceFormat(workspace);
+      const existing = localStorage.getItem(DB_KEY);
+      if (existing) assertWorkspaceFormat(JSON.parse(existing));
+    } catch (error) {
+      if (error?.code === "unsupported-workspace-version") workspaceCompatibilityError = error;
+      return false;
+    }
     for (let level = 0; level < WORKSPACE_CACHE_POLICIES.length; level++) {
       try { localStorage.setItem(DB_KEY, serializedWorkspace(workspace, level)); return true; }
       catch (error) { if (!isQuotaExceeded(error)) return false; }
     }
     return false;
   }
-  function persistWorkspaceSnapshot(workspace, savedAt = Date.now()) {
-    return workspaceStoreRequest("readwrite", store => store.put({ id: WORKSPACE_SNAPSHOT_ID, version: DB_VERSION, savedAt, workspace }))
-      .catch(() => false);
+  async function persistWorkspaceSnapshot(workspace, savedAt = Date.now()) {
+    if (workspaceCompatibilityError) return false;
+    let database;
+    try {
+      assertWorkspaceFormat(workspace);
+      database = await openAttachmentDatabase();
+      return await new Promise((resolve, reject) => {
+        // Read and write in one transaction so another tab cannot upgrade the
+        // stored format between the compatibility check and replacement.
+        const transaction = database.transaction(WORKSPACE_STORE, "readwrite");
+        const store = transaction.objectStore(WORKSPACE_STORE);
+        const request = store.get(WORKSPACE_SNAPSHOT_ID);
+        let failure;
+        request.onsuccess = () => {
+          try {
+            const existing = request.result;
+            if (existing) { assertWorkspaceFormat(existing); assertWorkspaceFormat(existing.workspace); }
+            assertWorkspaceFormat(workspace);
+            if (workspaceCompatibilityError) throw workspaceCompatibilityError;
+            store.put({ id: WORKSPACE_SNAPSHOT_ID, version: DB_VERSION, savedAt, workspace });
+          } catch (error) { failure = error; transaction.abort(); }
+        };
+        request.onerror = () => { failure = request.error; };
+        transaction.oncomplete = () => resolve(true);
+        transaction.onabort = () => reject(failure || transaction.error || new Error("Workspace snapshot was not saved"));
+        transaction.onerror = () => { failure ||= transaction.error; };
+      });
+    } catch (error) {
+      if (error?.code === "unsupported-workspace-version") workspaceCompatibilityError = error;
+      return false;
+    } finally { database?.close(); }
   }
   async function restoreWorkspaceSnapshot() {
     if (workspaceRestoreStarted) return false;
     workspaceRestoreStarted = true;
     try {
       const snapshot = await workspaceStoreRequest("readonly", store => store.get(WORKSPACE_SNAPSHOT_ID));
+      if (snapshot) { assertWorkspaceFormat(snapshot); assertWorkspaceFormat(snapshot.workspace); }
       const localSavedAt = Number(db?._workspaceCacheSavedAt || 0);
       if (!snapshot?.workspace || Number(snapshot.savedAt || 0) < localSavedAt) return false;
       const restored = migrateDatabase(snapshot.workspace);
@@ -1133,13 +1194,17 @@
       writeWorkspaceCache(db);
       render();
       return true;
-    } catch (_) { return false; }
+    } catch (error) {
+      if (error?.code === "unsupported-workspace-version") { workspaceCompatibilityError = error; throw error; }
+      return false;
+    }
   }
   function currentDashboardFingerprint() {
     return (db.standardProjects || []).map(p => `${p.id}|${p.status}|${p.progress}|${(p.evidence||[]).length}|${(p.assessments||[]).filter(a=>a.reviewed).length}|${(p.records||[]).filter(r=>r.type==="weakness"&&!["已关闭","Closed"].includes(r.closureState)).length}`).join("~") + `|act:${(db.activity||[]).length}|cus:${(db.customAudits||[]).length}`;
   }
   function saveNow() {
     saveQueued = false;
+    if (workspaceCompatibilityError) return;
     const savedAt = Date.now();
     db._workspaceCacheSavedAt = savedAt;
     writeWorkspaceCache(db);
@@ -4699,7 +4764,9 @@
     return result;
   }
   function cloudProjectSnapshot(project) {
+    assertProjectSnapshotFormat(project);
     const snapshot = deepCopy(project);
+    snapshot.workspaceFormatVersion = DB_VERSION;
     // Parsed representations are collaborative project data: colleagues need
     // the same document text, locators, tables, items, scores and configured
     // scope to review the current assessment.  Original attachment binaries
@@ -5026,6 +5093,7 @@
     const entry = remoteProjectEntry(remote);
     const snapshot = entry.snapshot || remote?.snapshot;
     if (!snapshot || typeof snapshot !== "object") throw new Error("Remote project has no usable snapshot");
+    assertProjectSnapshotFormat(snapshot);
     const rawId = String(snapshot.id || project.id || MBEAL_ITMS_PROJECT_ID);
     const localId = MBEAL_ITMS_LEGACY_PROJECT_IDS.has(rawId) ? MBEAL_ITMS_PROJECT_ID : rawId;
     const merged = initializeProjectModel({ ...deepCopy(snapshot), id: localId, collaboration: { ...(snapshot.collaboration || {}) } });
@@ -5092,6 +5160,7 @@
         const entry = remoteProjectEntry(remote);
         const snapshot = entry.snapshot || remote?.snapshot;
         if (!snapshot || typeof snapshot !== "object") continue;
+        assertProjectSnapshotFormat(snapshot);
         const rawId = String(snapshot.id || (cloudId === MBEAL_ITMS_CLOUD_PROJECT_ID ? MBEAL_ITMS_PROJECT_ID : cloudId));
         const localId = MBEAL_ITMS_LEGACY_PROJECT_IDS.has(rawId) ? MBEAL_ITMS_PROJECT_ID : rawId;
         fetched.push({ cloudId, localId, snapshot, entry, summary });
@@ -5184,7 +5253,48 @@
     return `<div class="assessment-command-cloud cloud-workspace-mode" aria-live="polite"><span class="cloud-status-dot ${esc(state)}"></span><span><strong>${esc(label)} project · r${Number(project.collaboration?.remoteRevision || 0)}</strong><small>Changes, parsed document representations, scores and project configuration synchronize through the shared service. Original attachment binaries remain on the uploading browser.</small></span><span class="cloud-presence" aria-label="${active.length} collaborators active">${avatars}${count}</span><button type="button" class="action-icon" data-action="refresh-collaboration" data-project="${esc(project.id)}" title="Refresh shared project" aria-label="Refresh shared project">${icon("refresh")}</button></div>`;
   }
 
+  function preserveControlledWorkspaceData(stored) {
+    return ["standardProjects", "customAudits"].flatMap(collection => (stored[collection] || []).map((project, index) => ({
+      collection, index, project: deepCopy(project),
+      closed: project.assessmentState === "Closed" || project.status === "complete" || project.status === "archived"
+    })));
+  }
+  function restoreControlledWorkspaceData(stored, originals, fromVersion) {
+    for (const entry of originals) {
+      const projects = stored[entry.collection] ||= [];
+      let index = projects.findIndex(project => project.id === entry.project.id);
+      if (index < 0) { index = Math.min(entry.index, projects.length); projects.splice(index, 0, deepCopy(entry.project)); }
+      const project = projects[index];
+      if (entry.closed) {
+        Object.keys(project).forEach(key => delete project[key]);
+        Object.assign(project, deepCopy(entry.project));
+      } else {
+        // Migration may add UI defaults, but prior decisions and immutable
+        // assessment versions must not be regenerated by a newer engine.
+        for (const key of ["assessments", "runs", "baselines"]) {
+          if (Object.hasOwn(entry.project, key)) project[key] = deepCopy(entry.project[key]);
+        }
+      }
+      if (fromVersion < DB_VERSION) {
+        stored.compatibilityReview ||= {};
+        stored.compatibilityReview.projects ||= {};
+        stored.compatibilityReview.projects[project.id] ||= {
+          status: "review-required", fromWorkspaceVersion: fromVersion, toWorkspaceVersion: DB_VERSION,
+          formalConclusionsPreserved: true, reason: "Workspace structure upgraded; an assessor must review applicability of newer validation rules separately."
+        };
+      }
+    }
+    return stored;
+  }
   function migrateDatabase(stored) {
+    assertWorkspaceFormat(stored);
+    if (!stored || !Array.isArray(stored.standardProjects)) return null;
+    const fromVersion = stored.version || 0;
+    const originals = preserveControlledWorkspaceData(stored);
+    const migrated = migrateDatabaseContents(deepCopy(stored));
+    return migrated ? restoreControlledWorkspaceData(migrated, originals, fromVersion) : null;
+  }
+  function migrateDatabaseContents(stored) {
     if (!stored || !Array.isArray(stored.standardProjects)) return null;
     if ((stored.version || 0) < 5) {
       stored.standardProjects.forEach(project => {
@@ -5756,7 +5866,7 @@
       stored.settings.workspaceCachePolicy = "indexeddb-full-localstorage-index";
       [...(stored.standardProjects || []), ...(stored.customAudits || [])].forEach(project => {
         (project.evidence || []).forEach(evidence => {
-          evidence.visualAssets = (evidence.visualAssets || []).map(asset => ({ id: asset.id, name: asset.name, path: asset.path, mime: asset.mime || asset.type, size: Number(asset.size || 0) }));
+          evidence.visualAssets = (evidence.visualAssets || []).map(asset => ({ ...asset, id: asset.id, name: asset.name, path: asset.path, mime: asset.mime || asset.type, size: Number(asset.size || 0) }));
           (evidence.atomicItems || []).forEach(item => { item.visualAssetIds = Array.isArray(item.visualAssetIds) ? item.visualAssetIds : []; });
         });
       });
@@ -5832,9 +5942,6 @@
         item.achievementPercent = item.sourceAssessment ? importedRatingScore(item.sourceAssessment.originalScore, item.rating) : (RATING_SCORE[item.rating] || 0);
       });
       if(!project.importSource && project.qualityModelVersion!==6){
-        if(project.assessmentState==="Closed"&&!assessmentQuality(project).ready){
-          project.assessmentState="Open";project.status="review";project.progress=Math.min(99,project.progress||99);project.logs||=[];project.logs.unshift({id:id("log"),date:new Date().toISOString(),action:"Open",user:"AuditFlow",comment:"证据充分性门禁升级后发现未复核或证据缺口，评估已自动重新打开。"});
-        }
         project.qualityModelVersion=6;
       }
     });
@@ -5878,6 +5985,8 @@
     if (WEB_MODE) {
       let stored;
       try { stored=JSON.parse(localStorage.getItem(DB_KEY)||"null"); } catch (_) {}
+      assertWorkspaceFormat(stored);
+      if (stored && (stored.version || 0) < DB_VERSION) stored = migrateDatabase(stored);
       if(!stored) {
         stored=seedDatabase();
         stored.standardProjects=[];stored.customAudits=[];stored.activity=[];stored.deletedProjects=[];
@@ -5890,10 +5999,12 @@
       const raw = localStorage.getItem(DB_KEY);
       if (!raw) throw new Error("empty workspace");
       const stored = JSON.parse(raw);
+      assertWorkspaceFormat(stored);
       // v6.6 fast path: when the stored version is current, do not re-run the
       // full migration and do not serialize the whole database back on every
       // startup. Cheap shape defaults and idempotent imports still run.
       if (stored && stored.version === DB_VERSION) {
+        const originals = preserveControlledWorkspaceData(stored);
         stored.settings ||= {};
         stored.deletedProjects = Array.isArray(stored.deletedProjects) ? stored.deletedProjects : [];
         stored.auditModels ||= [];
@@ -5914,6 +6025,7 @@
           (project.evidence || []).forEach(evidence => normalizeEvidenceAtomicItems(evidence, project.processes || []));
           ensureV84Project(project);
         });
+        restoreControlledWorkspaceData(stored, originals, DB_VERSION);
         writeWorkspaceCache(stored);
         return stored;
       }
@@ -5923,6 +6035,7 @@
         return migrated;
       }
     } catch (error) {
+      if (error?.code === "unsupported-workspace-version") { workspaceCompatibilityError = error; throw error; }
       if (error?.message !== "empty workspace") console.warn("Workspace load failed", error);
     }
     const seeded = seedDatabase();
@@ -7812,6 +7925,7 @@
 
   function getPractice(processId, code) { return (PRACTICE_LIBRARY[processId] || []).find(p => p[0] === code); }
   function initializeProjectModel(project) {
+    assertProjectSnapshotFormat(project);
     // Remote snapshots can be partial while they are being hydrated. Keep all
     // collection fields usable before any assessment job or render path reads
     // their length or iterates them.
@@ -16762,9 +16876,12 @@ function processDetailModal(processId) {
   const root = document.getElementById("app");
   if (!root) return;
   const heading = document.createElement("h2");
-  heading.textContent = "工作台加载失败 / Workbench could not start";
+  const incompatible = error?.code === "unsupported-workspace-version";
+  heading.textContent = incompatible ? "数据版本不兼容 / Incompatible workspace format" : "工作台加载失败 / Workbench could not start";
   const detail = document.createElement("p");
-  detail.textContent = "本地数据未被清除，请重新加载。/ Local data has not been cleared. Please reload.";
+  detail.textContent = incompatible
+    ? "此数据格式超出当前客户端支持范围，已停止写入并保留原始数据。请使用兼容的新版软件；需要回滚时，将升级前备份还原到独立数据库或工作区。/ Persistent writes are blocked and original data is preserved. Open a compatible newer client, or restore a pre-upgrade backup into a separate database or workspace."
+    : "本地数据未被清除，请重新加载。/ Local data has not been cleared. Please reload.";
   const retry = document.createElement("button");
   retry.type = "button";
   retry.className = "btn primary";

@@ -2,12 +2,14 @@
   "product": "JEAuditFlow",
   "version": "7.7.0",
   "candidate": false,
-  "productRuntimeDeployed": true,
+  "productRuntimeDeployed": false,
   "databaseWritesPerformed": false,
-  "generatedAt": "2026-11-15T09:28:25.188Z",
+  "generatedAt": "2026-11-15T16:57:50.229Z",
   "notes": [
     "INSTALL-7.7-ZH.md",
-    "RELEASE-NOTES-7.7-ZH.md"
+    "RELEASE-NOTES-7.7-ZH.md",
+    "DATA-UPGRADE-7.7-ZH.md",
+    "ACCESS-RECOVERY-7.7-ZH.md"
   ],
   "clientCompatibility": {
     "apiContractVersion": "1.0.0",
@@ -25,86 +27,86 @@
   "artifacts": [
     {
       "file": "JEAuditFlow-7.7.0-Backend.zip",
-      "sizeBytes": 3363568,
-      "sha256": "3aedbd7d68d85156424e1ccf33af0a87f9468347425f760fc657288da96b0842",
+      "sizeBytes": 3363668,
+      "sha256": "feeb86b131c25871381267ffd7056f0ab931fc0448bb183241642806a6201af8",
       "kind": "backend-api"
     },
     {
       "file": "JEAuditFlow-7.7.0-Web-Client.zip",
-      "sizeBytes": 76342394,
-      "sha256": "9dc20b629d0d6ab2bcf4006a21dc501c5491af7b717e5cc9e3e5f0b80842655f",
+      "sizeBytes": 76344149,
+      "sha256": "72f327a551fc9b9f23c56001d1b33ab9ff55961d339c40c28e942d352af62222",
       "kind": "web-client"
     },
     {
       "file": "JEAuditFlow-7.7.0-Browser-Extension.zip",
-      "sizeBytes": 69747206,
-      "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6",
+      "sizeBytes": 69748954,
+      "sha256": "c2575def2c4951f57da6b0af52b9620756303cb9754db19de7fa269468dc5e23",
       "kind": "browser-extension"
     },
     {
       "file": "JEAuditFlow-7.7.0-Browser-Extension.manifest.json",
       "sizeBytes": 1655,
-      "sha256": "3a351ee50feeafa30ccdfe9825cf1f4c45adc0fb18b838a9918ede5438b3dac5",
+      "sha256": "ebd940c91cf419d786982e79fd2c6f11949064da6d3a4b494273dbb3e4e8176b",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-Database.zip",
-      "sizeBytes": 16327,
-      "sha256": "747b6e5b4bfe9cebd6e26c052723f453456964530645a0728d25f49f601d0438",
+      "sizeBytes": 16326,
+      "sha256": "d03bff0260667799025496ed542e81d5d1d21ec587c0a7b9870f736ce8b75318",
       "kind": "database-zip"
     },
     {
       "file": "JEAuditFlow-7.7.0-Database.tar.gz",
-      "sizeBytes": 12441,
-      "sha256": "5c033ff817a6f243dddc5243540a89cfdcf1d596836450fd413ab3af558a7a13",
+      "sizeBytes": 12452,
+      "sha256": "790551eabaf8e04ac6a31bde409a4b38163bc8153089dc4e9ee0efeb1555f8d2",
       "kind": "database-tar-gz"
     },
     {
       "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
-      "sizeBytes": 157965,
-      "sha256": "9572a490105d01b7be8bb6ec94be389232e69c4b60d36a321931e691e1ba057f",
+      "sizeBytes": 189565,
+      "sha256": "3bdf80c1d67c51db5e0afa70fd2df43ddf545390ec54eca2c0612e5c21f965b1",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-Deployment-Support.manifest.json",
-      "sizeBytes": 6141,
-      "sha256": "f9c31d12be1855b638110c755d9804d1b260124b892f1b3787562fca2b22d8b4",
+      "sizeBytes": 8073,
+      "sha256": "8cb7b842765abf9cc515c2cbc740a1d6ae6894326c0ed955c06d2810046d2b6d",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-macOS-Launcher.app.zip",
-      "sizeBytes": 1464078,
-      "sha256": "6acf813a96b0966587a3ad42f8ddea882d613c47f22878701ebe4d934e8bf26c",
+      "sizeBytes": 1463099,
+      "sha256": "62c6fec3a5a150e598d7883c080ba62346765aa2ba4fc344bd02ba441fe8dd0a",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-macOS-Launcher.manifest.json",
       "sizeBytes": 1543,
-      "sha256": "cbc74183aa183d9d4503d8a0dd33907412994568473c5d0a28772b93b2be1167",
+      "sha256": "85d748a01be6caea2b014f7c13ef3895f674cedf92239e861a2d26da790a35d1",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-Source.zip",
-      "sizeBytes": 142629502,
-      "sha256": "02c6b557b218bb1be8b7d45e4755fba2de4ea67a514747e675e30236e4ef2eaa",
+      "sizeBytes": 142694481,
+      "sha256": "450bd4489f6ee3977554af5bbc9bd597c4a215d3d27b09cb635b5d8157628d47",
       "kind": "public-source"
     },
     {
       "file": "INSTALL-7.7-ZH.md",
-      "sizeBytes": 2922,
-      "sha256": "58ab44acc303f2857173072cf8a3766d3566ac2b35189fd8b97514c942769656",
+      "sizeBytes": 3972,
+      "sha256": "46a2df1d5e793bc77240b91032c26303ab04e07f858d38498adf5d286cedeff2",
       "kind": "release-support"
     },
     {
       "file": "RELEASE-NOTES-7.7-ZH.md",
-      "sizeBytes": 8665,
-      "sha256": "00baa35d13a8f7a98995c9e82d5f6efca8f9271c1845cbd5d83c1e629d94a32e",
+      "sizeBytes": 10348,
+      "sha256": "20b7435e24d1407326fc1edd40ed7503e58f9c64602e19962f6ceda1b5ab0f60",
       "kind": "release-support"
     },
     {
       "file": "VERIFICATION-7.7.0.md",
-      "sizeBytes": 19535,
-      "sha256": "56db421abd3581fcab2c194737493ceb6bba41717110f0fe2738aa207231e6d5",
+      "sizeBytes": 22954,
+      "sha256": "84516b9c4ed4ad429abfcdbd8acbb6cb3eb7edb08408399688a71145fe37bd55",
       "kind": "release-support"
     },
     {
@@ -126,20 +128,24 @@
       "kind": "release-support"
     },
     {
-      "file": "LOCAL-ACCEPTANCE-7.7.json",
-      "sizeBytes": 6206,
-      "sha256": "e8c40df59f69ced4411b77f73e87d03e2e5b9f04cedfbda263ffbda56307fadd",
+      "file": "DATA-UPGRADE-7.7-ZH.md",
+      "sizeBytes": 17791,
+      "sha256": "97734227a4d53a0cd90c439daea7142b5e9177a1b83b515a806efcb3a4714143",
+      "kind": "release-support"
+    },
+    {
+      "file": "ACCESS-RECOVERY-7.7-ZH.md",
+      "sizeBytes": 4541,
+      "sha256": "c03d181c5fe7633b89ae7b2f2d25f42c636149296ed6a1954b4bf2faeade7669",
       "kind": "release-support"
     }
   ],
   "publicServerDeployed": false,
-  "deploymentBoundary": "verified local installation only",
-  "localInstallation": {
-    "verifiedAt": "2026-11-14T07:56:48.768Z",
-    "evidence": "LOCAL-ACCEPTANCE-7.7.json",
-    "sourceHashesUnchanged": true,
-    "installedLauncherMatchesPackage": true
+  "deploymentBoundary": "packages only",
+  "dataUpgrade": {
+    "status": "not-evidenced"
   },
+  "localInstallation": null,
   "buildBoundary": {
     "databaseWritesPerformed": false,
     "credentialsIncluded": false,

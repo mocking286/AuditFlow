@@ -36,6 +36,10 @@ struct RuntimeCatalogTests {
         )
 
         let versions = installedRuntimeVersions(projectRoot: root)
+        guard defaultAuditFlowEntry(version: "7.7.0") == "landing.html",
+              defaultAuditFlowEntry(version: "7.6.0") == "landing.html" else {
+            throw RuntimeCatalogTestFailure.promotionalEntryWasSkipped
+        }
         guard versions == ["7.2.0", "7.5.0", "7.7.0"] else {
             throw RuntimeCatalogTestFailure.unexpectedVersions(versions)
         }
@@ -167,6 +171,7 @@ struct RuntimeCatalogTests {
 }
 
 enum RuntimeCatalogTestFailure: Error {
+    case promotionalEntryWasSkipped
     case unexpectedVersions([String])
     case actual72RuntimeMissing([String])
     case incomplete73RuntimeWasListed([String])

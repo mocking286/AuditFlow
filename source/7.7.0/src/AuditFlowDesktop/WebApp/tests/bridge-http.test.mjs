@@ -81,12 +81,20 @@ test("authenticated public relay opens login, assets and redirect through a Mac 
   await connector.stop();
 });
 
-test("7.6 root opens the authenticated workspace and shared feedback validates image bytes", async t => {
+test("root opens promotion, direct workbench keeps authentication, and shared feedback validates image bytes", async t => {
   const server = await startServer(t);
   const root = await fetch(server.base + "/");
   assert.equal(root.status, 200);
-  assert.ok((await root.text()).includes("auth-gate.js"));
-  assert.equal((await fetch(server.base + "/landing.html")).status, 200);
+  const promotion = await fetch(server.base + "/landing.html");
+  assert.equal(promotion.status, 200);
+  assert.equal(await root.text() === await promotion.text(), true, "root should serve the promotional page");
+  const workbench = await fetch(server.base + "/index.html?fromLanding=1#/dashboard");
+  assert.equal(workbench.status, 200);
+  const workbenchHtml = await workbench.text();
+  assert.ok(workbenchHtml.includes('id="authGate"'));
+  assert.ok(workbenchHtml.includes("auth-gate.js"));
+  assert.ok(workbenchHtml.includes("feedback-modal.js"));
+  assert.equal((await json(server, "/api/auth/me", undefined, {})).response.status, 401);
   assert.equal((await json(server, "/api/feedback", { feature: "Tree", content: "Fixture" }, {})).response.status, 401);
   const crossOrigin = await json(server, "/api/feedback", { feature: "Tree", content: "Fixture" }, { ...server.headers, origin: "https://untrusted.invalid" });
   assert.equal(crossOrigin.response.status, 403);

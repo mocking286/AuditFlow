@@ -5,5 +5,5 @@
   if (/^#\/[^/]+(?:\/.*)?$/.test(location.hash)) return;
 
   // Direct workbench entry belongs to the existing authentication gate.
-  // The marketing page remains available through its explicit URL.
+  // The server root opens the promotional page; direct links retain this gate.
 })();

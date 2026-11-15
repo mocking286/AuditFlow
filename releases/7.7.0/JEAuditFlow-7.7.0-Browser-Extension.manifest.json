@@ -8,7 +8,7 @@
   "capabilityVersion": "12.3.0",
   "packageType": "browser-extension",
   "archive": "JEAuditFlow-7.7.0-Browser-Extension.zip",
-  "sha256": "fed324a43a2483e6c7c44bd20e01da0229e17a70e887cd1698467853248d56c6",
+  "sha256": "c2575def2c4951f57da6b0af52b9620756303cb9754db19de7fa269468dc5e23",
   "fileCount": 220,
   "checklistCatalog": {
     "release": "7.7.0",
@@ -30,5 +30,5 @@
       "03_Requirement Checklist/System_Requirement_Review_Checklist.xlsx"
     ]
   },
-  "generatedAt": "2026-11-14T16:36:45.896Z"
+  "generatedAt": "2026-11-15T16:27:33.602Z"
 }

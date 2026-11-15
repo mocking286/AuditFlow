@@ -1033,16 +1033,12 @@ start_stack() {
   apply_schema "$schema_dir"
 
   local data_root="$RUNTIME_ROOT/data/$version"
-  local bootstrap_admin_email="${JEAUDITFLOW_ADMIN_EMAIL_OVERRIDE:-${AUDITFLOW_ADMIN_EMAIL:-yumeng.li@johnsonelectric.com}}"
-  local bootstrap_admin_password="${JEAUDITFLOW_ADMIN_PASSWORD_OVERRIDE:-${AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD:-}}"
   local configured_admin_email="${AUDITFLOW_ADMIN_EMAIL:-yumeng.li@johnsonelectric.com}"
   local configured_admin_password="${AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD:-}"
-  local ephemeral_admin_credentials=0
   local polarion_host="" polarion_port="" polarion_protocol="" polarion_base_url=""
   if [[ -n "${JEAUDITFLOW_POLARION_URL:-}" ]]; then
     IFS=$'\t' read -r polarion_host polarion_port polarion_protocol polarion_base_url < <(polarion_runtime_settings)
   fi
-  [[ -n "${JEAUDITFLOW_ADMIN_PASSWORD_OVERRIDE:-}" ]] && ephemeral_admin_credentials=1
   local common_env=(
     NODE_ENV=production
     AUDITFLOW_VERSION="$version"
@@ -1079,6 +1075,7 @@ start_stack() {
     AUDITFLOW_BOOTSTRAP_ADMIN_EMAIL="$configured_admin_email"
     AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD="$configured_admin_password"
     AUDITFLOW_LOCAL_ADMIN_PASSWORD_SYNC=0
+    AUDITFLOW_RECONCILE_CORE_DIRECTORY=0
     AUDITFLOW_BOOTSTRAP_CORE_PROJECTS=1
     AUDITFLOW_BOOTSTRAP_MBEAL=1
     AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_PASSWORD="${AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_PASSWORD:-}"
@@ -1135,6 +1132,8 @@ start_stack() {
     AUDITFLOW_USER_DATA_DIR="$data_root/users"
     AUDITFLOW_BOOTSTRAP_ADMIN_EMAIL="$configured_admin_email"
     AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD="$configured_admin_password"
+    AUDITFLOW_LOCAL_ADMIN_PASSWORD_SYNC=0
+    AUDITFLOW_RECONCILE_CORE_DIRECTORY=0
     AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_PASSWORD="${AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_PASSWORD:-}"
     DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-}"
     AUDITFLOW_MODEL_API_KEY="${AUDITFLOW_MODEL_API_KEY:-}"
@@ -1146,16 +1145,6 @@ start_stack() {
   chmod 700 "$RUNTIME_ROOT/data" "$data_root" "$data_root/jiraflow" "$data_root/fileanalyst" "$data_root/users" "$ENV_ROOT" 2>/dev/null || true
   local runtime_env="$ENV_ROOT/$version.env"
   write_env_file "$runtime_env" "${common_env[@]}"
-  local backend_env="$runtime_env"
-  local bootstrap_env=""
-  if (( ephemeral_admin_credentials )); then
-    bootstrap_env="$(mktemp "$ENV_ROOT/.${version}.bootstrap.XXXXXX")"
-    write_env_file "$bootstrap_env" "${common_env[@]}" \
-      "AUDITFLOW_BOOTSTRAP_ADMIN_EMAIL=$bootstrap_admin_email" \
-      "AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD=$bootstrap_admin_password" \
-      "AUDITFLOW_LOCAL_ADMIN_PASSWORD_SYNC=1"
-    backend_env="$bootstrap_env"
-  fi
 
   stop_service backend || true
   stop_service ai-bridge || true
@@ -1166,13 +1155,11 @@ start_stack() {
     tail -n 80 "$(log_file fileanalyst)" >&2 || true
     die "FileAnalyst failed health check"
   }
-  start_process_with_env_file backend "$backend_root/server" "$backend_env" "$NODE_BIN" server.mjs serve
+  start_process_with_env_file backend "$backend_root/server" "$runtime_env" "$NODE_BIN" server.mjs serve
   wait_for_url AuditFlow "http://127.0.0.1:${AUDITFLOW_PORT}/health" 60 || {
-    rm -f -- "$bootstrap_env"
     tail -n 100 "$(log_file backend)" >&2 || true
     die "AuditFlow failed health check"
   }
-  rm -f -- "$bootstrap_env"
   wait_for_url JiraFlow "http://127.0.0.1:${JIRAFLOW_PORT}/health" 60 || {
     tail -n 100 "$(log_file backend)" >&2 || true
     die "JiraFlow failed health check"
@@ -1187,12 +1174,6 @@ start_stack() {
     }
   fi
   ai_bridge_smoke
-  if (( ephemeral_admin_credentials )); then
-    # The launcher may supply a user-entered password for first-run bootstrap.
-    # Service processes already inherited it; do not leave that value in the
-    # generated runtime env files after startup.
-    rm -f -- "$runtime_env" "${ai_runtime_env:-}"
-  fi
   if [[ "$version" == 7.* ]]; then write_mcp_client_config; fi
   set_current_version "$version"
   log "JEAuditFlow $version stack is running"
@@ -1321,7 +1302,8 @@ urls() {
   if [[ -z "$requested_version" && -f "$CURRENT_VERSION_FILE" ]]; then requested_version="$(tr -d '[:space:]' < "$CURRENT_VERSION_FILE")"; fi
   load_config "$requested_version"
   local entry=landing.html
-  if [[ "$requested_version" == 7.6.* || "$requested_version" == 7.7.* ]]; then entry=index.html; fi
+  if [[ "$requested_version" == 7.6.* ]]; then entry=index.html; fi
+  if [[ "$requested_version" == 7.7.* ]]; then entry=""; fi
   printf 'AuditFlow:   http://127.0.0.1:%s/%s\n' "$AUDITFLOW_PORT" "$entry"
   if [[ -n "${AUDITFLOW_LAN_HOST:-}" ]]; then
     printf 'LAN access:  http://%s:%s/%s\n' "$AUDITFLOW_LAN_HOST" "$AUDITFLOW_PORT" "$entry"

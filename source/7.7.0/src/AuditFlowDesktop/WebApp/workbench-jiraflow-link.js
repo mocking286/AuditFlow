@@ -14,18 +14,18 @@
     "";
   const canProbeLocalServices = () => {
     const protocol = String(window.location.protocol || "").toLowerCase();
-    if (protocol === "chrome-extension:") return true;
+    if (protocol === "chrome-extension:" || protocol === "file:") return true;
     try {
       const pageUrl = new URL(window.location.href);
-      return pageUrl.protocol === "http:" &&
-        ["127.0.0.1", "localhost", "::1"].includes(pageUrl.hostname);
+      return embedded() && pageUrl.protocol === "http:" &&
+        ["127.0.0.1", "localhost", "[::1]", "::1"].includes(pageUrl.hostname);
     } catch (_) {
       return false;
     }
   };
 
-  // Direct JiraFlow probing is only a fallback; the backend health document
-  // advertises the dynamically allocated companion port.
+  // Served web pages use their session-bearing same-origin proxy. Only offline,
+  // extension and embedded desktop contexts discover loopback companion ports.
   const JIRAFLOW_PORTS = Object.freeze([
     6195,
     4188,
@@ -93,8 +93,8 @@
     if (!value) return null;
     try {
       const parsed = new URL(String(value), window.location.href);
-      const localProxy = parsed.protocol === "http:" &&
-        ["127.0.0.1", "localhost", "::1"].includes(parsed.hostname);
+      const localProxy = canProbeLocalServices() && parsed.protocol === "http:" &&
+        ["127.0.0.1", "localhost", "[::1]", "::1"].includes(parsed.hostname);
       const sameOriginProxy = parsed.origin === window.location.origin &&
         ["http:", "https:"].includes(parsed.protocol);
       if (
@@ -201,10 +201,10 @@
       nested.status ??
       "unavailable"
     ).toLowerCase();
-    const directHref = controlledUrl(
+    const directHref = canProbeLocalServices() ? controlledUrl(
       nested.jiraFlowBaseUri ?? nested.baseUri,
       nested.jiraFlowPort ?? nested.port
-    );
+    ) : null;
     const proxyHref = controlledProxyUrl(
       nested.jiraFlowProxyBaseUri ?? nested.proxyBaseUri
     );
@@ -295,8 +295,7 @@
     try {
       const pageUrl = new URL(window.location.href);
       if (
-        (pageUrl.protocol === "https:" ||
-          (pageUrl.protocol === "http:" && ["127.0.0.1", "localhost", "::1"].includes(pageUrl.hostname))) &&
+        ["http:", "https:"].includes(pageUrl.protocol) &&
         !pageUrl.username &&
         !pageUrl.password
       ) values.push(pageUrl.origin);
@@ -324,13 +323,13 @@
     if (!value) return null;
     try {
       const parsed = new URL(String(value));
-      const sameOriginHttps = parsed.protocol === "https:" &&
+      const sameOriginWeb = ["http:", "https:"].includes(parsed.protocol) &&
         parsed.origin === window.location.origin;
       const loopbackHttp = canProbeLocalServices() &&
         parsed.protocol === "http:" &&
-        ["127.0.0.1", "localhost", "::1"].includes(parsed.hostname);
+        ["127.0.0.1", "localhost", "[::1]", "::1"].includes(parsed.hostname);
       if (
-        (!sameOriginHttps && !loopbackHttp) ||
+        (!sameOriginWeb && !loopbackHttp) ||
         parsed.username ||
         parsed.password ||
         parsed.search ||
@@ -350,7 +349,7 @@
       const response = await window.fetch(url, {
         method: "GET",
         cache: "no-store",
-        credentials: "omit",
+        credentials: new URL(url, window.location.href).origin === window.location.origin ? "same-origin" : "omit",
         redirect: "error",
         signal: controller.signal
       });

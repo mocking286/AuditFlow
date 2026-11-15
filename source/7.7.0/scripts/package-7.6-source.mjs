@@ -48,6 +48,7 @@ const testNames = [
 ];
 if (version === "7.7.0") testNames.push(
   "assessment-tasks", "assessment-task-mail-delivery", "microsoft-sso-mail", "outlook-desktop-mail",
+  "bootstrap-preservation", "landing-release", "web-auth-navigation", "workspace-compatibility", "jiraflow-entry-regressions",
   "trace-assessment-excel-data", "jiraflow-finding-push-http", "jiraflow-finding-push-ui-contract",
   "jiraflow-sync-contract", "jiraflow-evidence-mutation", "jira-rest-channel", "jira-finding-integration-http"
 );
@@ -66,7 +67,7 @@ const scriptNames = [
 ];
 if (version === "7.7.0") scriptNames.push(
   "package-7.7-source.mjs", "package-7.7-release.mjs", "package-7.7-deployment-support.mjs",
-  "package-7.7-launcher.mjs", "assemble-7.7-release.mjs"
+  "package-7.7-launcher.mjs", "assemble-7.7-release.mjs", "assemble-7.7-release.test.mjs"
 );
 for (const name of scriptNames) await copy(path.join(project, "scripts", name), path.join(root, "scripts", name));
 for (const name of ["DEPLOYMENT-SUPPORT-7.6.md", "scripts/jeauditflow-local.sh", "docker/compose.yaml", "templates/7.6.local-settings.env.example", "launcher/Package.swift", "launcher/Sources/JEAuditFlowLauncher/main.swift", "launcher/script/build_and_run.sh", "launcher/script/test.sh", "launcher/Tests/RuntimeCatalogTests.swift", "launcher/Tests/LauncherResponsivenessTests.swift", "launcher/Tests/LauncherWindowTests.swift", "launcher/Resources/JEAuditFlowLauncher-icon-source.png"]) {
@@ -74,10 +75,18 @@ for (const name of ["DEPLOYMENT-SUPPORT-7.6.md", "scripts/jeauditflow-local.sh",
 }
 if (version === "7.7.0") {
   for (const name of ["DEPLOYMENT-SUPPORT-7.7.md", "scripts/native-mysql.sh", "scripts/native-migration-files.mjs",
+    "scripts/account-recovery.mjs", "scripts/account-recovery.test.mjs", "scripts/recover-configured-admin.mjs",
+    "scripts/data-upgrade-inventory.mjs", "scripts/data-upgrade-inventory.test.mjs",
+    "scripts/data-upgrade-plan.mjs", "scripts/data-upgrade-plan.test.mjs",
+    "scripts/data-upgrade-diagnostics.mjs", "scripts/data-upgrade-diagnostics.test.mjs",
+    "scripts/jeauditflow-startup-preservation.test.sh", "scripts/jeauditflow-local-77.test.sh",
     "scripts/migrate-7.6-to-native-7.7.mjs", "scripts/prepare-7.7-runtimes.mjs",
     "templates/7.7.local-settings.env.example", "templates/7.7.jiraflow-schema.sql",
     "templates/7.7.native-database.sh", "templates/7.7.database-README.md"]) {
     await copy(path.join(project, "local-deploy", name), path.join(root, "local-deploy", name));
+  }
+  for (const name of ["JEAuditFlow-7.7.0-Data-Upgrade-ZH.md", "JEAuditFlow-7.7.0-Access-Recovery-ZH.md"]) {
+    await copy(path.join(project, "docs", name), path.join(root, "docs", name));
   }
   const atlassianLauncher = path.resolve(project, "../../tools/AtlassianServiceLauncher");
   for (const name of [

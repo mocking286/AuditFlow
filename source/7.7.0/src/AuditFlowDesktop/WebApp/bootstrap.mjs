@@ -302,23 +302,40 @@ async function reconcileCoreDirectory(store, administrator, leads) {
 }
 
 /**
- * Provision the requested shared project only when explicitly enabled at runtime.
- * Passwords are received from deployment secrets, hashed before persistence, and
- * never returned or written to project state. Existing records are never replaced.
+ * Provision an empty installation from deployment secrets. Ordinary startup is
+ * read-only once accounts or projects exist. Directory maintenance is a separate
+ * explicit operation; legacy environment flags cannot enable it during startup.
  */
-export async function bootstrapAuditFlow({ store, passwordDigest, env = process.env } = {}) {
+export async function bootstrapAuditFlow({ store, passwordDigest, env = process.env, operation = "startup" } = {}) {
   if (!store || typeof store.accountByEmail !== "function" || typeof passwordDigest !== "function") {
     throw new Error("Bootstrap requires an account-capable collaboration store and password digest function");
   }
+  if (!["startup", "directory-maintenance"].includes(operation)) {
+    throw new Error(`Unsupported bootstrap operation: ${operation}`);
+  }
+  if (operation === "startup") {
+    if (typeof store.countAccounts !== "function" || typeof store.listProjects !== "function") {
+      throw new Error("Bootstrap requires read-only account and project counts before first-run provisioning");
+    }
+    const accountCount = await store.countAccounts();
+    const existingProjects = accountCount ? [] : await store.listProjects({ isAdmin: true });
+    if (accountCount || existingProjects.length) {
+      return {
+        enabled: false, preservedExistingData: true, createdAccounts: [],
+        projectCreated: false, membersAdded: [], reconciliation: null,
+        coreProjects: { created: [], membersAdded: [] }
+      };
+    }
+  } else if (!enabled(env.AUDITFLOW_RECONCILE_CORE_DIRECTORY)) {
+    throw new Error("Directory maintenance requires AUDITFLOW_RECONCILE_CORE_DIRECTORY");
+  }
 
-  const reconcileDirectory = enabled(env.AUDITFLOW_RECONCILE_CORE_DIRECTORY);
+  const reconcileDirectory = operation === "directory-maintenance";
   const mbealEnabled = enabled(env.AUDITFLOW_BOOTSTRAP_MBEAL) || reconcileDirectory;
   const coreProjectsEnabled = enabled(env.AUDITFLOW_BOOTSTRAP_CORE_PROJECTS)
     && String(env.AUDITFLOW_SERVER_ROLE || "").trim().toLowerCase() === "desktop";
   const adminEmail = normalizeEmail(env.AUDITFLOW_BOOTSTRAP_ADMIN_EMAIL) || DEFAULT_ADMIN_EMAIL;
   const leadEmails = readEmailList(env.AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_EMAILS, DEFAULT_MBEAL_LEAD_EMAILS);
-  const syncLocalAdminPassword = enabled(env.AUDITFLOW_LOCAL_ADMIN_PASSWORD_SYNC)
-    && String(env.AUDITFLOW_SERVER_ROLE || "").trim().toLowerCase() === "desktop";
   if (mbealEnabled && leadEmails.length !== 3) {
     throw new Error("AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_EMAILS must contain exactly three unique valid email addresses");
   }
@@ -333,12 +350,9 @@ export async function bootstrapAuditFlow({ store, passwordDigest, env = process.
 
   // Validate all required secrets before creating anything so a configuration
   // mistake never leaves a partially provisioned default project.
-  if (missingAdmin || (syncLocalAdminPassword && existingAdmin)) {
+  if (missingAdmin) {
     if (!adminPassword) throw new Error("Missing AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD deployment secret");
     assertPassword(adminPassword, "AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD");
-  }
-  if (syncLocalAdminPassword && existingAdmin && typeof store.updateAccount !== "function") {
-    throw new Error("Local administrator password sync requires an account update-capable store");
   }
   if (missingLeads.length) {
     if (!leadPassword) throw new Error("Missing AUDITFLOW_BOOTSTRAP_MBEAL_LEAD_PASSWORD deployment secret");
@@ -358,12 +372,6 @@ export async function bootstrapAuditFlow({ store, passwordDigest, env = process.
       password: adminPassword
     }, passwordDigest);
     createdAccounts.push(adminEmail);
-  } else if (syncLocalAdminPassword && existingAdmin) {
-    const passwordSalt = crypto.randomBytes(24).toString("hex");
-    administrator = await store.updateAccount(existingAdmin.userId, {
-      passwordSalt,
-      passwordHash: await passwordDigest(adminPassword, passwordSalt)
-    });
   }
   const leads = [];
   for (const email of leadEmails) {

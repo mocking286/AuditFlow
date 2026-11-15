@@ -27,7 +27,7 @@
     });
     resolveReady(auth.user);window.dispatchEvent(new CustomEvent("auditflow-authenticated",{detail:auth.user}));
   }
-  auth.logout=async()=>{try{await request("/api/auth/logout",{});}finally{location.reload();}};
+  auth.logout=async()=>{try{await request("/api/auth/logout",{});}finally{location.assign(new URL("/",location.href).href);}};
   function render(error="") {
     gate.hidden=false;
     const setup = initializing;

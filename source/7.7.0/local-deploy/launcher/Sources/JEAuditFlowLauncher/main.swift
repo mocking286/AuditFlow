@@ -46,7 +46,7 @@ func defaultRuntimePorts(version: String) -> RuntimePorts {
 }
 
 func defaultAuditFlowEntry(version: String) -> String {
-    version.compare("7.6.0", options: .numeric) != .orderedAscending ? "index.html" : "landing.html"
+    "landing.html"
 }
 
 struct RuntimeVersionSettings: Sendable {
@@ -379,7 +379,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
         adminPasswordField.action = #selector(loginAdmin)
         loginButton = commandButton("person.crop.circle.badge.checkmark", title: "登录管理员账号", action: #selector(loginAdmin))
         logoutButton = commandButton("rectangle.portrait.and.arrow.right", title: "退出会话", action: #selector(logoutAdmin))
-        adminStatusLabel = NSTextField(labelWithString: "未登录；启动服务时会使用此账号进行本机认证")
+        adminStatusLabel = NSTextField(labelWithString: "未登录；账号仅用于服务启动后的认证，不会重置已有密码")
         adminStatusLabel.textColor = .secondaryLabelColor
         adminStatusLabel.maximumNumberOfLines = 2
         adminStatusLabel.lineBreakMode = .byTruncatingTail
@@ -791,21 +791,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
     @objc private func startStack() {
         let args = selectedVersionArgs(command: "start")
         guard let environment = databaseConfirmationEnvironment(forSelectedVersion: true) else { return }
-        var startupEnvironment = environment
-        guard applyStartupCredentials(to: &startupEnvironment) else { return }
         runCommand(args, progressText: "正在启动 MySQL、FileAnalyst、AuditFlow 与 JiraFlow…", updatesStatus: true, completion: { [weak self] in
             self?.performLogin(silent: true)
-        }, environmentOverrides: startupEnvironment)
+        }, environmentOverrides: environment)
     }
 
     @objc private func restartStack() {
         let args = selectedVersionArgs(command: "restart")
         guard let environment = databaseConfirmationEnvironment(forSelectedVersion: true) else { return }
-        var startupEnvironment = environment
-        guard applyStartupCredentials(to: &startupEnvironment) else { return }
         runCommand(args, progressText: "正在重启选定版本…", updatesStatus: true, completion: { [weak self] in
             self?.performLogin(silent: true)
-        }, environmentOverrides: startupEnvironment)
+        }, environmentOverrides: environment)
     }
 
     @objc private func stopStack() {
@@ -980,24 +976,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
         guard let label = statusLabels[key] else { return }
         label.stringValue = value
         label.textColor = good == true ? .systemGreen : (good == false ? .systemRed : .secondaryLabelColor)
-    }
-
-    private func applyStartupCredentials(to environment: inout [String: String]) -> Bool {
-        if isAdminAuthenticated {
-            return true
-        }
-        let email = adminEmailField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        let password = adminPasswordField.stringValue
-        guard email.contains("@"), !password.isEmpty else {
-            showAlert(
-                title: "需要管理员凭据",
-                message: "请输入管理员邮箱和密码。密码只用于本次本机启动，不会写入配置文件或日志。"
-            )
-            return false
-        }
-        environment["JEAUDITFLOW_ADMIN_EMAIL_OVERRIDE"] = email
-        environment["JEAUDITFLOW_ADMIN_PASSWORD_OVERRIDE"] = password
-        return true
     }
 
     private func requireAdmin(_ action: String) -> Bool {
