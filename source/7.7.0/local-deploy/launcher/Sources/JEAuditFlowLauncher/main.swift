@@ -251,6 +251,10 @@ struct JEAuditFlowLauncherMain {
 }
 #endif
 
+private final class LauncherContentView: NSView {
+    override var isFlipped: Bool { true }
+}
+
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
     private let defaults = UserDefaults.standard
@@ -351,7 +355,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
         chooseRoot.bezelStyle = .rounded
         let rootRow = labeledRow("项目目录", controls: [projectRootField, chooseRoot])
         rootRow.alignment = .centerY
-        titleRow.widthAnchor.constraint(equalTo: rootRow.widthAnchor).isActive = true
         projectRootField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         chooseRoot.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -486,9 +489,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
         progressRow.orientation = .horizontal
         progressRow.spacing = 8
 
-        outputView = NSTextView()
+        outputView = NSTextView(frame: NSRect(x: 0, y: 0, width: 1000, height: 250))
         outputView.isEditable = false
         outputView.isSelectable = true
+        outputView.isVerticallyResizable = true
+        outputView.isHorizontallyResizable = false
+        outputView.autoresizingMask = [.width]
+        outputView.textContainer?.widthTracksTextView = true
+        outputView.textContainer?.containerSize = NSSize(width: 1000, height: CGFloat.greatestFiniteMagnitude)
         outputView.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
         outputView.textColor = .labelColor
         outputView.backgroundColor = NSColor(name: nil) { appearance in
@@ -506,9 +514,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
         stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
 
-        let content = NSView()
+        let content = LauncherContentView()
+        content.translatesAutoresizingMaskIntoConstraints = false
+        let contentScroll = NSScrollView()
+        contentScroll.hasVerticalScroller = true
+        contentScroll.autohidesScrollers = true
+        contentScroll.documentView = content
         content.addSubview(stack)
         NSLayoutConstraint.activate([
+            content.widthAnchor.constraint(equalTo: contentScroll.contentView.widthAnchor),
+            content.heightAnchor.constraint(greaterThanOrEqualTo: contentScroll.contentView.heightAnchor),
             stack.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 24),
             stack.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -24),
             stack.topAnchor.constraint(equalTo: content.topAnchor, constant: 22),
@@ -524,10 +539,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSTextFieldDelegate {
             progressRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
             outputScroll.widthAnchor.constraint(equalTo: stack.widthAnchor),
             outputScroll.heightAnchor.constraint(greaterThanOrEqualToConstant: 250),
-            title.widthAnchor.constraint(equalTo: stack.widthAnchor),
+            titleRow.widthAnchor.constraint(equalTo: stack.widthAnchor),
             subtitle.widthAnchor.constraint(equalTo: stack.widthAnchor)
         ])
-        window.contentView = content
+        window.contentView = contentScroll
         updateAuthenticationControls()
     }
 

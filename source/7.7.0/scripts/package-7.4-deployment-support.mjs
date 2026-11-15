@@ -21,6 +21,10 @@ const payload = [
   ["local-deploy/launcher/Package.swift"],
   ["local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift"],
   ["local-deploy/launcher/script/build_and_run.sh"],
+  ["local-deploy/launcher/script/test.sh"],
+  ["local-deploy/launcher/Tests/RuntimeCatalogTests.swift"],
+  ["local-deploy/launcher/Tests/LauncherResponsivenessTests.swift"],
+  ["local-deploy/launcher/Tests/LauncherWindowTests.swift"],
   ["local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png"],
   ...(version === "7.7.0" ? [
     ["local-deploy/scripts/native-mysql.sh"],

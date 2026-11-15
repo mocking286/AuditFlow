@@ -2,7 +2,7 @@
   "product": "JEAuditFlow",
   "version": "7.7.0",
   "packageType": "deployment-support",
-  "generatedAt": "2026-11-14T16:37:28.804Z",
+  "generatedAt": "2026-11-15T09:27:16.300Z",
   "sourceBuild": "7.7.0-candidate",
   "sourceReleaseGeneratedAt": "2026-11-14T16:37:00.479Z",
   "deploymentTargets": [
@@ -77,16 +77,44 @@
     {
       "source": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
       "file": "local-deploy/launcher/Sources/JEAuditFlowLauncher/main.swift",
-      "sizeBytes": 64778,
-      "sha256": "6e64dc6e7d9d38944ffb34d4dc45d6900113c2c33b837488bc05eda8f86c5d3a",
+      "sizeBytes": 65628,
+      "sha256": "e01fe74ffdbef3d5b12b30c85fd304b7b4fd28b3aa906b653e5e0b46f20ddf37",
       "executable": false
     },
     {
       "source": "local-deploy/launcher/script/build_and_run.sh",
       "file": "local-deploy/launcher/script/build_and_run.sh",
-      "sizeBytes": 4661,
-      "sha256": "26987a70d8bb506e51ba620b477af1a4b6633f9029ac057c1694448dc6ec7cc5",
+      "sizeBytes": 4755,
+      "sha256": "f8b5ffc16f7d2d4d399ba973f18e0d5394a1c41521f673bcf0df57735e7b7f78",
       "executable": true
+    },
+    {
+      "source": "local-deploy/launcher/script/test.sh",
+      "file": "local-deploy/launcher/script/test.sh",
+      "sizeBytes": 690,
+      "sha256": "e8c644c08010949becfc3ff40a5101d710c24e8fedbcb4c77e3d9beca7594c9f",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Tests/RuntimeCatalogTests.swift",
+      "file": "local-deploy/launcher/Tests/RuntimeCatalogTests.swift",
+      "sizeBytes": 8932,
+      "sha256": "2b34dfa9ac789a5010c82914d23c71b299d7a24eb0e842017029c201da623cdb",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Tests/LauncherResponsivenessTests.swift",
+      "file": "local-deploy/launcher/Tests/LauncherResponsivenessTests.swift",
+      "sizeBytes": 1796,
+      "sha256": "c9c94518db14c474f4d93c8b0f3af2d50a6a058c4a229aee3f001bacbcf96ad0",
+      "executable": false
+    },
+    {
+      "source": "local-deploy/launcher/Tests/LauncherWindowTests.swift",
+      "file": "local-deploy/launcher/Tests/LauncherWindowTests.swift",
+      "sizeBytes": 2648,
+      "sha256": "bfe48923750e4f478f5acd2507b44613b9f44c2f06c0f4f04b395d52c09429e9",
+      "executable": false
     },
     {
       "source": "local-deploy/launcher/Resources/JEAuditFlowLauncher-icon-source.png",
@@ -126,8 +154,8 @@
   ],
   "artifact": {
     "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
-    "sizeBytes": 151700,
-    "sha256": "9047f8a8ea34874d76525bb117d379c69fa484082bc79a7b5a862e5ef498a9c0",
+    "sizeBytes": 157965,
+    "sha256": "9572a490105d01b7be8bb6ec94be389232e69c4b60d36a321931e691e1ba057f",
     "integrity": "passed",
     "extractedAllowlist": "passed",
     "syntax": {

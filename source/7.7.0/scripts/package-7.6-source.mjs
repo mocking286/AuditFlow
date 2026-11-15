@@ -69,7 +69,7 @@ if (version === "7.7.0") scriptNames.push(
   "package-7.7-launcher.mjs", "assemble-7.7-release.mjs"
 );
 for (const name of scriptNames) await copy(path.join(project, "scripts", name), path.join(root, "scripts", name));
-for (const name of ["DEPLOYMENT-SUPPORT-7.6.md", "scripts/jeauditflow-local.sh", "docker/compose.yaml", "templates/7.6.local-settings.env.example", "launcher/Package.swift", "launcher/Sources/JEAuditFlowLauncher/main.swift", "launcher/script/build_and_run.sh", "launcher/Resources/JEAuditFlowLauncher-icon-source.png"]) {
+for (const name of ["DEPLOYMENT-SUPPORT-7.6.md", "scripts/jeauditflow-local.sh", "docker/compose.yaml", "templates/7.6.local-settings.env.example", "launcher/Package.swift", "launcher/Sources/JEAuditFlowLauncher/main.swift", "launcher/script/build_and_run.sh", "launcher/script/test.sh", "launcher/Tests/RuntimeCatalogTests.swift", "launcher/Tests/LauncherResponsivenessTests.swift", "launcher/Tests/LauncherWindowTests.swift", "launcher/Resources/JEAuditFlowLauncher-icon-source.png"]) {
   await copy(path.join(project, "local-deploy", name), path.join(root, "local-deploy", name));
 }
 if (version === "7.7.0") {

@@ -4,7 +4,7 @@
   "candidate": false,
   "productRuntimeDeployed": true,
   "databaseWritesPerformed": false,
-  "generatedAt": "2026-11-14T16:44:16.780Z",
+  "generatedAt": "2026-11-15T09:28:25.188Z",
   "notes": [
     "INSTALL-7.7-ZH.md",
     "RELEASE-NOTES-7.7-ZH.md"
@@ -61,32 +61,32 @@
     },
     {
       "file": "JEAuditFlow-7.7.0-Deployment-Support.zip",
-      "sizeBytes": 151700,
-      "sha256": "9047f8a8ea34874d76525bb117d379c69fa484082bc79a7b5a862e5ef498a9c0",
+      "sizeBytes": 157965,
+      "sha256": "9572a490105d01b7be8bb6ec94be389232e69c4b60d36a321931e691e1ba057f",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-Deployment-Support.manifest.json",
-      "sizeBytes": 4992,
-      "sha256": "feec33747cf198c33668883f17698f1801f8e3f5fbe3949e11266de7b970fcf6",
+      "sizeBytes": 6141,
+      "sha256": "f9c31d12be1855b638110c755d9804d1b260124b892f1b3787562fca2b22d8b4",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-macOS-Launcher.app.zip",
-      "sizeBytes": 1462962,
-      "sha256": "d5ee7494ffd41225916f02265a37573409043630dee44e23e6452a15953d142b",
+      "sizeBytes": 1464078,
+      "sha256": "6acf813a96b0966587a3ad42f8ddea882d613c47f22878701ebe4d934e8bf26c",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-macOS-Launcher.manifest.json",
       "sizeBytes": 1543,
-      "sha256": "040a1cb4aa16ee469cab0c74f1463786736a9a6493a66ab1bd004a97b4022134",
+      "sha256": "cbc74183aa183d9d4503d8a0dd33907412994568473c5d0a28772b93b2be1167",
       "kind": "release-support"
     },
     {
       "file": "JEAuditFlow-7.7.0-Source.zip",
-      "sizeBytes": 142623800,
-      "sha256": "b410a8e3416fe14a2948d4466bd6cd50bcd5ca9fadd909598520c412e789785b",
+      "sizeBytes": 142629502,
+      "sha256": "02c6b557b218bb1be8b7d45e4755fba2de4ea67a514747e675e30236e4ef2eaa",
       "kind": "public-source"
     },
     {
@@ -97,14 +97,14 @@
     },
     {
       "file": "RELEASE-NOTES-7.7-ZH.md",
-      "sizeBytes": 7445,
-      "sha256": "dc1981f2a1f4b6166aa8efdb2fc420f9879654d5a7f92d6671e9822487e82d49",
+      "sizeBytes": 8665,
+      "sha256": "00baa35d13a8f7a98995c9e82d5f6efca8f9271c1845cbd5d83c1e629d94a32e",
       "kind": "release-support"
     },
     {
       "file": "VERIFICATION-7.7.0.md",
-      "sizeBytes": 17931,
-      "sha256": "22af820729acba2667a5baf16f20ec776f2fea71fe517898ceffdc3c2a472110",
+      "sizeBytes": 19535,
+      "sha256": "56db421abd3581fcab2c194737493ceb6bba41717110f0fe2738aa207231e6d5",
       "kind": "release-support"
     },
     {

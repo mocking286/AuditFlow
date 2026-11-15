@@ -236,6 +236,32 @@ returned HTTP 200 with `status=ok` at 00:42 Asia/Shanghai.
 Final normal-port authentication after the last reload remains pending;
 the full board/interaction result above is explicitly preview acceptance.
 
+### Launcher Window Repair, 2026-11-15
+
+The installed 7.7.0 launcher could stay running without displaying its window.
+Its AppKit log showed an uncaught NSGenericException in buildWindow at
+NSLayoutConstraint.setActive. A real window-construction regression reproduced
+the precise no-common-ancestor exception before the fix.
+
+The header width constraint is now activated only after its views share a
+hierarchy; the title no longer consumes the entire horizontal row. A scrollable
+document keeps fixed-height controls reachable at smaller window sizes, and the
+output text view has a nonzero initial size and tracks the available width.
+
+- Runtime catalog, main-thread responsiveness and real window-construction
+  executable suites passed. The window regression also reproduced the prior
+  oversized-window behavior before the scrolling fix, and now passes at
+  1080x820 and 960x720 content sizes without header overlap.
+- The existing build_and_run.sh --verify entry built, locally signed,
+  installed and launched the repaired 7.7.0 app. Native accessibility and
+  screenshots verified the selected version, visible controls, service status,
+  scrolling to the complete output and scrolling back to the top.
+- Application services and native MySQL were stopped during this check. The
+  displayed stopped/unverified status and failed loopback probes are expected;
+  no application startup, database schema application or migration was performed.
+- This is a launcher-only follow-up. The earlier installation/migration receipt
+  and Jira/Polarion acceptance retain their original timestamps and scope.
+
 ### Remaining External Checks
 
 - Entra tenant/client registration and credentials were absent. Actual SSO

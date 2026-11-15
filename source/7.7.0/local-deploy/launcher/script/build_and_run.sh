@@ -32,6 +32,10 @@ if [[ -d "/Applications/Xcode-beta.app/Contents/Developer" ]]; then
   export DEVELOPER_DIR="/Applications/Xcode-beta.app/Contents/Developer"
 fi
 
+if [[ "$MODE" == --verify || "$MODE" == verify ]]; then
+  bash "$ROOT_DIR/script/test.sh"
+fi
+
 if [[ "$MODE" != --build-only ]] && pgrep -x "$APP_NAME" >/dev/null 2>&1; then
   /usr/bin/pkill -x "$APP_NAME" || true
   for _ in {1..20}; do
