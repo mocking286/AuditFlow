@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS jiraflow_state (
+  id SMALLINT PRIMARY KEY,
+  revision BIGINT NOT NULL,
+  snapshot LONGBLOB NOT NULL,
+  sha256 CHAR(64) NOT NULL,
+  project_count INT NOT NULL,
+  issue_count INT NOT NULL,
+  user_count INT NOT NULL,
+  event_count INT NOT NULL,
+  updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+    ON UPDATE CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB;

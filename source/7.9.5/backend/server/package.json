@@ -1,0 +1,19 @@
+{
+  "name": "jeauditflow-7.9.5-api-server",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26.13.1"
+  },
+  "scripts": {
+    "check": "node --check collaboration-model.mjs && node --check collaboration-store.mjs && node --check mysql-collaboration-store.mjs && node --check local-content-contract.mjs && node --check local-content-store.mjs && node --check bootstrap.mjs && node --check server.mjs && node --check trusted-proxy-origin.mjs && node --check engine.mjs && node --check report-templates.mjs && node --check api/index.mjs && node --check cloud/lib/auth.mjs && node --check cloud/lib/db.mjs && node --check deploy/migrate-runtime-env.mjs && node --check harness-run-ledger.mjs && node --check unlimited-ocr-mcp.mjs && node --check document-visual-ocr.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "start": "node server.mjs serve"
+  },
+  "dependencies": {
+    "jose": "^5.10.0",
+    "mysql2": "^3.23.3",
+    "pg": "^8.16.3"
+  },
+  "version": "7.9.5"
+}
