@@ -1,0 +1,32 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.9.5",
+  "packageType": "backend-api",
+  "apiContractVersion": "1.0.0",
+  "supportedClientRange": "7.9.x",
+  "modules": [
+    "auditflow-api",
+    "fileanalyst-api",
+    "jiraflow"
+  ],
+  "directories": [
+    "server",
+    "fileanalyst",
+    "jiraflow"
+  ],
+  "jiraFlow": {
+    "version": "2.1.0",
+    "releaseVersion": "7.9.5",
+    "jar": "jiraflow/jiraflow.jar",
+    "jarSha256": "2db54cb71760a16280ba39ce2f89f056246ac2486ba8c4bf71e6c9b3dee6c69f",
+    "source": "checked-in-jiraflow-source",
+    "sourceSha256": "7070c0210d6d9ba1dc412d08592a7a8c252b0b0aabc9235c8aa48b07432ae6eb",
+    "inputSha256": "2db54cb71760a16280ba39ce2f89f056246ac2486ba8c4bf71e6c9b3dee6c69f",
+    "expectedSourceSha256": "7070c0210d6d9ba1dc412d08592a7a8c252b0b0aabc9235c8aa48b07432ae6eb"
+  },
+  "webClientPackage": "JEAuditFlow-7.9.5-Web-Client.zip",
+  "databasePackage": "JEAuditFlow-7.9.5-Database.zip",
+  "databaseWritesPerformed": false,
+  "containsCredentials": false,
+  "generatedAt": "2026-11-18T18:30:52.100Z"
+}

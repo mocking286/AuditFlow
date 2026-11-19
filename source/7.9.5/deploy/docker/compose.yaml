@@ -1,0 +1,26 @@
+# Optional: MySQL for JEAuditFlow 7.9.5 in Docker instead of a native install.
+# The application itself still runs natively (systemd). Copy
+# ../../database/.env.example to .env next to this file and set real passwords.
+#   docker compose --env-file .env up -d
+name: jeauditflow795
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-jeauditflow_795}
+      MYSQL_USER: ${MYSQL_USER:-jeauditflow}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "127.0.0.1:${DB_PORT:-43327}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      retries: 10
+volumes:
+  mysql_data:
+    name: ${MYSQL_VOLUME_NAME:-jeauditflow_795_mysql_data}

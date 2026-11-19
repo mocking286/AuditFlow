@@ -1,0 +1,19 @@
+{
+  "name": "jeauditflow-7.9.5-api-server",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26.13.1"
+  },
+  "scripts": {
+    "check": "node --check aspice-training-reference.js && node --check assessment-mail.mjs && node --check assessment-tasks.mjs && node --check bootstrap.mjs && node --check bp-gp-evidence.mjs && node --check bridge-session.mjs && node --check cep-xp-assessment-data.js && node --check collaboration-model.mjs && node --check collaboration-store.mjs && node --check core-project-bootstrap.mjs && node --check cursor-agent-provider.mjs && node --check document-visual-ocr.mjs && node --check engine.mjs && node --check external-assessment-data.js && node --check harness-run-ledger.mjs && node --check helix-assessment-model.js && node --check jira-finding-integration.mjs && node --check jira-rest-channel.mjs && node --check local-content-contract.mjs && node --check local-content-store.mjs && node --check microsoft-graph-mail.mjs && node --check microsoft-oidc.mjs && node --check mysql-collaboration-store.mjs && node --check ops-service.mjs && node --check outlook-desktop-mail.mjs && node --check qa-checklist-workflow.js && node --check report-templates.mjs && node --check server.mjs && node --check sup-qa-checklist-catalog.js && node --check trusted-proxy-origin.mjs && node --check unlimited-ocr-mcp.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "start": "node server.mjs serve"
+  },
+  "dependencies": {
+    "jose": "^5.10.0",
+    "mysql2": "^3.23.3",
+    "pg": "^8.16.3"
+  },
+  "version": "7.9.5"
+}

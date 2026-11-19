@@ -1,0 +1,62 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.9.5",
+  "candidate": false,
+  "generatedAt": "2026-11-19T01:19:31.136Z",
+  "deployment": {
+    "target": "linux-server",
+    "mode": "bare-metal systemd + nginx",
+    "node": ">=26.13.1",
+    "java": ">=21",
+    "mysql": ">=8.0"
+  },
+  "clientCompatibility": {
+    "apiContractVersion": "1.0.0",
+    "backendRange": "7.9.x",
+    "webClientSourceVersion": "7.7.0"
+  },
+  "database": {
+    "name": "jeauditflow_795",
+    "port": 43327,
+    "schemaVersion": 29,
+    "ddlChanged": false
+  },
+  "notIncluded": [
+    {
+      "file": "JEAuditFlow-7.9.5-Browser-Extension.zip",
+      "reason": "Not supplied with the 7.9.5 inputs and not rebuildable from published source."
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "JEAuditFlow-7.9.5-Server-Install.tar.gz",
+      "sizeBytes": 82284418,
+      "sha256": "cb7849059423eff8adfc3c3b3102e1d80ce2fc080cfb34fcb7ea5b263cbc6406",
+      "kind": "server-install-bundle"
+    },
+    {
+      "file": "JEAuditFlow-7.9.5-Backend.zip",
+      "sizeBytes": 6341362,
+      "sha256": "6745c227c6603acfbfef24b6ff45980c4456e7ae6354a8990cc2144edafb113f",
+      "kind": "backend-api"
+    },
+    {
+      "file": "JEAuditFlow-7.9.5-Web-Client.zip",
+      "sizeBytes": 76348156,
+      "sha256": "40206898039b10f1ad3eedf8596c7733dde12215d66c9a4bbb3006f35b501e81",
+      "kind": "web-client"
+    },
+    {
+      "file": "JEAuditFlow-7.9.5-Database.zip",
+      "sizeBytes": 17163,
+      "sha256": "10681b251a964dc5d97fdc754775a6e8520a3f0b0da07f64a70069d4b9506750",
+      "kind": "database-zip"
+    },
+    {
+      "file": "JEAuditFlow-7.9.5-Database.tar.gz",
+      "sizeBytes": 11829,
+      "sha256": "b3e4c3ef2594a66960f923b0228994fba2eb006b49d0a8474b3b39fb82bee7c6",
+      "kind": "database-tar-gz"
+    }
+  ]
+}

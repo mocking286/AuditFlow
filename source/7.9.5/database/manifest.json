@@ -1,0 +1,49 @@
+{
+  "product": "JEAuditFlow",
+  "version": "7.9.5",
+  "package": "database",
+  "database": "MySQL 8.0+ (tested 8.0.46)",
+  "defaultDatabase": "jeauditflow_795",
+  "defaultPort": 43327,
+  "persistentVolume": "jeauditflow_795_mysql_data",
+  "safety": {
+    "installConfirmation": "APPLY <target database>",
+    "migrationConfirmation": "APPLY <target database>",
+    "cepImportConfirmation": "IMPORT CEP INTO <target database>",
+    "autoImportAllowed": false,
+    "writesRequireActionTimeConfirmation": true,
+    "createConfirmation": "CREATE <target database>"
+  },
+  "cepIssueOwnership": {
+    "sourceKind": "jira-issue-import",
+    "ownedBy": "jiraflow",
+    "projectKey": "CEP"
+  },
+  "containsUserData": false,
+  "containsCredentials": false,
+  "schemaFiles": [
+    "schema/collaboration-schema.sql",
+    "schema/fileanalyst-schema.sql",
+    "schema/shared-service-schema.sql",
+    "schema/content-sync-schema.sql",
+    "schema/cep-issues-schema.sql",
+    "schema/jiraflow-schema.sql"
+  ],
+  "importers": [
+    "import/cep-issues-importer.mjs",
+    "import/cep-issues-to-sql.mjs"
+  ],
+  "generatedAt": "2026-11-18T18:30:54.318Z",
+  "localHarnessComposeProject": "jeauditflow795-local",
+  "sourceSchemaVersion": "7.8.0",
+  "schemaVersion": 29,
+  "ddlChanged": false,
+  "deploymentMode": "native",
+  "storageEngine": "InnoDB",
+  "scripts": [
+    "create-database.sh",
+    "install-schema.sh",
+    "migrate.sh",
+    "healthcheck.sh"
+  ]
+}
