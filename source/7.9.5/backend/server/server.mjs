@@ -1300,6 +1300,17 @@ function proxyJiraFlow(request, response) {
       resolve(true);
       return;
     }
+    // The proxy injects the JiraFlow service token, so on a shared server only
+    // signed-in AuditFlow users may reach it.
+    if (serverRole !== "desktop") {
+      try {
+        await authenticatedIdentity(request);
+      } catch (error) {
+        sendJson(response, Number(error.status || 401), { error: error.message, code: "auditflow_session_required" });
+        resolve(true);
+        return;
+      }
+    }
     const credentials = await readJiraFlowCredentials();
     if (!credentials) {
       sendJson(response, 503, { error: "JiraFlow credentials are not configured", code: "jiraflow_credentials_unavailable" });

@@ -1,0 +1,5 @@
+cb7849059423eff8adfc3c3b3102e1d80ce2fc080cfb34fcb7ea5b263cbc6406  JEAuditFlow-7.9.5-Server-Install.tar.gz
+6745c227c6603acfbfef24b6ff45980c4456e7ae6354a8990cc2144edafb113f  JEAuditFlow-7.9.5-Backend.zip
+40206898039b10f1ad3eedf8596c7733dde12215d66c9a4bbb3006f35b501e81  JEAuditFlow-7.9.5-Web-Client.zip
+10681b251a964dc5d97fdc754775a6e8520a3f0b0da07f64a70069d4b9506750  JEAuditFlow-7.9.5-Database.zip
+b3e4c3ef2594a66960f923b0228994fba2eb006b49d0a8474b3b39fb82bee7c6  JEAuditFlow-7.9.5-Database.tar.gz

@@ -1,5 +1,6 @@
 import { createReadStream, existsSync, mkdirSync, readFileSync, realpathSync, renameSync, statSync, writeFileSync, appendFileSync } from "node:fs";
 import { pbkdf2Sync, randomBytes, timingSafeEqual } from "node:crypto";
+import { homedir } from "node:os";
 import path from "node:path";
 
 const API_PREFIX = "/api/v1";
@@ -11,6 +12,7 @@ const MAX_EVENT_FILE_BYTES = 8 * 1024 * 1024;
 const SAFE_EVENT = /^[a-z0-9][a-z0-9_.:-]{0,63}$/i;
 
 function localAppData() {
+  if (process.platform !== "win32") return process.env.XDG_DATA_HOME || path.join(homedir(), ".local", "share");
   return process.env.LOCALAPPDATA || path.join(process.env.USERPROFILE || process.cwd(), "AppData", "Local");
 }
 

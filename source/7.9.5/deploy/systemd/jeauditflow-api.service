@@ -1,0 +1,25 @@
+[Unit]
+Description=JEAuditFlow 7.9.5 API, web client and JiraFlow
+After=network-online.target mysql.service jeauditflow-fileanalyst.service
+Wants=network-online.target jeauditflow-fileanalyst.service
+
+[Service]
+Type=simple
+User=jeauditflow
+Group=jeauditflow
+WorkingDirectory=/opt/jeauditflow/7.9.5/server
+EnvironmentFile=/etc/jeauditflow/7.9.5.env
+ExecStart=/opt/jeauditflow/node/bin/node server.mjs serve
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=30
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/jeauditflow/7.9.5
+
+[Install]
+WantedBy=multi-user.target
