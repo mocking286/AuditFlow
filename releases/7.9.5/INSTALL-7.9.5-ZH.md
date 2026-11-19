@@ -4,6 +4,8 @@
 
 已在 Ubuntu 24.04 + MySQL 8.0.46 + OpenJDK 21 + Node.js 26.13.1 上完整验证：从全新安装到浏览器登录、建项目、上传附件、打开 JiraFlow 都已跑通。
 
+> 想把一台 Mac 当作服务器（数据库用 TablePlus 中已配置的本机 MySQL，双击即启动）：见 `source/7.9.5/launcher/使用说明-ZH.md`。
+
 ## 1. 发布包
 
 | 文件 | 用途 |
