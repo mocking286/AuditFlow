@@ -1,0 +1,448 @@
+#!/bin/bash
+# JEAuditFlow 7.9.5 local launcher for macOS.
+# Double-click: install (first run), start MySQL + FileAnalyst + API + JiraFlow,
+# open the workbench. From Terminal:
+#   JEAuditFlowLauncher.app/Contents/MacOS/JEAuditFlowLauncher
+#     [start|stop|stop-all|status|open|logs|install <Server-Install.tar.gz>|choose-root]
+# Must stay compatible with /bin/bash 3.2 (the macOS system bash).
+set -u
+
+VERSION=7.9.5
+NODE_MIN=26.13.1
+JAVA_MIN=21
+API_PORT=47983
+FA_PORT=47984
+JF_PORT=47985
+DB_PORT=43327
+DB_NAME=jeauditflow_795
+DB_USER=jeauditflow
+ADMIN_EMAIL_DEFAULT=yumeng.li@johnsonelectric.com
+
+APP_CONTENTS="$(cd "$(dirname "$0")/.." && pwd)"
+RESOURCES="$APP_CONTENTS/Resources"
+SUPPORT="${JEAUDITFLOW_SUPPORT_DIR:-$HOME/Library/Application Support/JEAuditFlow/$VERSION}"
+LOG_DIR="${JEAUDITFLOW_LOG_DIR:-$HOME/Library/Logs/JEAuditFlow/$VERSION}"
+RUN_DIR="$SUPPORT/run"
+DATA_DIR="$SUPPORT/data"
+MYSQL_DIR="$SUPPORT/mysql"
+ENV_FILE="$SUPPORT/$VERSION.env"
+ROOT_FILE="$SUPPORT/project-root"
+ADMIN_FILE="$SUPPORT/admin-login.txt"
+LAUNCHER_LOG="$LOG_DIR/launcher.log"
+WORKBENCH_URL="http://127.0.0.1:$API_PORT/index.html"
+PATH="$PATH:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH
+
+umask 077
+mkdir -p "$SUPPORT" "$LOG_DIR" "$RUN_DIR" "$DATA_DIR"
+
+log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >>"$LAUNCHER_LOG"; printf '%s\n' "$*"; }
+
+gui() { [ "${JEAUDITFLOW_LAUNCHER_NO_GUI:-0}" != 1 ] && command -v osascript >/dev/null 2>&1; }
+
+as_quote() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'; }
+
+# dialog <message> [buttons...]; prints the chosen button.
+dialog() {
+  local message="$1"; shift
+  if ! gui; then
+    printf '%s\n' "$message" >&2
+    [ $# -gt 0 ] && printf '%s\n' "${JEAUDITFLOW_LAUNCHER_ANSWER:-$1}"
+    return 0
+  fi
+  local buttons="" b
+  [ $# -eq 0 ] && set -- "好"
+  for b in "$@"; do buttons="$buttons${buttons:+, }\"$(as_quote "$b")\""; done
+  osascript -e "button returned of (display dialog \"$(as_quote "$message")\" with title \"JEAuditFlow $VERSION\" buttons {$buttons} default button \"$(as_quote "$1")\" with icon note)" 2>/dev/null
+}
+
+fail() {
+  log "错误：$1"
+  dialog "$1" "关闭" >/dev/null
+  exit 1
+}
+
+choose_folder() {
+  gui || { printf '%s\n' "${JEAUDITFLOW_LAUNCHER_CHOICE:-}"; return 0; }
+  osascript -e "POSIX path of (choose folder with prompt \"$(as_quote "$1")\")" 2>/dev/null | sed 's#/$##'
+}
+
+choose_file() {
+  gui || { printf '%s\n' "${JEAUDITFLOW_LAUNCHER_CHOICE:-}"; return 0; }
+  osascript -e "POSIX path of (choose file with prompt \"$(as_quote "$1")\")" 2>/dev/null
+}
+
+expand_home() { case "$1" in "~") printf '%s\n' "$HOME" ;; "~/"*) printf '%s/%s\n' "$HOME" "${1#\~/}" ;; *) printf '%s\n' "$1" ;; esac; }
+
+# --- version helpers -------------------------------------------------------
+version_ge() {
+  awk -v a="$1" -v b="$2" 'BEGIN { split(a, x, "."); split(b, y, ".");
+    for (i = 1; i <= 3; i++) { if (x[i] + 0 > y[i] + 0) exit 0; if (x[i] + 0 < y[i] + 0) exit 1 } exit 0 }'
+}
+
+# --- project root ----------------------------------------------------------
+root_valid() {
+  [ -n "$1" ] && [ -f "$1/server/server.mjs" ] && [ -f "$1/fileanalyst/server.mjs" ] &&
+    [ -f "$1/jiraflow/jiraflow.jar" ] && [ -f "$1/client/index.html" ] && [ -d "$1/server/node_modules" ]
+}
+
+# Accepts the installed 7.9.5 directory itself, or a 7.x project checkout that
+# keeps versions under local-deploy/runtime/versions/7.9.5.
+normalize_root() {
+  local candidate
+  for candidate in "$1" "$1/local-deploy/runtime/versions/$VERSION" "$1/$VERSION"; do
+    if root_valid "$candidate"; then printf '%s\n' "$candidate"; return 0; fi
+  done
+  return 1
+}
+
+resolve_root() {
+  local candidate saved default_root
+  saved="$( [ -f "$ROOT_FILE" ] && cat "$ROOT_FILE" )"
+  default_root="$(expand_home "$(head -n1 "$RESOURCES/default-project-root.txt" 2>/dev/null)")"
+  for candidate in "${JEAUDITFLOW_ROOT:-}" "$saved" "$default_root"; do
+    [ -n "$candidate" ] || continue
+    if PROJECT_ROOT="$(normalize_root "$candidate")"; then
+      printf '%s\n' "$PROJECT_ROOT" >"$ROOT_FILE"
+      return 0
+    fi
+  done
+  return 1
+}
+
+install_bundle() {
+  local bundle="$1" target work dir
+  [ -f "$bundle" ] || fail "找不到安装包：$bundle"
+  target="$(expand_home "$(head -n1 "$RESOURCES/default-project-root.txt" 2>/dev/null)")"
+  [ -n "$target" ] || target="$HOME/JEAuditFlow/$VERSION"
+  work="$(mktemp -d "${TMPDIR:-/tmp}/jeauditflow-install.XXXXXX")"
+  log "正在解压 $bundle"
+  tar -xzf "$bundle" -C "$work" || fail "无法解压安装包（应为 JEAuditFlow-$VERSION-Server-Install.tar.gz）"
+  dir="$work/JEAuditFlow-$VERSION-Server-Install"
+  [ -f "$dir/SHA256SUMS.txt" ] || fail "安装包中缺少 SHA256SUMS.txt"
+  (cd "$dir" && shasum -a 256 -c SHA256SUMS.txt >/dev/null 2>&1) || fail "安装包 SHA-256 校验失败"
+  if [ -d "$target" ]; then mv "$target" "$target.previous-$(date +%Y%m%d%H%M%S)"; fi
+  mkdir -p "$target/client" "$target/database"
+  unzip -q "$dir/JEAuditFlow-$VERSION-Backend.zip" -d "$target" &&
+    unzip -q "$dir/JEAuditFlow-$VERSION-Web-Client.zip" -d "$target/client" &&
+    unzip -q "$dir/JEAuditFlow-$VERSION-Database.zip" -d "$target/database" || fail "解压程序文件失败"
+  chmod +x "$target"/database/*.sh
+  cp "$dir"/*.md "$target/" 2>/dev/null
+  rm -rf "$work"
+  xattr -dr com.apple.quarantine "$target" 2>/dev/null
+  PROJECT_ROOT="$target"
+  printf '%s\n' "$PROJECT_ROOT" >"$ROOT_FILE"
+  log "已安装到 $PROJECT_ROOT"
+}
+
+ensure_root() {
+  resolve_root && return 0
+  local choice path
+  choice="$(dialog "未找到 JEAuditFlow $VERSION 程序目录。
+
+请选择 JEAuditFlow-$VERSION-Server-Install.tar.gz 安装包（安装到 $(head -n1 "$RESOURCES/default-project-root.txt" 2>/dev/null)），或选择已解压的 $VERSION 目录。" "选择安装包…" "选择已有目录…" "取消")"
+  case "$choice" in
+    "选择安装包…")
+      path="$(choose_file "选择 JEAuditFlow-$VERSION-Server-Install.tar.gz")"
+      [ -n "$path" ] || exit 0
+      install_bundle "$path" ;;
+    "选择已有目录…")
+      path="$(choose_folder "选择 JEAuditFlow $VERSION 目录（包含 server、fileanalyst、jiraflow、client）")"
+      [ -n "$path" ] || exit 0
+      PROJECT_ROOT="$(normalize_root "$path")" || fail "所选目录不是完整的 $VERSION 安装：$path"
+      printf '%s\n' "$PROJECT_ROOT" >"$ROOT_FILE" ;;
+    *) exit 0 ;;
+  esac
+}
+
+# --- runtimes --------------------------------------------------------------
+find_node() {
+  local candidate v
+  for candidate in "${JEAUDITFLOW_NODE:-}" /opt/homebrew/opt/node@26/bin/node /usr/local/opt/node@26/bin/node \
+      "$(command -v node 2>/dev/null)" /opt/homebrew/bin/node /usr/local/bin/node; do
+    [ -n "$candidate" ] && [ -x "$candidate" ] || continue
+    v="$("$candidate" -p process.versions.node 2>/dev/null)" || continue
+    if version_ge "$v" "$NODE_MIN"; then NODE_BIN="$candidate"; return 0; fi
+  done
+  return 1
+}
+
+find_java() {
+  local candidate home major
+  home="$(/usr/libexec/java_home -v "$JAVA_MIN+" 2>/dev/null)"
+  for candidate in "${JEAUDITFLOW_JAVA:-}" "${home:+$home/bin/java}" /opt/homebrew/opt/openjdk@21/bin/java \
+      /opt/homebrew/opt/openjdk/bin/java "$(command -v java 2>/dev/null)"; do
+    [ -n "$candidate" ] && [ -x "$candidate" ] || continue
+    major="$("$candidate" -XshowSettings:properties -version 2>&1 | sed -n 's/.*java.specification.version = //p' | head -n1)"
+    [ -n "$major" ] || continue
+    if [ "${major%%.*}" -ge "$JAVA_MIN" ] 2>/dev/null; then JAVA_BIN="$candidate"; return 0; fi
+  done
+  return 1
+}
+
+find_mysql_tools() {
+  local prefix candidate
+  for candidate in "${JEAUDITFLOW_MYSQL_BIN_DIR:-}" /opt/homebrew/opt/mysql/bin /opt/homebrew/opt/mysql@8.4/bin \
+      /usr/local/opt/mysql/bin /usr/local/opt/mysql@8.4/bin /usr/local/mysql/bin; do
+    [ -n "$candidate" ] && [ -x "$candidate/mysqld" ] && { MYSQL_BIN_DIR="$candidate"; return 0; }
+  done
+  candidate="$(command -v mysqld 2>/dev/null)"
+  [ -z "$candidate" ] && [ -x /usr/sbin/mysqld ] && candidate=/usr/sbin/mysqld
+  if [ -n "$candidate" ]; then
+    MYSQL_BIN_DIR="$(dirname "$candidate")"; return 0
+  fi
+  return 1
+}
+
+mysql_client() { if [ -x "$MYSQL_BIN_DIR/mysql" ]; then printf '%s\n' "$MYSQL_BIN_DIR/mysql"; else command -v mysql; fi; }
+
+# --- configuration ---------------------------------------------------------
+random_hex() { openssl rand -hex "$1"; }
+
+write_env() {
+  local db_password admin_password
+  db_password="$(random_hex 18)"
+  admin_password="AF-$(random_hex 10)"
+  cat >"$ENV_FILE" <<EOF
+NODE_ENV=production
+AUDITFLOW_PORT=$API_PORT
+AUDITFLOW_SERVER_ROLE=desktop
+AUDITFLOW_WEB_CLIENT_ROOT=__ROOT__/client
+AUDITFLOW_OUTPUT_DIR=$DATA_DIR/auditflow
+AUDITFLOW_USER_DATA_DIR=$DATA_DIR/users
+AUDITFLOW_DATA_DIR=$DATA_DIR/ops
+AUDITFLOW_RELEASES_DIR=$DATA_DIR/releases
+AUDITFLOW_MYSQL_URL=mysql://$DB_USER:$db_password@127.0.0.1:$DB_PORT/$DB_NAME
+AUDITFLOW_BOOTSTRAP_ADMIN_EMAIL=$ADMIN_EMAIL_DEFAULT
+AUDITFLOW_ADMIN_NAME=Yumeng Li
+AUDITFLOW_BOOTSTRAP_ADMIN_PASSWORD=$admin_password
+FILEANALYST_PORT=$FA_PORT
+FILEANALYST_HOST=127.0.0.1
+FILEANALYST_BASE_PATH=/fileanalyst
+FILEANALYST_AUTOSTART=0
+FILEANALYST_AUDITFLOW_AUTH_URL=http://127.0.0.1:$API_PORT/api/auth/me
+FILEANALYST_AUDITFLOW_PROJECTS_URL=http://127.0.0.1:$API_PORT/api/projects
+FILEANALYST_CLIENT_ROOT=__ROOT__/client/fileanalyst
+FILEANALYST_STORAGE=mysql
+FILEANALYST_REQUIRE_DATABASE=1
+FILEANALYST_MYSQL_URL=mysql://$DB_USER:$db_password@127.0.0.1:$DB_PORT/$DB_NAME
+FILEANALYST_DATA_DIR=$DATA_DIR/fileanalyst
+FILEANALYST_LOCAL_ONLY=0
+FILEANALYST_LOCAL_PREVIEW=0
+FILEANALYST_DESKTOP_MODE=0
+JIRAFLOW_AUTOSTART=1
+JIRAFLOW_PORT=$JF_PORT
+JIRAFLOW_HOST=127.0.0.1
+JIRAFLOW_ROOT=__ROOT__/jiraflow
+JIRAFLOW_JAVA=__JAVA__
+JIRAFLOW_DATA_DIR=$DATA_DIR/jiraflow
+JIRAFLOW_USER=testuser
+JIRAFLOW_STORAGE=mysql
+JIRAFLOW_MYSQL_URL=jdbc:mysql://127.0.0.1:$DB_PORT/$DB_NAME?sslMode=DISABLED&allowPublicKeyRetrieval=true
+JIRAFLOW_MYSQL_USER=$DB_USER
+JIRAFLOW_MYSQL_PASSWORD=$db_password
+EOF
+  printf '[client]\nuser=%s\npassword=%s\n' "$DB_USER" "$db_password" >"$SUPPORT/mysql-client.cnf"
+  printf '工作台：%s\n账号：%s\n初始密码：%s\n' "$WORKBENCH_URL" "$ADMIN_EMAIL_DEFAULT" "$admin_password" >"$ADMIN_FILE"
+  chmod 600 "$ENV_FILE" "$SUPPORT/mysql-client.cnf" "$ADMIN_FILE"
+  FIRST_RUN=1
+}
+
+env_value() { sed -n "s/^$1=//p" "$ENV_FILE" | tail -n1; }
+
+# Exports the env file line by line: values contain '&' and must not be
+# evaluated by the shell. Per-install paths are substituted at load time.
+load_env() {
+  local line
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; *=*) ;; *) continue ;; esac
+    line="$(printf '%s' "$line" | sed -e "s#__ROOT__#$PROJECT_ROOT#g" -e "s#__JAVA__#$JAVA_BIN#g")"
+    export "$line"
+  done <"$ENV_FILE"
+}
+
+# --- MySQL -----------------------------------------------------------------
+port_open() {
+  if command -v nc >/dev/null 2>&1; then nc -z -w 2 127.0.0.1 "$1" >/dev/null 2>&1
+  else (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; fi
+}
+
+app_db_ok() {
+  "$(mysql_client)" --defaults-file="$SUPPORT/mysql-client.cnf" --protocol=TCP -h127.0.0.1 -P"$DB_PORT" \
+    -Nse "select 1" "$DB_NAME" >/dev/null 2>&1
+}
+
+start_mysql() {
+  local i
+  [ -d "$MYSQL_DIR/data/mysql" ] || {
+    log "首次初始化本地 MySQL 数据目录 $MYSQL_DIR/data"
+    mkdir -p "$MYSQL_DIR"
+    "$MYSQL_BIN_DIR/mysqld" --no-defaults --initialize-insecure --basedir="$(dirname "$MYSQL_BIN_DIR")" --datadir="$MYSQL_DIR/data" \
+      >>"$LOG_DIR/mysql-init.log" 2>&1 || fail "MySQL 初始化失败，详见 $LOG_DIR/mysql-init.log"
+  }
+  log "启动本地 MySQL（127.0.0.1:$DB_PORT）"
+  nohup "$MYSQL_BIN_DIR/mysqld" --no-defaults --datadir="$MYSQL_DIR/data" --port="$DB_PORT" \
+    --bind-address=127.0.0.1 --socket="$MYSQL_DIR/mysql.sock" --mysqlx=OFF \
+    --pid-file="$MYSQL_DIR/mysqld.pid" --log-error="$LOG_DIR/mysqld.log" \
+    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci >/dev/null 2>&1 </dev/null &
+  for i in $(seq 1 60); do port_open "$DB_PORT" && return 0; sleep 1; done
+  fail "MySQL 未能在 60 秒内启动，详见 $LOG_DIR/mysqld.log"
+}
+
+init_database() {
+  local root_cnf="$SUPPORT/mysql-root.cnf" root_password client
+  client="$(mysql_client)"
+  [ -n "$client" ] || fail "找不到 mysql 客户端"
+  if [ ! -f "$root_cnf" ]; then
+    root_password="$(random_hex 18)"
+    "$client" --no-defaults -uroot --socket="$MYSQL_DIR/mysql.sock" \
+      -e "alter user 'root'@'localhost' identified by '$root_password';" 2>>"$LAUNCHER_LOG" ||
+      fail "无法设置本地 MySQL root 密码（该实例不是由启动器初始化的？）"
+    printf '[client]\nuser=root\npassword=%s\n' "$root_password" >"$root_cnf"
+    chmod 600 "$root_cnf"
+  fi
+  MYSQL_BIN="$client" MYSQL_ADMIN_DEFAULTS_FILE="$root_cnf" MYSQL_PASSWORD="$(sed -n 's/^password=//p' "$SUPPORT/mysql-client.cnf")" \
+    bash "$PROJECT_ROOT/database/create-database.sh" --confirm "CREATE $DB_NAME" >>"$LAUNCHER_LOG" 2>&1 ||
+    fail "创建数据库失败，详见 $LAUNCHER_LOG"
+  MYSQL_BIN="$client" MYSQL_DEFAULTS_FILE="$SUPPORT/mysql-client.cnf" \
+    bash "$PROJECT_ROOT/database/install-schema.sh" --confirm "APPLY $DB_NAME" >>"$LAUNCHER_LOG" 2>&1 ||
+    fail "导入数据库 schema 失败，详见 $LAUNCHER_LOG"
+  touch "$SUPPORT/database-initialized"
+  log "数据库 $DB_NAME 已就绪"
+}
+
+ensure_mysql() {
+  if port_open "$DB_PORT"; then
+    app_db_ok && return 0
+    [ -S "$MYSQL_DIR/mysql.sock" ] && [ ! -f "$SUPPORT/database-initialized" ] && { init_database; return 0; }
+    fail "端口 $DB_PORT 已被另一个 MySQL 占用，且启动器的数据库账号无法登录。请停止该实例，或在其中手动创建 $DB_NAME（见 database/README.md）。"
+  fi
+  find_mysql_tools || fail "未找到 MySQL。请先在终端执行：brew install mysql
+（不需要执行 brew services start，启动器会单独运行一个端口为 $DB_PORT 的实例）"
+  start_mysql
+  [ -f "$SUPPORT/database-initialized" ] || init_database
+  app_db_ok || fail "无法用启动器保存的账号登录数据库 $DB_NAME"
+}
+
+stop_mysql() {
+  local pid
+  [ -f "$MYSQL_DIR/mysqld.pid" ] || return 0
+  pid="$(cat "$MYSQL_DIR/mysqld.pid")"
+  kill "$pid" 2>/dev/null && log "已停止本地 MySQL"
+}
+
+# --- services --------------------------------------------------------------
+health_json() { curl -fsS -m 5 "http://127.0.0.1:$API_PORT/api/health" 2>/dev/null; }
+
+stack_healthy() {
+  local h
+  h="$(health_json)" || return 1
+  case "$h" in *'"status":"ok"'*) ;; *) return 1 ;; esac
+  case "$h" in *'"fileAnalyst":{"available":true,"healthy":true'*) ;; *) return 1 ;; esac
+  case "$h" in *'"jiraFlow":{"available":true,"healthy":true'*) ;; *) return 1 ;; esac
+}
+
+pid_alive() { [ -f "$RUN_DIR/$1.pid" ] && kill -0 "$(cat "$RUN_DIR/$1.pid")" 2>/dev/null; }
+
+start_service() {
+  local name="$1" dir="$2"; shift 2
+  pid_alive "$name" && return 0
+  (cd "$dir" && exec nohup "$@") >>"$LOG_DIR/$name.log" 2>&1 </dev/null &
+  echo $! >"$RUN_DIR/$name.pid"
+}
+
+wait_for() {
+  local label="$1" url="$2" seconds="$3" i
+  for i in $(seq 1 "$seconds"); do curl -fsS -m 3 "$url" >/dev/null 2>&1 && return 0; sleep 1; done
+  fail "$label 未能在 ${seconds} 秒内就绪，详见 $LOG_DIR"
+}
+
+start_stack() {
+  ensure_root
+  find_node || fail "需要 Node.js $NODE_MIN 或更高版本。请在终端执行：brew install node
+（或从 https://nodejs.org 安装 26.x LTS），然后重新打开启动器。"
+  find_java || fail "JiraFlow 需要 Java $JAVA_MIN 或更高版本。请在终端执行：brew install openjdk@21"
+  [ -f "$ENV_FILE" ] || write_env
+  if stack_healthy; then log "JEAuditFlow $VERSION 已在运行"; return 0; fi
+  ensure_mysql
+  load_env
+  log "启动 FileAnalyst（127.0.0.1:$FA_PORT）"
+  start_service fileanalyst "$PROJECT_ROOT/fileanalyst" "$NODE_BIN" server.mjs
+  wait_for FileAnalyst "http://127.0.0.1:$FA_PORT/api/health" 60
+  log "启动 AuditFlow API 与 JiraFlow（127.0.0.1:$API_PORT）"
+  start_service api "$PROJECT_ROOT/server" "$NODE_BIN" server.mjs serve
+  wait_for "AuditFlow API" "http://127.0.0.1:$API_PORT/api/health" 90
+  local i
+  for i in $(seq 1 60); do stack_healthy && break; sleep 1; done
+  stack_healthy || fail "服务已启动，但 FileAnalyst 或 JiraFlow 健康检查未通过，详见 $LOG_DIR"
+  log "JEAuditFlow $VERSION 已启动：$WORKBENCH_URL"
+}
+
+stop_service() {
+  local name="$1" pid i
+  [ -f "$RUN_DIR/$name.pid" ] || return 0
+  pid="$(cat "$RUN_DIR/$name.pid")"
+  if kill "$pid" 2>/dev/null; then
+    for i in $(seq 1 20); do kill -0 "$pid" 2>/dev/null || break; sleep 0.5; done
+    kill -9 "$pid" 2>/dev/null
+    log "已停止 $name"
+  fi
+  rm -f "$RUN_DIR/$name.pid"
+}
+
+stop_stack() { stop_service api; stop_service fileanalyst; }
+
+open_url() { if command -v open >/dev/null 2>&1; then open "$1"; else log "请在浏览器中打开 $1"; fi; }
+
+status() {
+  local h
+  printf 'JEAuditFlow %s\n程序目录：%s\n配置：%s\n日志：%s\n' "$VERSION" "$( [ -f "$ROOT_FILE" ] && cat "$ROOT_FILE" || echo 未设置)" "$ENV_FILE" "$LOG_DIR"
+  if h="$(health_json)"; then printf 'API：运行中 %s\n' "$WORKBENCH_URL"; stack_healthy && echo "FileAnalyst/JiraFlow：正常" || echo "FileAnalyst/JiraFlow：异常"
+  else echo "API：未运行"; fi
+  port_open "$DB_PORT" && echo "MySQL：127.0.0.1:$DB_PORT 可连接" || echo "MySQL：未运行"
+}
+
+main_gui() {
+  FIRST_RUN=0
+  start_stack
+  open_url "$WORKBENCH_URL"
+  local login="" choice
+  [ -f "$ADMIN_FILE" ] && login="$(cat "$ADMIN_FILE")"
+  while :; do
+    if [ "$FIRST_RUN" = 1 ]; then
+      choice="$(dialog "JEAuditFlow $VERSION 已启动，并已在浏览器中打开工作台。
+
+首次登录信息（保存在 $ADMIN_FILE）：
+$login
+
+关闭本窗口后服务会继续运行；再次打开启动器可以停止服务。" "完成" "打开工作台" "停止服务")"
+      FIRST_RUN=0
+    else
+      choice="$(dialog "JEAuditFlow $VERSION 正在运行：
+$WORKBENCH_URL
+
+日志目录：$LOG_DIR" "完成" "打开工作台" "健康状态" "停止服务")"
+    fi
+    case "$choice" in
+      "打开工作台") open_url "$WORKBENCH_URL" ;;
+      "健康状态") open_url "http://127.0.0.1:$API_PORT/api/health" ;;
+      "停止服务") stop_stack; stop_mysql; dialog "已停止 JEAuditFlow $VERSION 和本地 MySQL。" "好" >/dev/null; return 0 ;;
+      *) return 0 ;;
+    esac
+    gui || return 0
+  done
+}
+
+log "--- launcher ${1:-gui} (root hint: ${JEAUDITFLOW_ROOT:-default})"
+case "${1:-gui}" in
+  gui|-psn_*) main_gui ;;
+  start) FIRST_RUN=0; start_stack ;;
+  open) open_url "$WORKBENCH_URL" ;;
+  stop) stop_stack ;;
+  stop-all) stop_stack; stop_mysql ;;
+  status) status ;;
+  logs) open_url "$LOG_DIR" ;;
+  install) install_bundle "${2:?usage: install <JEAuditFlow-$VERSION-Server-Install.tar.gz>}" ;;
+  choose-root) rm -f "$ROOT_FILE"; ensure_root; log "程序目录：$PROJECT_ROOT" ;;
+  *) echo "usage: $0 [start|stop|stop-all|status|open|logs|install <tar.gz>|choose-root]" >&2; exit 2 ;;
+esac
